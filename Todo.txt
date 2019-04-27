@@ -1,0 +1,14 @@
+-Optimize Building Unit by rendering blocks using a tesselator
+-Sync Building Unit's builds with all other players on a server
+-Add config options for ore costs (and a static one for the quarry)
+-Add config options for disabling any tile entity you want
+-Store items inside of building unit when broken
+-Add some way of changing the costs of the ores to mine
+
+Items
+-Some sort of pocket tool???
+
+Blocks
+-Black Market (Ever-changing prices on illegal goods)
+-Teleport Pad for the interaction terminal
+-Storage Unit for the interaction terminal (inventory tweaks support would be nice too)

@@ -1,0 +1,13 @@
+{
+  "type": "forge:ore_shapeless",
+  "group": "coin_nickel",
+  "ingredients": [
+    {
+      "item": "calemiutils:coin_quarter"
+    }
+  ],
+  "result": {
+    "item": "calemiutils:coin_nickel",
+    "count": 5
+  }
+}

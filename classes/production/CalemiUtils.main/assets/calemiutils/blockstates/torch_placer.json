@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "calemiutils:torch_placer"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "LSL",
+    "LCL",
+    "LLL"
+  ],
+  "key": {
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "slabWood"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "C": {
+      "item": "minecraft:chest"
+    }
+  },
+  "result": {
+    "item": "calemiutils:builders_kit",
+    "count": 1
+  }
+}

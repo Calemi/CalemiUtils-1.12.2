@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "WWW",
+    "EDE",
+    "EDE"
+  ],
+  "key": {
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "gemDiamond"
+    },
+    "E": {
+      "item": "minecraft:ender_pearl"
+    },
+    "W": {
+      "item": "minecraft:wool",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "calemiutils:brush",
+    "count": 1
+  }
+}

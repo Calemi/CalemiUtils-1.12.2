@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "end": "calemiutils:blocks/unit_side",
+    "side": "calemiutils:blocks/building_unit_side"
+  }
+}

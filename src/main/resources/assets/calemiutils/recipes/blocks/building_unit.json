@@ -1,0 +1,24 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "CLC",
+    "LPL",
+    "CLC"
+  ],
+  "key": {
+    "C": {
+      "item": "calemiutils:gold_chip"
+    },
+    "L": {
+      "type": "forge:ore_dict",
+      "ore": "logWood"
+    },
+    "P": {
+      "item": "calemiutils:pencil"
+    }
+  },
+  "result": {
+    "item": "calemiutils:building_unit",
+    "count": 1
+  }
+}

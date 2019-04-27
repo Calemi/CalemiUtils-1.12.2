@@ -1,0 +1,13 @@
+{
+  "type": "forge:ore_shapeless",
+  "group": "coin_quarter",
+  "ingredients": [
+    {
+      "item": "calemiutils:coin_dollar"
+    }
+  ],
+  "result": {
+    "item": "calemiutils:coin_quarter",
+    "count": 4
+  }
+}

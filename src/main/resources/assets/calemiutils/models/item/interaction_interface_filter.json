@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "calemiutils:items/interaction_interface_filter"
+  }
+}

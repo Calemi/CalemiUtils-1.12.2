@@ -1,0 +1,24 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "GDG",
+    "DCD",
+    "GDG"
+  ],
+  "key": {
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "dustGlowstone"
+    },
+    "G": {
+      "item": "calemiutils:gold_chip"
+    },
+    "C": {
+      "item": "calemiutils:coin_quarter"
+    }
+  },
+  "result": {
+    "item": "calemiutils:range_upgrade",
+    "count": 1
+  }
+}

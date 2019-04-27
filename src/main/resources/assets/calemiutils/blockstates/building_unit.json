@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "calemiutils:building_unit"
+    }
+  }
+}

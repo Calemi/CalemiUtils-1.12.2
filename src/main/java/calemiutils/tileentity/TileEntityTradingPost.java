@@ -1,0 +1,181 @@
+package calemiutils.tileentity;
+
+import calemiutils.config.CUConfig;
+import calemiutils.gui.GuiTradingPost;
+import calemiutils.inventory.ContainerTradingPost;
+import calemiutils.security.ISecurity;
+import calemiutils.security.SecurityProfile;
+import calemiutils.tileentity.base.ICurrencyNetworkProducer;
+import calemiutils.tileentity.base.ITileEntityGuiHandler;
+import calemiutils.tileentity.base.TileEntityInventoryBase;
+import calemiutils.util.helper.MathHelper;
+import calemiutils.util.helper.NBTHelper;
+import calemiutils.util.helper.StringHelper;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+public class TileEntityTradingPost extends TileEntityInventoryBase implements ITileEntityGuiHandler, ICurrencyNetworkProducer, ISecurity {
+
+    private final SecurityProfile profile = new SecurityProfile();
+    public int storedCurrency = 0;
+    public int amountForSale;
+    public int salePrice;
+    public boolean hasValidTradeOffer;
+    private ItemStack stackForSale = ItemStack.EMPTY;
+
+    public TileEntityTradingPost() {
+
+        setInputSlots(MathHelper.getCountingArray(0, 26));
+        setSideInputSlots(MathHelper.getCountingArray(0, 26));
+        amountForSale = 1;
+        salePrice = 0;
+        hasValidTradeOffer = false;
+    }
+
+    @Override
+    public void update() {
+
+        hasValidTradeOffer = getStackForSale() != null && !getStackForSale().isEmpty() && amountForSale >= 1;
+    }
+
+    public int getStock() {
+
+        if (getStackForSale() != null) {
+
+            int count = 0;
+
+            for (int i = 0; i < getSizeInventory(); i++) {
+
+                if (getStackInSlot(i) != null && getStackInSlot(i).isItemEqual(getStackForSale())) {
+                    count += getStackInSlot(i).getCount();
+                }
+            }
+
+            return count;
+        }
+
+        return 0;
+    }
+
+    public ItemStack getStackForSale() {
+
+        return stackForSale;
+    }
+
+    public void setStackForSale(ItemStack stack) {
+
+        stackForSale = stack;
+    }
+
+    @Override
+    public Container getTileContainer(EntityPlayer player) {
+
+        return new ContainerTradingPost(player, this);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiContainer getTileGuiContainer(EntityPlayer player) {
+
+        return new GuiTradingPost(player, this);
+    }
+
+    @Override
+    public int getSizeInventory() {
+
+        return 27;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+
+        super.readFromNBT(nbt);
+
+        profile.readFromNBT(nbt);
+
+        storedCurrency = nbt.getInteger("currency");
+        amountForSale = nbt.getInteger("amount");
+        salePrice = nbt.getInteger("price");
+
+        stackForSale = NBTHelper.loadItem(nbt);
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+
+        super.writeToNBT(nbt);
+
+        profile.writeToNBT(nbt);
+
+        nbt.setInteger("currency", storedCurrency);
+        nbt.setInteger("amount", amountForSale);
+        nbt.setInteger("price", salePrice);
+
+        NBTHelper.saveItem(nbt, stackForSale);
+
+        return nbt;
+    }
+
+    @Override
+    public int getStoredCurrency() {
+
+        return storedCurrency;
+    }
+
+    @Override
+    public void setCurrency(int amount) {
+
+        int setAmount = amount;
+
+        if (amount > getMaxCurrency()) {
+            setAmount = getMaxCurrency();
+        }
+
+        storedCurrency = setAmount;
+
+    }
+
+    @Override
+    public int extractAllCurrency() {
+
+        int i = storedCurrency;
+        storedCurrency = 0;
+        return i;
+    }
+
+    @Override
+    public SecurityProfile getSecurityProfile() {
+
+        return profile;
+    }
+
+    @Override
+    public EnumFacing[] getConnectedDirections() {
+
+        return new EnumFacing[]{EnumFacing.DOWN};
+    }
+
+    @Override
+    public int getMaxCurrency() {
+
+        return CUConfig.misc.postCurrencyCapacity;
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+
+        if (hasValidTradeOffer) {
+            return new TextComponentString(amountForSale + "x " + getStackForSale().getDisplayName() + " for " + StringHelper.printCurrency(salePrice));
+        }
+
+        return null;
+    }
+}

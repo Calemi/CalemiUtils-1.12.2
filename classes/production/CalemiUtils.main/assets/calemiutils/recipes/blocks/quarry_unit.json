@@ -1,0 +1,27 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "CBC",
+    "LML",
+    "CBC"
+  ],
+  "key": {
+    "C": {
+      "item": "calemiutils:gold_chip"
+    },
+    "L": {
+      "type": "forge:ore_dict",
+      "ore": "logWood"
+    },
+    "B": {
+      "item": "minecraft:iron_block"
+    },
+    "M": {
+      "item": "calemiutils:motor"
+    }
+  },
+  "result": {
+    "item": "calemiutils:quarry_unit",
+    "count": 1
+  }
+}

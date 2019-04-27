@@ -1,0 +1,14 @@
+{
+  "type": "forge:ore_shapeless",
+  "group": "coin_penny",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "gemRaritanium"
+    }
+  ],
+  "result": {
+    "item": "calemiutils:coin_penny",
+    "count": 1
+  }
+}

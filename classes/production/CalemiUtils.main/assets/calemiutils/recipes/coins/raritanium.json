@@ -1,0 +1,12 @@
+{
+  "type": "forge:ore_shapeless",
+  "ingredients": [
+    {
+      "item": "calemiutils:coin_penny"
+    }
+  ],
+  "result": {
+    "item": "calemiutils:raritanium",
+    "count": 1
+  }
+}

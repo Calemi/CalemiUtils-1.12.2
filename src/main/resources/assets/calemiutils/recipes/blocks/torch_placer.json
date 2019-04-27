@@ -1,0 +1,30 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "CTC",
+    "LML",
+    "CEC"
+  ],
+  "key": {
+    "C": {
+      "item": "calemiutils:gold_chip"
+    },
+    "L": {
+      "type": "forge:ore_dict",
+      "ore": "logWood"
+    },
+    "T": {
+      "item": "minecraft:torch"
+    },
+    "E": {
+      "item": "minecraft:ender_pearl"
+    },
+    "M": {
+      "item": "calemiutils:motor"
+    }
+  },
+  "result": {
+    "item": "calemiutils:torch_placer",
+    "count": 1
+  }
+}

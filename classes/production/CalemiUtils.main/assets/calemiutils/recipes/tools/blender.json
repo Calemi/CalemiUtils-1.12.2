@@ -1,0 +1,25 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "IGI",
+    "IGI",
+    "IMI"
+  ],
+  "key": {
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "blockGlass"
+    },
+    "M": {
+      "item": "calemiutils:motor"
+    }
+  },
+  "result": {
+    "item": "calemiutils:blender",
+    "count": 1
+  }
+}
