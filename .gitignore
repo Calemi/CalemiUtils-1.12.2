@@ -3,6 +3,7 @@
 run/
 .gradle/
 gradle/
+classes/
 gradlew
 build/
 gradle-app.setting
