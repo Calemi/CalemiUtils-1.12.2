@@ -2,6 +2,7 @@ package calemiutils.block;
 
 import calemiutils.CalemiUtils;
 import calemiutils.block.base.BlockContainerBase;
+import calemiutils.config.CUConfig;
 import calemiutils.gui.GuiInteractionTerminal;
 import calemiutils.tileentity.TileEntityInteractionTerminal;
 import calemiutils.util.HardnessConstants;
@@ -29,6 +30,7 @@ public class BlockInteractionTerminal extends BlockContainerBase {
 
         super("interaction_terminal", MaterialSound.IRON, HardnessConstants.SECURED);
         setCreativeTab(CalemiUtils.TAB);
+        if (CUConfig.blockUtils.interactionNetwork) addBlock();
     }
 
     @Override

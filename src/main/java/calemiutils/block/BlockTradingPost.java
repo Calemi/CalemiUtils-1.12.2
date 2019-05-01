@@ -2,6 +2,7 @@ package calemiutils.block;
 
 import calemiutils.CalemiUtils;
 import calemiutils.block.base.BlockInventoryContainerBase;
+import calemiutils.config.CUConfig;
 import calemiutils.init.InitItems;
 import calemiutils.item.ItemWallet;
 import calemiutils.tileentity.TileEntityTradingPost;
@@ -40,12 +41,14 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
         super("trading_post", MaterialSound.IRON, HardnessConstants.SECURED);
         setCreativeTab(CalemiUtils.TAB);
+        if (CUConfig.blockUtils.tradingPost && CUConfig.itemUtils.economy) addBlock();
     }
 
     @Override
     public void addInformation(ItemStack stack, World player, List<String> tooltip, ITooltipFlag advanced) {
 
         LoreHelper.addInformationLore(tooltip, "Used to buy/sell blocks and items.");
+        LoreHelper.addControlsLore(tooltip, "Show Trade Info", LoreHelper.Type.SNEAK_USE, true);
         LoreHelper.addControlsLore(tooltip, "Open Inventory", LoreHelper.Type.USE_WRENCH, true);
         LoreHelper.addControlsLore(tooltip, "Buy Item", LoreHelper.Type.USE_WALLET);
     }
@@ -89,32 +92,32 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
         Location location = new Location(world, pos);
 
-        ItemStack heldStack = player.getHeldItemMainhand();
+        ItemStack heldStack = player.getHeldItem(hand);
+        ItemStack walletStack = WalletHelper.getCurrentWalletStack(player);
 
         TileEntity te = location.getTileEntity();
 
         if (te instanceof TileEntityTradingPost) {
 
             TileEntityTradingPost tePost = (TileEntityTradingPost) te;
-
             UnitChatMessage message = new UnitChatMessage(tePost.getSecurityProfile().getOwnerName() + "'s Trading Post", player);
 
-            if (heldStack.getItem() instanceof ItemWallet) {
-                handleTrade(message, world, player, tePost);
-            }
-
-            else if (heldStack.getItem() == InitItems.SECURITY_WRENCH) {
+            if (!player.isSneaking() && heldStack.getItem() == InitItems.SECURITY_WRENCH) {
 
                 if (SecurityHelper.openSecuredBlock(location, player, true)) {
                     FMLNetworkHandler.openGui(player, CalemiUtils.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
                 }
             }
 
+            else if (!player.isSneaking() && !walletStack.isEmpty()) {
+                handleTrade(message, world, player, tePost);
+            }
+
             else if (!world.isRemote) {
 
                 if (tePost.hasValidTradeOffer) {
                     message.printMessage(ChatFormatting.GREEN, tePost.getSecurityProfile().getOwnerName() + " is selling " + StringHelper.printCommas(tePost.amountForSale) + " " + tePost.getStackForSale().getDisplayName() + " for " + (tePost.salePrice > 0 ? (StringHelper.printCurrency(tePost.salePrice)) : "free"));
-                    message.printMessage(ChatFormatting.GREEN, "Hold a wallet to make a purchase.");
+                    message.printMessage(ChatFormatting.GREEN, "Hold a wallet in your inventory to make a purchase.");
                 }
 
                 else {
@@ -128,15 +131,16 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
     private void handleTrade(UnitChatMessage message, World world, EntityPlayer player, TileEntityTradingPost tePost) {
 
-        ItemWallet wallet = (ItemWallet) player.getHeldItemMainhand().getItem();
+        ItemStack walletStack = WalletHelper.getCurrentWalletStack(player);
+        ItemWallet wallet = (ItemWallet) walletStack.getItem();
 
         if (tePost.hasValidTradeOffer) {
 
             if (tePost.getStock() >= tePost.amountForSale) {
 
-                if (wallet.getBalance(player.getHeldItemMainhand()) >= tePost.salePrice) {
+                if (ItemWallet.getBalance(walletStack) >= tePost.salePrice) {
 
-                    NBTTagCompound nbt = ItemHelper.getNBT(player.getHeldItemMainhand());
+                    NBTTagCompound nbt = ItemHelper.getNBT(walletStack);
 
                     nbt.setInteger("balance", nbt.getInteger("balance") - tePost.salePrice);
 
@@ -159,7 +163,7 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
                                     }
                                 }
 
-                                InventoryHelper.consumeItem(tePost, tePost.getStackForSale(), tePost.amountForSale, true);
+                                InventoryHelper.consumeItem(tePost, tePost.amountForSale, true, tePost.getStackForSale());
 
                                 tePost.storedCurrency += tePost.salePrice;
                                 tePost.markForUpdate();

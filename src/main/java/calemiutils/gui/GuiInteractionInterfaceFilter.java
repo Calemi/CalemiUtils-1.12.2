@@ -135,6 +135,7 @@ public class GuiInteractionInterfaceFilter extends GuiContainerBase {
     @Override
     public void drawGuiForeground(int mouseX, int mouseY) {
 
+        fakeSlot.renderButton(mouseX, mouseY, 150);
     }
 
     @Override

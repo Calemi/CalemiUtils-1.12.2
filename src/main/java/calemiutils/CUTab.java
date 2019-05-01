@@ -1,5 +1,6 @@
 package calemiutils;
 
+import calemiutils.config.CUConfig;
 import calemiutils.init.InitItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -17,6 +18,12 @@ class CUTab extends CreativeTabs {
     @Override
     public ItemStack getTabIconItem() {
 
-        return new ItemStack(InitItems.PENCIL);
+        ItemStack stack = new ItemStack(InitItems.RARITANIUM);
+
+        if (CUConfig.itemUtils.pencil && CUConfig.blockUtils.blueprint) {
+            stack = new ItemStack(InitItems.PENCIL);
+        }
+
+        return stack;
     }
 }

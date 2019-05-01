@@ -2,6 +2,7 @@ package calemiutils.block;
 
 import calemiutils.CalemiUtils;
 import calemiutils.block.base.BlockInventoryContainerBase;
+import calemiutils.config.CUConfig;
 import calemiutils.gui.GuiBuildingUnit;
 import calemiutils.tileentity.TileEntityBuildingUnit;
 import calemiutils.util.MaterialSound;
@@ -29,6 +30,7 @@ public class BlockBuildingUnit extends BlockInventoryContainerBase {
 
         super("building_unit", MaterialSound.WOOD, 0, 0, 5);
         setCreativeTab(CalemiUtils.TAB);
+        if (CUConfig.blockUtils.buildingUnit && CUConfig.blockUtils.blueprint) addBlock();
     }
 
     @Override
@@ -69,6 +71,11 @@ public class BlockBuildingUnit extends BlockInventoryContainerBase {
     private void openGui(EntityPlayer playerIn, TileEntityBuildingUnit te) {
 
         FMLClientHandler.instance().displayGuiScreen(playerIn, new GuiBuildingUnit(playerIn, te));
+    }
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+
     }
 
     @Override

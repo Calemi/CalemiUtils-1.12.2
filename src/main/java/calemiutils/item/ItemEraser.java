@@ -1,6 +1,7 @@
 package calemiutils.item;
 
 import calemiutils.block.BlockBlueprint;
+import calemiutils.config.CUConfig;
 import calemiutils.item.base.ItemBase;
 import calemiutils.util.Location;
 import calemiutils.util.VeinScan;
@@ -22,6 +23,7 @@ public class ItemEraser extends ItemBase {
     public ItemEraser() {
 
         super("eraser", 1);
+        if (CUConfig.itemUtils.eraser && CUConfig.blockUtils.blueprint) addItem();
     }
 
     @Override

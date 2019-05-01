@@ -25,6 +25,7 @@ public class ItemBlender extends ItemBase {
     public ItemBlender() {
 
         super("blender", 1);
+        if (CUConfig.itemUtils.blender) addItem();
     }
 
     @Override
@@ -58,7 +59,7 @@ public class ItemBlender extends ItemBase {
 
                         if (ItemHelper.getNBT(stack).getFloat("juice") + food <= CUConfig.misc.blenderMaxJuice) {
 
-                            InventoryHelper.consumeItem(player.inventory, currentStack, 1, false);
+                            InventoryHelper.consumeItem(player.inventory, 1, false, currentStack);
                             ItemHelper.getNBT(stack).setFloat("juice", ItemHelper.getNBT(stack).getFloat("juice") + food);
                         }
                     }

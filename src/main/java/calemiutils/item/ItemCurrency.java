@@ -1,5 +1,6 @@
 package calemiutils.item;
 
+import calemiutils.config.CUConfig;
 import calemiutils.item.base.ItemBase;
 import calemiutils.util.helper.StringHelper;
 import com.mojang.realmsclient.gui.ChatFormatting;
@@ -17,6 +18,7 @@ public class ItemCurrency extends ItemBase {
 
         super("coin_" + name);
         this.value = value;
+        if (CUConfig.itemUtils.economy) addItem();
     }
 
     @Override

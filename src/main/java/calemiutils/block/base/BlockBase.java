@@ -21,11 +21,16 @@ public class BlockBase extends Block implements IHasModel {
         setHardness(hardness);
         setHarvestLevel("pickaxe", harvestLevel);
         setResistance(resistance);
+    }
+
+    public BlockBase addBlock() {
 
         if (getRegistryName() != null) {
             InitBlocks.BLOCKS.add(this);
             InitItems.ITEMS.add(new ItemBlock(this).setRegistryName(getRegistryName()));
         }
+
+        return this;
     }
 
     @Override

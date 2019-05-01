@@ -101,7 +101,9 @@ public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable imp
 
         for (int i = 2; i < getSizeInventory(); i++) {
 
-            if (getStackInSlot(i).isEmpty() || (ItemStack.areItemsEqual(getStackInSlot(i), stack)) && getStackInSlot(i).getCount() < getInventoryStackLimit()) {
+            boolean equalAndNotFull = (ItemStack.areItemsEqual(getStackInSlot(i), stack) && getStackInSlot(i).getCount() < getInventoryStackLimit());
+
+            if (getStackInSlot(i).isEmpty() || equalAndNotFull) {
                 return true;
             }
         }
@@ -136,15 +138,23 @@ public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable imp
 
     private void findCurrentLocationToMine() {
 
-        for (Location location : locationsToMine) {
+        if (locationsToMine.size() > 0) {
+
+            Location location = locationsToMine.get(0);
+
+            System.out.println(location.getBlock().getLocalizedName());
 
             if (!location.isAirBlock() && location.getBlockState() != getBlockToReplace().getDefaultState()) {
                 currentLocationToMine = location;
-                return;
+            }
+
+            else {
+                locationsToMine.remove(location);
+                findCurrentLocationToMine();
             }
         }
 
-        currentLocationToMine = null;
+        else currentLocationToMine = null;
     }
 
     protected ArrayList<Location> getLocationsWithinRange() {

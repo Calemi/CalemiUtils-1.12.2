@@ -1,5 +1,6 @@
 package calemiutils.item;
 
+import calemiutils.config.CUConfig;
 import calemiutils.item.base.ItemBase;
 import calemiutils.util.helper.ItemHelper;
 import calemiutils.util.helper.LoreHelper;
@@ -16,6 +17,7 @@ public class ItemBuildingUnitTemplate extends ItemBase {
     public ItemBuildingUnitTemplate() {
 
         super("building_unit_template", 1);
+        if (CUConfig.blockUtils.buildingUnit && CUConfig.blockUtils.blueprint) addItem();
     }
 
     @Override

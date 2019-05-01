@@ -1,6 +1,7 @@
 package calemiutils.item;
 
 import calemiutils.CalemiUtils;
+import calemiutils.config.CUConfig;
 import calemiutils.gui.GuiLinkBook;
 import calemiutils.item.base.ItemBase;
 import calemiutils.tileentity.TileEntityBookStand;
@@ -35,6 +36,7 @@ public class ItemLinkBookLocation extends ItemBase {
 
         super("link_book_location", 1);
         setCreativeTab(CalemiUtils.TAB);
+        if (CUConfig.itemUtils.locationLinkBook) addItem();
     }
 
     private static UnitChatMessage getUnitChatMessage(EntityPlayer player) {

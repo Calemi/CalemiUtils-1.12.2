@@ -82,6 +82,6 @@ public class GuiInteractionInterface extends GuiContainerBase {
 
     @Override
     public void drawGuiForeground(int mouseX, int mouseY) {
-
+        fakeSlot.renderButton(mouseX, mouseY, 150);
     }
 }

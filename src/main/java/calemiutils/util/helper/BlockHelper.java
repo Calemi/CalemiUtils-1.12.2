@@ -42,7 +42,7 @@ public class BlockHelper {
 
                     nextLocation.setBlock(block);
 
-                    InventoryHelper.consumeItem(player.inventory, new ItemStack(block), 1, true);
+                    InventoryHelper.consumeItem(player.inventory, 1, true, new ItemStack(block));
 
                     break;
                 }

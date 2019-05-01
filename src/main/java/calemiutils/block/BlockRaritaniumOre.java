@@ -26,6 +26,7 @@ public class BlockRaritaniumOre extends BlockBase {
 
         super("raritanium_ore", MaterialSound.STONE, 3, 2, 3);
         setCreativeTab(CalemiUtils.TAB);
+        if (CUConfig.blockUtils.raritaniumOre) addBlock();
     }
 
     @Override

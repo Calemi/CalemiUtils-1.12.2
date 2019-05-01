@@ -1,6 +1,7 @@
 package calemiutils.item;
 
 import calemiutils.CalemiUtils;
+import calemiutils.config.CUConfig;
 import calemiutils.item.base.ItemBase;
 import calemiutils.tileentity.TileEntityInteractionInterface;
 import calemiutils.util.Location;
@@ -26,6 +27,7 @@ public class ItemInteractionInterfaceFilter extends ItemBase {
     public ItemInteractionInterfaceFilter() {
 
         super("interaction_interface_filter", 1);
+        if (CUConfig.blockUtils.interactionNetwork) addItem();
     }
 
     public static ItemStack getFilterIcon(ItemStack stack) {

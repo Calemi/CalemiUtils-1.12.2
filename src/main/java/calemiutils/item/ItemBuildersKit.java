@@ -28,16 +28,17 @@ public class ItemBuildersKit extends ItemBase {
     public ItemBuildersKit() {
 
         super("builders_kit", 1);
+        if (CUConfig.itemUtils.buildersKit) addItem();
     }
 
     @Override
     public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 
         LoreHelper.addDisabledLore(tooltip, CUConfig.misc.buildersKitCapacity);
-        LoreHelper.addInformationLore(tooltip, "Stores huge amounts of the same block type that can be placed! Can also be used on blueprints!");
+        LoreHelper.addInformationLore(tooltip, "Stores huge amounts of the same block type that can be placed! Can also be used on Blueprints!");
         LoreHelper.addControlsLore(tooltip, "Place Block", LoreHelper.Type.USE, true);
         LoreHelper.addControlsLore(tooltip, "Open Inventory", LoreHelper.Type.SNEAK_USE);
-        LoreHelper.addControlsLore(tooltip, "Place the blocks stored into the blueprints", LoreHelper.Type.LEFT_CLICK_BLUEPRINT);
+        LoreHelper.addControlsLore(tooltip, "Place the blocks stored into the Blueprints", LoreHelper.Type.LEFT_CLICK_BLUEPRINT);
         tooltip.add("");
         tooltip.add("Block: " + ChatFormatting.AQUA + getBlockName(stack));
         tooltip.add("Amount: " + ChatFormatting.AQUA + StringHelper.printCommas(getAmountOfBlocks(stack)) + " / " + StringHelper.printCommas(CUConfig.misc.buildersKitCapacity));
@@ -162,14 +163,17 @@ public class ItemBuildersKit extends ItemBase {
 
         super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 
-        if (entityIn instanceof EntityPlayer) {
+        if (entityIn.world.getWorldTime() % 2 == 0) {
 
-            EntityPlayer player = (EntityPlayer) entityIn;
+            if (entityIn instanceof EntityPlayer) {
 
-            if (ItemHelper.getNBT(stack).getBoolean("suck") && getBlockType(stack) != null) {
+                EntityPlayer player = (EntityPlayer) entityIn;
 
-                if (InventoryHelper.countItems(player.inventory, getBlockType(stack), false) > 0) {
-                    InventoryHelper.consumeItem(player.inventory, getBlockType(stack), addAmountOfBlocks(stack, 1), false);
+                if (ItemHelper.getNBT(stack).getBoolean("suck") && getBlockType(stack) != null) {
+
+                    if (InventoryHelper.countItems(player.inventory, false, getBlockType(stack)) > 0) {
+                        InventoryHelper.consumeItem(player.inventory, addAmountOfBlocks(stack, 1), false, getBlockType(stack));
+                    }
                 }
             }
         }

@@ -32,6 +32,7 @@ public class BlockScaffold extends BlockBase {
 
         super("iron_scaffold", MaterialSound.IRON, 1, 1, 1);
         setCreativeTab(CalemiUtils.TAB);
+        if (CUConfig.blockUtils.ironScaffold) addBlock();
     }
 
     @Override

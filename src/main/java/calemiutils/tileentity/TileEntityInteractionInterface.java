@@ -37,7 +37,6 @@ public class TileEntityInteractionInterface extends TileEntityInventoryBase impl
     public void readFromNBT(NBTTagCompound nbt) {
 
         super.readFromNBT(nbt);
-        profile.readFromNBT(nbt);
         filter = NBTHelper.loadItem(nbt);
     }
 
@@ -45,7 +44,6 @@ public class TileEntityInteractionInterface extends TileEntityInventoryBase impl
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 
         super.writeToNBT(nbt);
-        profile.writeToNBT(nbt);
         NBTHelper.saveItem(nbt, filter);
         return nbt;
     }

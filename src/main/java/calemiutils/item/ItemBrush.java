@@ -25,6 +25,7 @@ public class ItemBrush extends ItemBase {
     public ItemBrush() {
 
         super("brush", 1);
+        if (CUConfig.itemUtils.brush && CUConfig.blockUtils.blueprint) addItem();
     }
 
     public static UnitChatMessage getMessage(EntityPlayer player) {

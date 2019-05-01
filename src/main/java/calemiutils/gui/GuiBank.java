@@ -63,7 +63,7 @@ public class GuiBank extends GuiContainerBase {
 
             ItemWallet wallet = (ItemWallet) teBank.getStackInSlot(1).getItem();
 
-            int currency = wallet.getBalance(teBank.getStackInSlot(1));
+            int currency = ItemWallet.getBalance(teBank.getStackInSlot(1));
             NBTTagCompound nbt = ItemHelper.getNBT(teBank.getStackInSlot(1));
 
             if (button.id == deposit.id) {
@@ -88,7 +88,7 @@ public class GuiBank extends GuiContainerBase {
 
             if (button.id == withdraw.id) {
 
-                int amountToAdd = MathHelper.getAmountToAdd(currency, teBank.storedCurrency, CUConfig.misc.walletCurrencyCapacity);
+                int amountToAdd = MathHelper.getAmountToAdd(currency, teBank.storedCurrency, CUConfig.wallet.walletCurrencyCapacity);
 
                 if (amountToAdd > 0) {
                     teBank.addCurrency(-amountToAdd);
@@ -97,7 +97,7 @@ public class GuiBank extends GuiContainerBase {
 
                 else {
 
-                    int remainder = MathHelper.getRemainder(currency, teBank.storedCurrency, CUConfig.misc.walletCurrencyCapacity);
+                    int remainder = MathHelper.getRemainder(currency, teBank.storedCurrency, CUConfig.wallet.walletCurrencyCapacity);
 
                     if (remainder > 0) {
                         teBank.addCurrency(-remainder);
@@ -106,7 +106,7 @@ public class GuiBank extends GuiContainerBase {
                 }
             }
 
-            CalemiUtils.network.sendToServer(new ServerPacketHandler("bank-sync" + "%" + teBank.storedCurrency + "%" + wallet.getBalance(teBank.getStackInSlot(1)) + "%" + PacketHelper.sendLocation(teBank.getLocation())));
+            CalemiUtils.network.sendToServer(new ServerPacketHandler("bank-sync" + "%" + teBank.storedCurrency + "%" + ItemWallet.getBalance(teBank.getStackInSlot(1)) + "%" + PacketHelper.sendLocation(teBank.getLocation())));
         }
     }
 

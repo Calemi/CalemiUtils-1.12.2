@@ -23,7 +23,7 @@ public class WorldGenOre implements IWorldGenerator {
 
     private void generateSurface(World world, Random rand, int chunkX, int chunkZ) {
 
-        if (CUConfig.worldGen.raritaniumOreGen) {
+        if (CUConfig.worldGen.raritaniumOreGen && CUConfig.blockUtils.raritaniumOre) {
 
             for (int i = 0; i < CUConfig.worldGen.raritaniumOreVeinsPerChunk; i++) {
 

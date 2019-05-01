@@ -1,6 +1,7 @@
 package calemiutils.item;
 
 import calemiutils.block.BlockBlueprint;
+import calemiutils.config.CUConfig;
 import calemiutils.gui.GuiPencil;
 import calemiutils.init.InitBlocks;
 import calemiutils.item.base.ItemBase;
@@ -29,6 +30,7 @@ public class ItemPencil extends ItemBase {
     public ItemPencil() {
 
         super("pencil", 1);
+        if (CUConfig.itemUtils.pencil && CUConfig.blockUtils.blueprint) addItem();
     }
 
     @Override

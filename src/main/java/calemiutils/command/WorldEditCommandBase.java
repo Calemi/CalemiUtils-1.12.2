@@ -1,12 +1,12 @@
 package calemiutils.command;
 
+import calemiutils.CUReference;
 import calemiutils.block.BlockBlueprint;
 import calemiutils.config.CUConfig;
 import calemiutils.init.InitBlocks;
 import calemiutils.item.ItemBrush;
 import calemiutils.util.Location;
 import calemiutils.util.helper.ChatHelper;
-import calemiutils.util.helper.ItemHelper;
 import calemiutils.util.helper.WorldEditHelper;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.block.Block;
@@ -75,11 +75,13 @@ public class WorldEditCommandBase extends CommandBase {
 
             if (strings.length == 0) {
 
-                ChatHelper.printModMessage(ChatFormatting.GREEN, "Help for Calemi's Utils", player);
+                String holdBrush = "[Hold Brush]";
+
+                ChatHelper.printModMessage(ChatFormatting.GREEN, "----- Help for " + CUReference.MOD_NAME + " -----", player);
                 ChatHelper.printModMessage(ChatFormatting.GREEN, "() are optional arguments.", player);
-                ChatHelper.printModMessage(ChatFormatting.GREEN, "(Hold Brush) /cu cube <color> (block) - Creates a cube of blueprint. <color> Color. (block) the block it replaces.", player);
-                ChatHelper.printModMessage(ChatFormatting.GREEN, "(Hold Brush) /cu circle <color> (block) - Creates a circle of blueprint. <color> Color. (block) the block it replaces.", player);
-                ChatHelper.printModMessage(ChatFormatting.GREEN, "(Hold Brush) /cu move - Moves the cube selection (Not implemented)", player);
+                ChatHelper.printModMessage(ChatFormatting.GREEN, holdBrush + " /cu cube <color> (block) - Creates a cube of blueprint. <color> Color. (block) the block it replaces.", player);
+                ChatHelper.printModMessage(ChatFormatting.GREEN, holdBrush + " /cu circle <color> (block) - Creates a circle of blueprint. <color> Color. (block) the block it replaces.", player);
+                ChatHelper.printModMessage(ChatFormatting.GREEN, holdBrush + " /cu move - Moves the cube selection (Not implemented)", player);
             }
 
             else if (strings[0].equals("food")) {
@@ -161,7 +163,6 @@ public class WorldEditCommandBase extends CommandBase {
 
     private void generate(ArrayList<Location> list, IBlockState block, Block mask, boolean isAirMask, EntityPlayer player, int amount) {
 
-        ItemBrush.getMessage(player).printMessage(ChatFormatting.GREEN, "Replaced " + ItemHelper.countByStacks(amount));
         WorldEditHelper.generateCommand(list, block, mask, isAirMask, player, ItemBrush.getMessage(player));
     }
 

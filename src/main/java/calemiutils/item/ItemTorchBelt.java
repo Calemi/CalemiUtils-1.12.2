@@ -1,11 +1,15 @@
 package calemiutils.item;
 
+import baubles.api.BaubleType;
+import baubles.api.IBauble;
+import calemiutils.config.CUConfig;
 import calemiutils.item.base.ItemBase;
 import calemiutils.util.Location;
 import calemiutils.util.helper.*;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -16,11 +20,18 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class ItemTorchBelt extends ItemBase {
+public class ItemTorchBelt extends ItemBase implements IBauble {
 
     public ItemTorchBelt() {
 
         super("torch_belt", 1);
+        if (CUConfig.itemUtils.torchBelt) addItem();
+    }
+
+    @Override
+    public BaubleType getBaubleType(ItemStack itemstack) {
+
+        return BaubleType.BELT;
     }
 
     @Override
@@ -51,6 +62,15 @@ public class ItemTorchBelt extends ItemBase {
 
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+        tick(stack, worldIn, entityIn);
+    }
+
+    @Override
+    public void onWornTick(ItemStack stack, EntityLivingBase player) {
+        tick(stack, player.world, player);
+    }
+
+    private void tick(ItemStack stack, World worldIn, Entity entityIn) {
 
         if (entityIn instanceof EntityPlayer && ItemHelper.getNBT(stack).getBoolean("on")) {
 
@@ -66,7 +86,7 @@ public class ItemTorchBelt extends ItemBase {
 
                         location.setBlock(Blocks.TORCH);
 
-                        if (!player.capabilities.isCreativeMode) InventoryHelper.consumeItem(player.inventory, new ItemStack(Blocks.TORCH), 1, true);
+                        if (!player.capabilities.isCreativeMode) InventoryHelper.consumeItem(player.inventory, 1, true, new ItemStack(Blocks.TORCH));
                     }
                 }
             }

@@ -39,19 +39,23 @@ public class GuiFakeSlot extends GuiButton {
         this.stack = stack;
     }
 
-    @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(int mouseX, int mouseY, int zLevel) {
 
         if (this.visible) {
 
-            List<String> list = StringHelper.removeNullsFromList(stack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL));
+            List<String> list = StringHelper.removeNullsFromList(stack.getTooltip(Minecraft.getMinecraft().player, ITooltipFlag.TooltipFlags.NORMAL));
 
             StringHelper.removeCharFromList(list, "Shift", "Ctrl");
 
             GuiHelper.drawItemStack(itemRender, getItemStack(), rect.x, rect.y);
-            if (!stack.isEmpty()) GuiHelper.drawHoveringTextBox(mouseX, mouseY, 150, rect, StringHelper.getArrayFromList(list));
+            if (!stack.isEmpty()) GuiHelper.drawHoveringTextBox(mouseX, mouseY, zLevel, rect, StringHelper.getArrayFromList(list));
 
             GL11.glColor3f(1, 1, 1);
         }
+    }
+
+    @Override
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+
     }
 }

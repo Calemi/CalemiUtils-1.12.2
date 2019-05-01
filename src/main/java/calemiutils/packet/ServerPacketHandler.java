@@ -1,5 +1,6 @@
 package calemiutils.packet;
 
+import calemiutils.CalemiUtils;
 import calemiutils.init.InitItems;
 import calemiutils.item.*;
 import calemiutils.tileentity.TileEntityBank;
@@ -10,6 +11,7 @@ import calemiutils.tileentity.base.TileEntityBase;
 import calemiutils.util.Location;
 import calemiutils.util.helper.ItemHelper;
 import calemiutils.util.helper.NBTHelper;
+import calemiutils.util.helper.WalletHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -75,6 +77,13 @@ public class ServerPacketHandler implements IMessage {
                 }
             }
 
+            if (data[0].equalsIgnoreCase("gui-open")) {
+
+                int id = Integer.parseInt(data[1]);
+
+                player.openGui(CalemiUtils.instance, id, player.world, (int) player.posX, (int) player.posY, (int) player.posZ);
+            }
+
             if (data[0].equalsIgnoreCase("wallet-withdraw")) {
 
                 int id = Integer.parseInt(data[1]);
@@ -99,13 +108,27 @@ public class ServerPacketHandler implements IMessage {
 
                 price *= multiplier;
 
-                if (player.getHeldItemMainhand().getItem() instanceof ItemWallet) {
+                ItemStack walletStack = WalletHelper.getCurrentWalletStack(player);
 
-                    NBTTagCompound nbt = ItemHelper.getNBT(player.getHeldItemMainhand());
+                if (!walletStack.isEmpty()) {
+
+                    NBTTagCompound nbt = ItemHelper.getNBT(walletStack);
 
                     nbt.setInteger("balance", nbt.getInteger("balance") - price);
 
                     ItemHelper.spawnItem(player.world, player, new ItemStack(item, multiplier));
+                }
+            }
+
+            if (data[0].equalsIgnoreCase("wallet-togglesuck")) {
+
+                ItemStack heldStack = WalletHelper.getCurrentWalletStack(player);
+
+                if (heldStack.getItem() instanceof ItemWallet) {
+
+                    ItemWallet wallet = (ItemWallet) heldStack.getItem();
+
+                    wallet.toggleSuck(heldStack);
                 }
             }
 

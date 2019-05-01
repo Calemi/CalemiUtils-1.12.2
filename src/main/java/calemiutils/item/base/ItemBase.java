@@ -12,14 +12,18 @@ public class ItemBase extends Item implements IHasModel {
         setUnlocalizedName(name);
         setRegistryName(name);
         setCreativeTab(CalemiUtils.TAB);
-
-        InitItems.ITEMS.add(this);
     }
 
     protected ItemBase(String name, int stackSize) {
 
         this(name);
         setMaxStackSize(stackSize);
+    }
+
+    public ItemBase addItem() {
+
+        InitItems.ITEMS.add(this);
+        return this;
     }
 
     @Override

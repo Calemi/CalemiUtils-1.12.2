@@ -138,5 +138,7 @@ public class GuiTradingPost extends GuiContainerBase {
         GL11.glDisable(GL11.GL_LIGHTING);
         addInfoIcon();
         addInfoIconText(mouseX, mouseY, "Button Click Info", "Shift: 10, Ctrl: 100, Shift + Ctrl: 100");
+
+        fakeSlot.renderButton(mouseX, mouseY, 150);
     }
 }

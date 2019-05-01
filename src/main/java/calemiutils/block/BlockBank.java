@@ -2,6 +2,7 @@ package calemiutils.block;
 
 import calemiutils.CalemiUtils;
 import calemiutils.block.base.BlockInventoryContainerBase;
+import calemiutils.config.CUConfig;
 import calemiutils.tileentity.TileEntityBank;
 import calemiutils.util.HardnessConstants;
 import calemiutils.util.IExtraInformation;
@@ -31,6 +32,7 @@ public class BlockBank extends BlockInventoryContainerBase implements IExtraInfo
         super("bank", MaterialSound.IRON, HardnessConstants.SECURED);
         setCreativeTab(CalemiUtils.TAB);
         setBlockUnbreakable();
+        if (CUConfig.blockUtils.bank && CUConfig.itemUtils.economy) addBlock();
     }
 
     @Override
@@ -68,7 +70,7 @@ public class BlockBank extends BlockInventoryContainerBase implements IExtraInfo
             return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
         }
 
-        else return false;
+        else return true;
     }
 
     @Override

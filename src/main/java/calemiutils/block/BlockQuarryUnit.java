@@ -2,6 +2,7 @@ package calemiutils.block;
 
 import calemiutils.CalemiUtils;
 import calemiutils.block.base.BlockInventoryContainerBase;
+import calemiutils.config.CUConfig;
 import calemiutils.tileentity.TileEntityQuarryUnit;
 import calemiutils.util.HardnessConstants;
 import calemiutils.util.MaterialSound;
@@ -21,6 +22,7 @@ public class BlockQuarryUnit extends BlockInventoryContainerBase {
 
         super("quarry_unit", MaterialSound.WOOD, HardnessConstants.UNIT);
         setCreativeTab(CalemiUtils.TAB);
+        if (CUConfig.blockUtils.quarryUnit && CUConfig.itemUtils.economy) addBlock();
     }
 
     @Override

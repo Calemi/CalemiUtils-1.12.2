@@ -2,6 +2,7 @@ package calemiutils.block;
 
 import calemiutils.CalemiUtils;
 import calemiutils.block.base.BlockInventoryContainerBase;
+import calemiutils.config.CUConfig;
 import calemiutils.tileentity.TileEntityInteractionInterface;
 import calemiutils.util.HardnessConstants;
 import calemiutils.util.Location;
@@ -27,6 +28,7 @@ public class BlockInteractionInterface extends BlockInventoryContainerBase {
 
         super("interaction_interface", MaterialSound.IRON, HardnessConstants.SECURED);
         setCreativeTab(CalemiUtils.TAB);
+        if (CUConfig.blockUtils.interactionNetwork) addBlock();
     }
 
     @Override
@@ -41,7 +43,7 @@ public class BlockInteractionInterface extends BlockInventoryContainerBase {
 
         Location location = new Location(worldIn, pos);
 
-        if (SecurityHelper.openSecuredBlock(location, playerIn, true)) {
+        if (hand == EnumHand.MAIN_HAND && SecurityHelper.openSecuredBlock(location, playerIn, true)) {
 
             return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
         }

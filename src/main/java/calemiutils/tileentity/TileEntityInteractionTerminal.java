@@ -8,7 +8,6 @@ import calemiutils.tileentity.base.TileEntityBase;
 import calemiutils.util.Location;
 import calemiutils.util.VeinScan;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
 import java.util.ArrayList;
@@ -105,21 +104,6 @@ public class TileEntityInteractionTerminal extends TileEntityBase implements INe
         }
 
         return false;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-
-        super.readFromNBT(nbt);
-        profile.readFromNBT(nbt);
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-
-        super.writeToNBT(nbt);
-        profile.writeToNBT(nbt);
-        return nbt;
     }
 
     @Override

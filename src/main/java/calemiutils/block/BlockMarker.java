@@ -1,6 +1,7 @@
 package calemiutils.block;
 
 import calemiutils.CalemiUtils;
+import calemiutils.config.CUConfig;
 import calemiutils.init.InitBlocks;
 import calemiutils.init.InitItems;
 import calemiutils.registry.IHasModel;
@@ -31,7 +32,7 @@ public class BlockMarker extends BlockTorch implements IHasModel {
         setLightLevel(0.5F);
         setSoundType(SoundType.WOOD);
 
-        if (getRegistryName() != null) {
+        if (CUConfig.blockUtils.buildingUnit && getRegistryName() != null) {
             InitBlocks.BLOCKS.add(this);
             InitItems.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
         }

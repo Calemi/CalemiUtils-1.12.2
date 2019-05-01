@@ -1,7 +1,10 @@
 package calemiutils.proxy;
 
+import calemiutils.event.KeyEvent;
+import calemiutils.event.OverlayEvent;
 import calemiutils.init.InitItems;
 import calemiutils.item.base.ItemPencilColored;
+import calemiutils.key.KeyBindings;
 import calemiutils.render.RenderBuildingUnit;
 import calemiutils.render.RenderDiggingUnit;
 import calemiutils.render.RenderTradingPost;
@@ -14,11 +17,17 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class ClientProxy extends CommonProxy {
 
     @Override
     public void registerRenders() {
+
+        ClientRegistry.registerKeyBinding(KeyBindings.openWalletButton);
+        FMLCommonHandler.instance().bus().register(new KeyEvent());
+
+        FMLCommonHandler.instance().bus().register(new OverlayEvent());
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTradingPost.class, new RenderTradingPost());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBuildingUnit.class, new RenderBuildingUnit());

@@ -48,6 +48,8 @@ public class TileEntityBuildingUnit extends TileEntityInventoryBase implements I
     @Override
     public void update() {
 
+        System.out.println(slots.get(0));
+
         currentBuildBlueprint = MathHelper.clamp(currentBuildBlueprint, 0, buildBlueprints.size() - 1);
 
         if (world.getWorldTime() % 20 == 0) {
@@ -138,6 +140,8 @@ public class TileEntityBuildingUnit extends TileEntityInventoryBase implements I
             }
 
             buildBlueprints.addAll(list);
+
+            markForUpdate();
         }
     }
 

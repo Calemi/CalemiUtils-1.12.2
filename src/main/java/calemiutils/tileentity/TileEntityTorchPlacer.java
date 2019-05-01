@@ -52,7 +52,7 @@ public class TileEntityTorchPlacer extends TileEntityUpgradable {
 
                 if (isDoneAndReset()) {
                     darkSpot.setBlock(TORCH);
-                    InventoryHelper.consumeItem(this, TORCH_STACK, 1, true);
+                    InventoryHelper.consumeItem(this, 1, true, TORCH_STACK);
                 }
             }
         }

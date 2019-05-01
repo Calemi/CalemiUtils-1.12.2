@@ -7,10 +7,7 @@ import calemiutils.init.InitItems;
 import calemiutils.inventory.ContainerWallet;
 import calemiutils.item.ItemWallet;
 import calemiutils.packet.ServerPacketHandler;
-import calemiutils.util.helper.GuiHelper;
-import calemiutils.util.helper.ItemHelper;
-import calemiutils.util.helper.ShiftHelper;
-import calemiutils.util.helper.StringHelper;
+import calemiutils.util.helper.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +19,8 @@ import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class GuiWallet extends GuiContainerBase {
+
+    private GuiButtonRect toggleSuckButton;
 
     public GuiWallet(EntityPlayer player) {
 
@@ -49,6 +48,22 @@ public class GuiWallet extends GuiContainerBase {
         new GuiButtonRect(1, getScreenX() + 146, getScreenY() + 15 + (18), 16, "+", buttonList);
         new GuiButtonRect(2, getScreenX() + 146, getScreenY() + 15 + (2 * 18), 16, "+", buttonList);
         new GuiButtonRect(3, getScreenX() + 146, getScreenY() + 15 + (3 * 18), 16, "+", buttonList);
+
+        toggleSuckButton = new GuiButtonRect(4, getScreenX() + (getGuiSizeX() / 2) - (54 / 2), getScreenY() + 18 + (3 * 18), 54, "", buttonList);
+    }
+
+    private ItemStack getCurrentWalletStack() {
+
+        ItemStack walletStack = WalletHelper.getCurrentWalletStack(player);
+
+        if (!walletStack.isEmpty()) {
+            return walletStack;
+        }
+
+        else {
+            Minecraft.getMinecraft().player.closeScreen();
+            return ItemStack.EMPTY;
+        }
     }
 
     @Override
@@ -63,17 +78,24 @@ public class GuiWallet extends GuiContainerBase {
 
         price *= multiplier;
 
-        if (player.getHeldItemMainhand().getItem() instanceof ItemWallet) {
+        ItemStack walletStack = getCurrentWalletStack();
 
-            ItemWallet item = (ItemWallet) player.getHeldItemMainhand().getItem();
+        if (!walletStack.isEmpty()) {
 
-            if (item.getBalance(player.getHeldItemMainhand()) >= price) {
+            ItemWallet walletItem = (ItemWallet) walletStack.getItem();
+
+            if (button.id < 4 && ItemWallet.getBalance(walletStack) >= price) {
 
                 CalemiUtils.network.sendToServer(new ServerPacketHandler("wallet-withdraw%" + button.id + "%" + multiplier));
 
-                NBTTagCompound nbt = ItemHelper.getNBT(player.getHeldItemMainhand());
+                NBTTagCompound nbt = ItemHelper.getNBT(walletStack);
 
                 nbt.setInteger("balance", nbt.getInteger("balance") - price);
+            }
+
+            if (button.id == toggleSuckButton.id) {
+                CalemiUtils.network.sendToServer(new ServerPacketHandler("wallet-togglesuck"));
+                walletItem.toggleSuck(walletStack);
             }
         }
     }
@@ -89,13 +111,13 @@ public class GuiWallet extends GuiContainerBase {
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glColor4f(1, 1, 1, 1);
 
-        player.getHeldItemMainhand();
-        if (player.getHeldItemMainhand().getItem() instanceof ItemWallet) {
-            GuiHelper.drawCenteredString(StringHelper.printCurrency(ItemHelper.getNBT(player.getHeldItemMainhand()).getInteger("balance")), getScreenX() + getGuiSizeX() / 2 - 16, getScreenY() + 46, TEXT_COLOR);
-        }
+        ItemStack stack = getCurrentWalletStack();
 
-        else {
-            Minecraft.getMinecraft().player.closeScreen();
+        if (!stack.isEmpty()) {
+
+            toggleSuckButton.displayString = "Suck: " + (ItemHelper.getNBT(stack).getBoolean("suck") ? "ON" : "OFF");
+
+            GuiHelper.drawCenteredString(StringHelper.printCurrency(ItemHelper.getNBT(stack).getInteger("balance")), getScreenX() + getGuiSizeX() / 2 - 16, getScreenY() + 46, TEXT_COLOR);
         }
     }
 

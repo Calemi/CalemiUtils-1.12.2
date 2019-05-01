@@ -1,7 +1,7 @@
 package calemiutils.item;
 
 import calemiutils.config.CUConfig;
-import calemiutils.event.CurrencyEvent;
+import calemiutils.event.WrenchEvent;
 import calemiutils.item.base.ItemBase;
 import calemiutils.security.ISecurity;
 import calemiutils.tileentity.base.TileEntityBase;
@@ -24,6 +24,7 @@ public class ItemSecurityWrench extends ItemBase {
     public ItemSecurityWrench() {
 
         super("security_wrench", 1);
+        if (CUConfig.itemUtils.securityWrench) addItem();
     }
 
     @Override
@@ -38,7 +39,7 @@ public class ItemSecurityWrench extends ItemBase {
                 ISecurity security = (ISecurity) location.getTileEntity();
 
                 if (security.getSecurityProfile().isOwner(player.getName()) || player.capabilities.isCreativeMode || !CUConfig.misc.useSecurity) {
-                    CurrencyEvent.onBlockWrenched(world, location);
+                    WrenchEvent.onBlockWrenched(world, location);
                     return EnumActionResult.SUCCESS;
 
                 }
@@ -47,7 +48,7 @@ public class ItemSecurityWrench extends ItemBase {
             }
 
             else {
-                CurrencyEvent.onBlockWrenched(world, location);
+                WrenchEvent.onBlockWrenched(world, location);
             }
         }
 

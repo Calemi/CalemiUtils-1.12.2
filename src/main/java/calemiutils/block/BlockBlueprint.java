@@ -90,13 +90,13 @@ public class BlockBlueprint extends BlockColoredBase {
 
         if (player.isSneaking()) {
             replaceBlock(location, player, state);
-            InventoryHelper.consumeItem(player.inventory, currentStack, 1, true);
+            InventoryHelper.consumeItem(player.inventory, 1, true, currentStack);
             SoundHelper.playBlockPlaceSound(world, player, Block.getBlockFromItem(currentStack.getItem()).getDefaultState(), location);
         }
 
         else {
 
-            int itemCount = InventoryHelper.countItems(player.inventory, currentStack, true);
+            int itemCount = InventoryHelper.countItems(player.inventory, true, currentStack);
 
             if (itemCount >= scan.buffer.size()) {
 
@@ -114,7 +114,7 @@ public class BlockBlueprint extends BlockColoredBase {
                     SoundHelper.playBlockPlaceSound(world, player, Block.getBlockFromItem(currentStack.getItem()).getDefaultState(), location);
 
                     if (!world.isRemote) message.printMessage(ChatFormatting.GREEN, "Placed " + ItemHelper.countByStacks(amountToConsume));
-                    InventoryHelper.consumeItem(player.inventory, currentStack, amountToConsume, true);
+                    InventoryHelper.consumeItem(player.inventory, amountToConsume, true, currentStack);
                 }
             }
 
@@ -139,7 +139,11 @@ public class BlockBlueprint extends BlockColoredBase {
     @Override
     public int getMetaFromState(IBlockState state) {
 
-        return (state.getValue(COLOR)).getMetadata();
+        if (state.getBlock() instanceof BlockBlueprint) {
+            return (state.getValue(COLOR)).getMetadata();
+        }
+
+        return 0;
     }
 
     @Override

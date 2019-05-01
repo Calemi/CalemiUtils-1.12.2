@@ -99,9 +99,6 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
 
         super.readFromNBT(nbt);
 
-        profile.readFromNBT(nbt);
-
-        storedCurrency = nbt.getInteger("currency");
         amountForSale = nbt.getInteger("amount");
         salePrice = nbt.getInteger("price");
 
@@ -113,9 +110,6 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
 
         super.writeToNBT(nbt);
 
-        profile.writeToNBT(nbt);
-
-        nbt.setInteger("currency", storedCurrency);
         nbt.setInteger("amount", amountForSale);
         nbt.setInteger("price", salePrice);
 

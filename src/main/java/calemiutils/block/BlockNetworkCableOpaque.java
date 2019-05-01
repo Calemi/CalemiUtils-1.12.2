@@ -2,6 +2,7 @@ package calemiutils.block;
 
 import calemiutils.CalemiUtils;
 import calemiutils.block.base.BlockContainerBase;
+import calemiutils.config.CUConfig;
 import calemiutils.tileentity.TileEntityNetworkCable;
 import calemiutils.util.HardnessConstants;
 import calemiutils.util.MaterialSound;
@@ -21,6 +22,7 @@ public class BlockNetworkCableOpaque extends BlockContainerBase {
 
         super(name, MaterialSound.IRON, HardnessConstants.SECURED);
         if (hasTab) setCreativeTab(CalemiUtils.TAB);
+        if (CUConfig.blockUtils.networkCable) addBlock();
     }
 
     public BlockNetworkCableOpaque() {

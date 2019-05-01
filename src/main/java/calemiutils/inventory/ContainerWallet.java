@@ -7,6 +7,7 @@ import calemiutils.inventory.base.ItemStackInventory;
 import calemiutils.inventory.base.SlotFilter;
 import calemiutils.item.ItemCurrency;
 import calemiutils.util.helper.ItemHelper;
+import calemiutils.util.helper.WalletHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
@@ -35,9 +36,13 @@ public class ContainerWallet extends ContainerBase {
         this.addSlotToContainer(new SlotFilter(stackInv, 0, 17, 42, InitItems.COIN_PENNY, InitItems.COIN_NICKEL, InitItems.COIN_QUARTER, InitItems.COIN_DOLLAR));
     }
 
+    private ItemStack getCurrentWalletStack() {
+        return WalletHelper.getCurrentWalletStack(player);
+    }
+
     private NBTTagCompound getNBT() {
 
-        return ItemHelper.getNBT(player.getHeldItemMainhand());
+        return ItemHelper.getNBT(getCurrentWalletStack());
     }
 
     @Override
@@ -58,7 +63,7 @@ public class ContainerWallet extends ContainerBase {
 
             for (int i = 0; i < stack.getCount(); i++) {
 
-                if (balance + currency.value <= CUConfig.misc.walletCurrencyCapacity) {
+                if (balance + currency.value <= CUConfig.wallet.walletCurrencyCapacity) {
 
                     balance += currency.value;
 

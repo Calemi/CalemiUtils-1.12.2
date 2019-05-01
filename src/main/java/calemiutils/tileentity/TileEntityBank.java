@@ -13,7 +13,6 @@ import calemiutils.util.helper.MathHelper;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -169,26 +168,6 @@ public class TileEntityBank extends TileEntityInventoryBase implements ITileEnti
     public int getSizeInventory() {
 
         return 2;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-
-        super.readFromNBT(nbt);
-
-        profile.readFromNBT(nbt);
-        storedCurrency = nbt.getInteger("currency");
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-
-        super.writeToNBT(nbt);
-
-        profile.writeToNBT(nbt);
-        nbt.setInteger("currency", storedCurrency);
-
-        return nbt;
     }
 
     @Override

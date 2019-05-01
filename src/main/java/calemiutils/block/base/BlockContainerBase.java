@@ -22,12 +22,16 @@ public abstract class BlockContainerBase extends BlockContainer implements IHasM
         setHardness(hardness);
         setHarvestLevel("pickaxe", harvestLevel);
         setResistance(resistance);
+    }
+
+    public BlockContainerBase addBlock() {
 
         if (getRegistryName() != null) {
-
             InitBlocks.BLOCKS.add(this);
             InitItems.ITEMS.add(new ItemBlock(this).setRegistryName(getRegistryName()));
         }
+
+        return this;
     }
 
     protected BlockContainerBase(String name, MaterialSound matSound, HardnessConstants constant) {

@@ -1,5 +1,6 @@
 package calemiutils.tileentity.base;
 
+import calemiutils.security.ISecurity;
 import calemiutils.util.Location;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -68,12 +69,40 @@ public abstract class TileEntityBase extends TileEntity implements ITickable {
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
 
+        if (this instanceof ISecurity) {
+
+            ISecurity security = (ISecurity) this;
+
+            security.getSecurityProfile().readFromNBT(nbt);
+        }
+
+        if (this instanceof ICurrencyNetwork) {
+
+            ICurrencyNetwork currency = (ICurrencyNetwork) this;
+
+            currency.setCurrency(nbt.getInteger("currency"));
+        }
+
         enable = nbt.getBoolean("enable");
         super.readFromNBT(nbt);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+
+        if (this instanceof ISecurity) {
+
+            ISecurity security = (ISecurity) this;
+
+            security.getSecurityProfile().writeToNBT(nbt);
+        }
+
+        if (this instanceof ICurrencyNetwork) {
+
+            ICurrencyNetwork currency = (ICurrencyNetwork) this;
+
+            nbt.setInteger("currency", currency.getStoredCurrency());
+        }
 
         nbt.setBoolean("enable", enable);
         return super.writeToNBT(nbt);

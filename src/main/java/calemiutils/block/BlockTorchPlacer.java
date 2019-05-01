@@ -2,6 +2,7 @@ package calemiutils.block;
 
 import calemiutils.CalemiUtils;
 import calemiutils.block.base.BlockInventoryContainerBase;
+import calemiutils.config.CUConfig;
 import calemiutils.tileentity.TileEntityTorchPlacer;
 import calemiutils.util.HardnessConstants;
 import calemiutils.util.MaterialSound;
@@ -21,6 +22,7 @@ public class BlockTorchPlacer extends BlockInventoryContainerBase {
 
         super("torch_placer", MaterialSound.WOOD, HardnessConstants.UNIT);
         setCreativeTab(CalemiUtils.TAB);
+        if (CUConfig.blockUtils.torchPlacer) addBlock();
     }
 
     @Override

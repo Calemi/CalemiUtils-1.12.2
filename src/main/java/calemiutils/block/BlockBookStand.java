@@ -2,6 +2,7 @@ package calemiutils.block;
 
 import calemiutils.CalemiUtils;
 import calemiutils.block.base.BlockInventoryContainerBase;
+import calemiutils.config.CUConfig;
 import calemiutils.item.ItemLinkBookLocation;
 import calemiutils.tileentity.TileEntityBookStand;
 import calemiutils.util.IExtraInformation;
@@ -44,6 +45,7 @@ public class BlockBookStand extends BlockInventoryContainerBase implements IExtr
         super("book_stand", MaterialSound.WOOD, 1, 0, 1);
         setCreativeTab(CalemiUtils.TAB);
         setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(BOOK, Boolean.FALSE));
+        if (CUConfig.blockUtils.bookStand && CUConfig.itemUtils.locationLinkBook) addBlock();
     }
 
     public static void setState(boolean value, World worldIn, BlockPos pos, int meta) {

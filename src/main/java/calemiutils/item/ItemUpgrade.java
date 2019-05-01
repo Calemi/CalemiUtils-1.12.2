@@ -1,5 +1,6 @@
 package calemiutils.item;
 
+import calemiutils.config.CUConfig;
 import calemiutils.item.base.ItemBase;
 import calemiutils.util.helper.LoreHelper;
 import net.minecraft.client.util.ITooltipFlag;
@@ -13,6 +14,7 @@ public class ItemUpgrade extends ItemBase {
     public ItemUpgrade(String name) {
 
         super(name + "_upgrade", 5);
+        if (CUConfig.itemUtils.upgrades) addItem();
     }
 
     @Override

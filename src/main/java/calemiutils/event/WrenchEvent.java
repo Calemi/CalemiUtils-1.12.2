@@ -1,10 +1,12 @@
 package calemiutils.event;
 
+import calemiutils.tileentity.TileEntityBuildingUnit;
 import calemiutils.tileentity.base.ICurrencyNetwork;
 import calemiutils.tileentity.base.TileEntityBase;
 import calemiutils.util.Location;
 import calemiutils.util.helper.ItemHelper;
 import calemiutils.util.helper.LoreHelper;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -16,7 +18,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class CurrencyEvent {
+public class WrenchEvent {
 
     public static void onBlockWrenched(World world, Location location) {
 
@@ -28,12 +30,23 @@ public class CurrencyEvent {
             ItemHelper.spawnItem(world, location, stack);
         }
 
+        //Currency
         if (tileEntity instanceof ICurrencyNetwork) {
 
             ICurrencyNetwork currencyNetwork = (ICurrencyNetwork) tileEntity;
 
             if (currencyNetwork.getStoredCurrency() > 0) {
                 ItemHelper.getNBT(stack).setInteger("currency", currencyNetwork.getStoredCurrency());
+            }
+        }
+
+        //Building Unit
+        if (tileEntity instanceof TileEntityBuildingUnit) {
+
+            TileEntityBuildingUnit teBuildingUnit = (TileEntityBuildingUnit) tileEntity;
+
+            if (!teBuildingUnit.isEmpty()) {
+                ItemStackHelper.saveAllItems(ItemHelper.getNBT(stack), teBuildingUnit.slots);
             }
         }
 
@@ -46,18 +59,27 @@ public class CurrencyEvent {
     public void onBlockPlace(PlaceEvent event) {
 
         TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
+        ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
 
-        if (tileEntity instanceof ICurrencyNetwork) {
+        if (!stack.isEmpty() && stack.getItem() instanceof ItemBlock) {
 
-            ICurrencyNetwork currencyNetwork = (ICurrencyNetwork) tileEntity;
-            ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
+            //Currency
+            if (tileEntity instanceof ICurrencyNetwork) {
 
-            if (!stack.isEmpty() && stack.getItem() instanceof ItemBlock) {
+                ICurrencyNetwork currencyNetwork = (ICurrencyNetwork) tileEntity;
 
                 if (ItemHelper.getNBT(stack).getInteger("currency") != 0) {
                     currencyNetwork.setCurrency(ItemHelper.getNBT(stack).getInteger("currency"));
                     ((TileEntityBase) tileEntity).markForUpdate();
                 }
+            }
+
+            //Building Unit
+            if (tileEntity instanceof TileEntityBuildingUnit) {
+
+                TileEntityBuildingUnit teBuildingUnit = (TileEntityBuildingUnit) tileEntity;
+
+                ItemStackHelper.loadAllItems(ItemHelper.getNBT(stack), teBuildingUnit.slots);
             }
         }
     }
@@ -66,6 +88,7 @@ public class CurrencyEvent {
     @SideOnly(Side.CLIENT)
     public void onLoreEvent(ItemTooltipEvent event) {
 
+        //Currency
         int currency = ItemHelper.getNBT(event.getItemStack()).getInteger("currency");
 
         if (currency != 0) {
