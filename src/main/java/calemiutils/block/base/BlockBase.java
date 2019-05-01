@@ -23,14 +23,13 @@ public class BlockBase extends Block implements IHasModel {
         setResistance(resistance);
     }
 
-    public BlockBase addBlock() {
+    protected void addBlock() {
 
         if (getRegistryName() != null) {
             InitBlocks.BLOCKS.add(this);
             InitItems.ITEMS.add(new ItemBlock(this).setRegistryName(getRegistryName()));
         }
 
-        return this;
     }
 
     @Override

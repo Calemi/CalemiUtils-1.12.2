@@ -9,6 +9,7 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+@SuppressWarnings("CanBeFinal")
 @Config(modid = CUReference.MOD_ID)
 @Config.LangKey("config.title")
 public class CUConfig {
@@ -41,6 +42,7 @@ public class CUConfig {
         @Config.Comment("Disable this to remove the Pencil.")
         public boolean pencil = true;
 
+        @SuppressWarnings("CanBeFinal")
         @Name("Enable Brush")
         @Config.Comment("Disable this to remove the Brush")
         public boolean brush = true;

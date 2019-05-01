@@ -1,8 +1,5 @@
 package calemiutils.event;
 
-import baubles.api.BaublesApi;
-import baubles.api.cap.IBaublesItemHandler;
-import baubles.common.Baubles;
 import calemiutils.config.CUConfig;
 import calemiutils.item.ItemWallet;
 import calemiutils.util.Location;
@@ -10,12 +7,7 @@ import calemiutils.util.helper.ItemHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class KeepWalletEvent {
 

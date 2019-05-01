@@ -1,6 +1,5 @@
 package calemiutils.block;
 
-import calemiutils.config.CUConfig;
 import calemiutils.init.InitBlocks;
 import calemiutils.tileentity.TileEntityNetworkGate;
 import calemiutils.util.Location;
