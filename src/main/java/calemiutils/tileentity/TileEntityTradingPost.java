@@ -8,6 +8,7 @@ import calemiutils.security.SecurityProfile;
 import calemiutils.tileentity.base.ICurrencyNetworkProducer;
 import calemiutils.tileentity.base.ITileEntityGuiHandler;
 import calemiutils.tileentity.base.TileEntityInventoryBase;
+import calemiutils.util.UnitChatMessage;
 import calemiutils.util.helper.MathHelper;
 import calemiutils.util.helper.NBTHelper;
 import calemiutils.util.helper.StringHelper;
@@ -26,10 +27,13 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
 
     private final SecurityProfile profile = new SecurityProfile();
     public int storedCurrency = 0;
+
     public int amountForSale;
     public int salePrice;
     public boolean hasValidTradeOffer;
     private ItemStack stackForSale = ItemStack.EMPTY;
+
+    public boolean adminMode = false;
 
     public TileEntityTradingPost() {
 
@@ -38,6 +42,15 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
         amountForSale = 1;
         salePrice = 0;
         hasValidTradeOffer = false;
+    }
+
+    public UnitChatMessage getUnitName(EntityPlayer player) {
+
+        if (adminMode) {
+            return new UnitChatMessage("Admin Post", player);
+        }
+
+        return new UnitChatMessage(getSecurityProfile().getOwnerName() + "'s Trading Post", player);
     }
 
     @Override
@@ -103,6 +116,8 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
         salePrice = nbt.getInteger("price");
 
         stackForSale = NBTHelper.loadItem(nbt);
+
+        adminMode = nbt.getBoolean("adminMode");
     }
 
     @Override
@@ -114,6 +129,8 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
         nbt.setInteger("price", salePrice);
 
         NBTHelper.saveItem(nbt, stackForSale);
+
+        nbt.setBoolean("adminMode", adminMode);
 
         return nbt;
     }
