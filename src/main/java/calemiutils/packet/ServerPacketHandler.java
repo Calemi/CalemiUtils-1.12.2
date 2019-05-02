@@ -272,7 +272,9 @@ public class ServerPacketHandler implements IMessage {
                 String name = "";
                 if (data.length > 4) name = data[4];
 
-                if (tileEntity != null) tileEntity.readBlueprintsInRange(name);
+                if (tileEntity != null) {
+                    tileEntity.readBlueprintsInRange(player, name);
+                }
             }
 
             if (data[0].equalsIgnoreCase("buildingunit-rotate")) {

@@ -13,6 +13,7 @@ import calemiutils.tileentity.base.ITileEntityGuiHandler;
 import calemiutils.tileentity.base.TileEntityInventoryBase;
 import calemiutils.util.BlueprintTemplates;
 import calemiutils.util.helper.ItemHelper;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,8 +38,8 @@ public class TileEntityBuildingUnit extends TileEntityInventoryBase implements I
     public int currentBuildBlueprint = 0;
     public int currentRotation = 0;
 
-    public int horRange = CUConfig.misc.buildingUnitHorizontalMaxRange;
-    public int verRange = CUConfig.misc.buildingUnitVerticalMaxRange;
+    public int horRange = CUConfig.buildingUnit.buildingUnitHorizontalMaxRange;
+    public int verRange = CUConfig.buildingUnit.buildingUnitVerticalMaxRange;
 
     public TileEntityBuildingUnit() {
 
@@ -47,8 +48,6 @@ public class TileEntityBuildingUnit extends TileEntityInventoryBase implements I
 
     @Override
     public void update() {
-
-        System.out.println(slots.get(0));
 
         currentBuildBlueprint = MathHelper.clamp(currentBuildBlueprint, 0, buildBlueprints.size() - 1);
 
@@ -90,12 +89,12 @@ public class TileEntityBuildingUnit extends TileEntityInventoryBase implements I
 
     private void searchForMarkers() {
 
-        int tempHorRange = CUConfig.misc.buildingUnitHorizontalMaxRange;
-        int tempVerRange = CUConfig.misc.buildingUnitVerticalMaxRange;
+        int tempHorRange = CUConfig.buildingUnit.buildingUnitHorizontalMaxRange;
+        int tempVerRange = CUConfig.buildingUnit.buildingUnitVerticalMaxRange;
 
         for (EnumFacing dir : EnumFacing.HORIZONTALS) {
 
-            for (int i = 0; i < CUConfig.misc.buildingUnitHorizontalMaxRange; i++) {
+            for (int i = 0; i < CUConfig.buildingUnit.buildingUnitHorizontalMaxRange; i++) {
 
                 if (getLocation().translate(dir, i).getBlock() instanceof BlockMarker && i < tempHorRange) {
                     tempHorRange = i;
@@ -104,7 +103,7 @@ public class TileEntityBuildingUnit extends TileEntityInventoryBase implements I
             }
         }
 
-        for (int i = 0; i < CUConfig.misc.buildingUnitVerticalMaxRange; i++) {
+        for (int i = 0; i < CUConfig.buildingUnit.buildingUnitVerticalMaxRange; i++) {
 
             if (getLocation().translate(EnumFacing.UP, i).getBlock() instanceof BlockMarker) {
                 tempVerRange = i;
@@ -145,18 +144,25 @@ public class TileEntityBuildingUnit extends TileEntityInventoryBase implements I
         }
     }
 
-    public void readBlueprintsInRange(String name) {
+    public void readBlueprintsInRange(EntityPlayer player, String name) {
 
         BlueprintTemplate template = BlueprintTemplate.scan(this);
 
         if (template.positions.size() > 0) {
 
-            ItemStack stack = new ItemStack(InitItems.BUILDING_UNIT_TEMPLATE);
+            if (template.positions.size() < CUConfig.buildingUnit.buildingUnitBlockSize) {
 
-            EntityItem entity = ItemHelper.spawnItem(getWorld(), getLocation().translate(EnumFacing.UP, 1), stack);
-            entity.setItem(template.writeToItem(stack));
-            if (!name.isEmpty()) ItemHelper.getNBT(stack).setString("buildName", name);
+                ItemStack stack = new ItemStack(InitItems.BUILDING_UNIT_TEMPLATE);
+
+                EntityItem entity = ItemHelper.spawnItem(getWorld(), getLocation().translate(EnumFacing.UP, 1), stack);
+                entity.setItem(template.writeToItem(stack));
+                if (!name.isEmpty()) ItemHelper.getNBT(stack).setString("buildName", name);
+            }
+
+            else getUnitName(player).printMessage(ChatFormatting.RED, "There are too many Blueprints in range! (" + (template.positions.size() - CUConfig.buildingUnit.buildingUnitBlockSize + 1) + " Blueprint(s) over)");
         }
+
+        else getUnitName(player).printMessage(ChatFormatting.RED, "There are no Blueprints in range!");
     }
 
     public void placeBlueprints() {
@@ -167,7 +173,7 @@ public class TileEntityBuildingUnit extends TileEntityInventoryBase implements I
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
 
-        return FULL_AABB.grow(CUConfig.misc.buildingRenderBoxSize).offset(getPos());
+        return FULL_AABB.grow(CUConfig.buildingUnit.buildingUnitRenderBoxSize).offset(getPos());
     }
 
     @Override

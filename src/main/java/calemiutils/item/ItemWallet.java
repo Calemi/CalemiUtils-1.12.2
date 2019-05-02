@@ -27,7 +27,7 @@ public class ItemWallet extends ItemBase implements IBauble  {
     public ItemWallet() {
 
         super("wallet", 1);
-        if (CUConfig.itemUtils.wallet && CUConfig.itemUtils.economy) addItem();
+        if (CUConfig.itemUtils.wallet) addItem();
     }
 
     @Override

@@ -2,6 +2,8 @@ package calemiutils.tileentity.base;
 
 import calemiutils.security.ISecurity;
 import calemiutils.util.Location;
+import calemiutils.util.UnitChatMessage;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -20,6 +22,10 @@ public abstract class TileEntityBase extends TileEntity implements ITickable {
     public Location getLocation() {
 
         return new Location(world, pos);
+    }
+
+    protected UnitChatMessage getUnitName(EntityPlayer player) {
+        return new UnitChatMessage(getLocation().getBlock().getLocalizedName(), player);
     }
 
     public void markForUpdate() {

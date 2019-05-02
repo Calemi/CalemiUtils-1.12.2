@@ -86,6 +86,11 @@ public class GuiWallet extends GuiContainerBase {
 
             if (button.id < 4 && ItemWallet.getBalance(walletStack) >= price) {
 
+                if (ItemHelper.getNBT(walletStack).getBoolean("suck")) {
+                    walletItem.toggleSuck(walletStack);
+                    CalemiUtils.network.sendToServer(new ServerPacketHandler("wallet-togglesuck"));
+                }
+
                 CalemiUtils.network.sendToServer(new ServerPacketHandler("wallet-withdraw%" + button.id + "%" + multiplier));
 
                 NBTTagCompound nbt = ItemHelper.getNBT(walletStack);

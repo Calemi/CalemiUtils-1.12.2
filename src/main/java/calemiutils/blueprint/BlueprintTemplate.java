@@ -31,7 +31,7 @@ public class BlueprintTemplate {
 
         for (int x = -horRad; x < horRad; x++) {
 
-            for (int y = -verRad; y < verRad; y++) {
+            for (int y = 0; y < verRad; y++) {
 
                 for (int z = -horRad; z < horRad; z++) {
 

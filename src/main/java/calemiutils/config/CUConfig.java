@@ -20,6 +20,7 @@ public class CUConfig {
     public static final CategoryWorldGen worldGen = new CategoryWorldGen();
     public static final CategoryBlockScans blockScans = new CategoryBlockScans();
     public static final CategoryWallet wallet = new CategoryWallet();
+    public static final CategoryBuildingUnit buildingUnit = new CategoryBuildingUnit();
     public static final CategoryMisc misc = new CategoryMisc();
 
     private static final String NEEDED_FOR_SERVERS = "(Only needed on Servers)";
@@ -192,6 +193,29 @@ public class CUConfig {
         public boolean walletOverlay = true;
     }
 
+    public static class CategoryBuildingUnit {
+
+        @Name("Building Unit Horizontal Max Range")
+        @Config.Comment("The max range the Building Unit can scan for blueprints horizontally.")
+        @RangeInt(min = 1, max = 128)
+        public int buildingUnitHorizontalMaxRange = 64;
+
+        @Name("Building Unit Vertical Max Range")
+        @Config.Comment("The max range the Building Unit can scan for blueprints vertically.")
+        @RangeInt(min = 1, max = 256)
+        public int buildingUnitVerticalMaxRange = 64;
+
+        @Name("Building Unit Render Box Size")
+        @Config.Comment("The size of a box that determines whether to render the ghost Blueprints around the unit.")
+        @RangeInt(min = 1, max = 64)
+        public int buildingUnitRenderBoxSize = 16;
+
+        @Name("Building Unit Max Block Size")
+        @Config.Comment("The size of a box that determines whether to render the ghost Blueprints around the unit.")
+        @RangeInt(min = 1, max = 2000)
+        public int buildingUnitBlockSize = 1500;
+    }
+
     public static class CategoryMisc {
 
         @Name("Use Permission for Commands")
@@ -231,21 +255,6 @@ public class CUConfig {
         @Config.Comment("The max range the Mining Unit can mine blocks.")
         @RangeInt(min = 10, max = 64)
         public int miningUnitMaxRange = 32;
-
-        @Name("Building Unit Horizontal Max Range")
-        @Config.Comment("The max range the Building Unit can scan for blueprints horizontally.")
-        @RangeInt(min = 1, max = 128)
-        public int buildingUnitHorizontalMaxRange = 64;
-
-        @Name("Building Unit Vertical Max Range")
-        @Config.Comment("The max range the Building Unit can scan for blueprints vertically.")
-        @RangeInt(min = 1, max = 256)
-        public int buildingUnitVerticalMaxRange = 64;
-
-        @Name("Building Unit Render Box Size")
-        @Config.Comment("The size of a box that determines whether to render the ghost Blueprints around the unit.")
-        @RangeInt(min = 1, max = 64)
-        public int buildingRenderBoxSize = 16;
 
         @Name("Blender Max Juice")
         @Config.Comment("0 to Disable. The max height amount of juice the blender can store.")

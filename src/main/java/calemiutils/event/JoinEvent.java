@@ -16,26 +16,24 @@ public class JoinEvent {
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
 
         if (CUConfig.wallet.startingWallet && CUConfig.itemUtils.wallet) {
-            return;
-        }
 
-        //Code Credit (diesieben07)
-        NBTTagCompound data = event.player.getEntityData();
-        NBTTagCompound persistent;
+            //Code Credit (diesieben07)
+            NBTTagCompound data = event.player.getEntityData();
+            NBTTagCompound persistent;
 
-        if (!data.hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
-            data.setTag(EntityPlayer.PERSISTED_NBT_TAG, (persistent = new NBTTagCompound()));
-        }
+            if (!data.hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
+                data.setTag(EntityPlayer.PERSISTED_NBT_TAG, (persistent = new NBTTagCompound()));
+            }
 
-        else {
-            persistent = data.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
-        }
+            else {
+                persistent = data.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
+            }
 
-        if (!persistent.hasKey(NBT_KEY)) {
+            if (!persistent.hasKey(NBT_KEY)) {
 
-            persistent.setBoolean(NBT_KEY, true);
-            event.player.inventory.addItemStackToInventory(new ItemStack(InitItems.WALLET));
+                persistent.setBoolean(NBT_KEY, true);
+                event.player.inventory.addItemStackToInventory(new ItemStack(InitItems.WALLET));
+            }
         }
     }
-
 }
