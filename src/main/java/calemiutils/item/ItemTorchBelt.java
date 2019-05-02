@@ -17,9 +17,11 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 
 import java.util.List;
 
+@Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles", striprefs = true)
 public class ItemTorchBelt extends ItemBase implements IBauble {
 
     public ItemTorchBelt() {
@@ -29,6 +31,7 @@ public class ItemTorchBelt extends ItemBase implements IBauble {
     }
 
     @Override
+    @Optional.Method(modid = "baubles")
     public BaubleType getBaubleType(ItemStack itemstack) {
 
         return BaubleType.BELT;
@@ -66,6 +69,7 @@ public class ItemTorchBelt extends ItemBase implements IBauble {
     }
 
     @Override
+    @Optional.Method(modid = "baubles")
     public void onWornTick(ItemStack stack, EntityLivingBase player) {
         tick(stack, player.world, player);
     }

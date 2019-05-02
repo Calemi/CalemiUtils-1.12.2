@@ -10,7 +10,6 @@ import calemiutils.util.*;
 import calemiutils.util.helper.*;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -102,7 +101,7 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
                 Location location = new Location(worldIn, pos);
                 TileEntity te = location.getTileEntity();
 
-                if (te != null && te instanceof TileEntityTradingPost) {
+                if (te instanceof TileEntityTradingPost) {
 
                     TileEntityTradingPost tePost = (TileEntityTradingPost) te;
                     tePost.adminMode = true;
@@ -171,51 +170,47 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
                     if (tePost.storedCurrency + tePost.salePrice < CUConfig.misc.postCurrencyCapacity) {
 
-                        for (int i = 0; i < tePost.amountForSale; i++) {
+                        ItemStack is = new ItemStack(tePost.getStackForSale().getItem(), tePost.amountForSale, tePost.getStackForSale().getItemDamage());
 
-                            ItemStack is = new ItemStack(tePost.getStackForSale().getItem(), tePost.amountForSale, tePost.getStackForSale().getItemDamage());
+                        if (tePost.adminMode) {
 
-                            if (tePost.adminMode) {
+                            if (!world.isRemote) {
 
-                                if (!world.isRemote) {
+                                EntityItem dropItem;
+                                dropItem = ItemHelper.spawnItem(world, player, is);
 
-                                    EntityItem dropItem;
-                                    dropItem = ItemHelper.spawnItem(world, player, is);
+                                if (is.hasTagCompound()) {
+                                    dropItem.getItem().setTagCompound(is.getTagCompound());
+                                }
 
-                                    if (is.hasTagCompound()) {
-                                        dropItem.getItem().setTagCompound(is.getTagCompound());
+                                tePost.storedCurrency += tePost.salePrice;
+                                tePost.markForUpdate();
+                            }
+                        }
+
+                        else {
+
+                            for (ItemStack stack : tePost.slots) {
+
+                                if (ItemStack.areItemsEqual(stack, is)) {
+
+                                    if (!world.isRemote) {
+
+                                        EntityItem dropItem;
+
+                                        dropItem = ItemHelper.spawnItem(world, player, is);
+
+                                        if (stack.hasTagCompound()) {
+                                            dropItem.getItem().setTagCompound(stack.getTagCompound());
+                                        }
                                     }
+
+                                    InventoryHelper.consumeItem(tePost, tePost.amountForSale, true, tePost.getStackForSale());
 
                                     tePost.storedCurrency += tePost.salePrice;
                                     tePost.markForUpdate();
-                                }
-                            }
 
-                            else {
-
-                                for (ItemStack stack : tePost.slots) {
-
-                                    if (ItemStack.areItemsEqual(stack, is)) {
-
-                                        if (!world.isRemote) {
-
-                                            EntityItem dropItem;
-
-                                            dropItem = ItemHelper.spawnItem(world, player, is);
-
-                                            if (stack.hasTagCompound()) {
-                                                dropItem.getItem().setTagCompound(stack.getTagCompound());
-                                            }
-                                        }
-
-                                        InventoryHelper.consumeItem(tePost, tePost.amountForSale, true, tePost.getStackForSale());
-
-                                        tePost.storedCurrency += tePost.salePrice;
-                                        tePost.markForUpdate();
-
-                                        tePost.writeToNBT(tePost.getTileData());
-                                        return;
-                                    }
+                                    tePost.writeToNBT(tePost.getTileData());
                                 }
                             }
                         }
@@ -240,6 +235,7 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
     }
 
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+
         return AABB;
     }
 

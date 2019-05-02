@@ -19,9 +19,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 
 import java.util.List;
 
+@Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles", striprefs = true)
 public class ItemWallet extends ItemBase implements IBauble  {
 
     public ItemWallet() {
@@ -31,6 +33,7 @@ public class ItemWallet extends ItemBase implements IBauble  {
     }
 
     @Override
+    @Optional.Method(modid = "baubles")
     public BaubleType getBaubleType(ItemStack itemstack) {
         return BaubleType.TRINKET;
     }
@@ -73,6 +76,7 @@ public class ItemWallet extends ItemBase implements IBauble  {
     }
 
     @Override
+    @Optional.Method(modid = "baubles")
     public void onWornTick(ItemStack stack, EntityLivingBase player) {
         tick(stack, player);
     }
