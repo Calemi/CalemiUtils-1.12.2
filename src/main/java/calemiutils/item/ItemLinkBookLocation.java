@@ -23,6 +23,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -89,7 +90,7 @@ public class ItemLinkBookLocation extends ItemBase {
 
         if (!player.world.isRemote && printMessage) {
 
-            getUnitChatMessage(player).printMessage(ChatFormatting.GREEN, "Linked location to " + location.toString());
+            getUnitChatMessage(player).printMessage(TextFormatting.GREEN, "Linked location to " + location.toString());
         }
     }
 
@@ -107,7 +108,7 @@ public class ItemLinkBookLocation extends ItemBase {
 
         if (!player.world.isRemote) {
 
-            getUnitChatMessage(player).printMessage(ChatFormatting.GREEN, "Cleared Book");
+            getUnitChatMessage(player).printMessage(TextFormatting.GREEN, "Cleared Book");
         }
     }
 
@@ -116,7 +117,7 @@ public class ItemLinkBookLocation extends ItemBase {
         if (!world.isRemote) {
 
             EntityHelper.teleportPlayer((EntityPlayerMP) player, location, dim);
-            getUnitChatMessage(player).printMessage(ChatFormatting.GREEN, "Teleported you to " + location.toString());
+            getUnitChatMessage(player).printMessage(TextFormatting.GREEN, "Teleported you to " + location.toString());
         }
 
     }
@@ -174,7 +175,7 @@ public class ItemLinkBookLocation extends ItemBase {
 
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ItemLinkBookLocation && location.getTileEntity() != null && location.getTileEntity() instanceof TileEntityBookStand && location.getIInventory() != null) {
 
-            if (InventoryHelper.insertHeldItem(player, hand, location, location.getIInventory(), 0, true)) {
+            if (InventoryHelper.insertHeldItemIntoSlot(player, hand, location, location.getIInventory(), 0, true)) {
                 return EnumActionResult.SUCCESS;
             }
 
@@ -187,7 +188,7 @@ public class ItemLinkBookLocation extends ItemBase {
 
                     bindLocation(heldItem, player, linkedLocation, false);
                     if (bookInventory.hasDisplayName()) bindName(heldItem, bookInventory.getDisplayName());
-                    if (!worldIn.isRemote) getUnitChatMessage(player).printMessage(ChatFormatting.GREEN, "Copied Data from Book Stand");
+                    if (!worldIn.isRemote) getUnitChatMessage(player).printMessage(TextFormatting.GREEN, "Copied Data from Book Stand");
                     return EnumActionResult.SUCCESS;
                 }
             }

@@ -3,15 +3,13 @@ package calemiutils.packet;
 import calemiutils.CalemiUtils;
 import calemiutils.init.InitItems;
 import calemiutils.item.*;
-import calemiutils.tileentity.TileEntityBank;
-import calemiutils.tileentity.TileEntityBuildingUnit;
-import calemiutils.tileentity.TileEntityInteractionInterface;
-import calemiutils.tileentity.TileEntityTradingPost;
+import calemiutils.tileentity.*;
 import calemiutils.tileentity.base.TileEntityBase;
 import calemiutils.util.Location;
+import calemiutils.util.helper.InventoryHelper;
 import calemiutils.util.helper.ItemHelper;
 import calemiutils.util.helper.NBTHelper;
-import calemiutils.util.helper.WalletHelper;
+import calemiutils.util.helper.CurrencyHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -91,24 +89,24 @@ public class ServerPacketHandler implements IMessage {
                 int multiplier = Integer.parseInt(data[2]);
 
                 Item item = InitItems.COIN_PENNY;
-                int price = 1;
+                int price = InitItems.COIN_PENNY.value;
 
                 if (id == 1) {
                     item = InitItems.COIN_NICKEL;
-                    price = 5;
+                    price = InitItems.COIN_NICKEL.value;
                 }
                 if (id == 2) {
                     item = InitItems.COIN_QUARTER;
-                    price = 25;
+                    price = InitItems.COIN_QUARTER.value;
                 }
                 if (id == 3) {
                     item = InitItems.COIN_DOLLAR;
-                    price = 100;
+                    price = InitItems.COIN_DOLLAR.value;
                 }
 
                 price *= multiplier;
 
-                ItemStack walletStack = WalletHelper.getCurrentWalletStack(player);
+                ItemStack walletStack = CurrencyHelper.getCurrentWalletStack(player);
 
                 if (!walletStack.isEmpty()) {
 
@@ -122,7 +120,7 @@ public class ServerPacketHandler implements IMessage {
 
             if (data[0].equalsIgnoreCase("wallet-togglesuck")) {
 
-                ItemStack heldStack = WalletHelper.getCurrentWalletStack(player);
+                ItemStack heldStack = CurrencyHelper.getCurrentWalletStack(player);
 
                 if (heldStack.getItem() instanceof ItemWallet) {
 
@@ -243,6 +241,88 @@ public class ServerPacketHandler implements IMessage {
                 String string = data[4];
 
                 if (tileEntity != null) tileEntity.setStackForSale(ItemHelper.getStackFromString(string));
+            }
+
+            if (data[0].equalsIgnoreCase("tradingpost-togglesellmode")) {
+
+                BlockPos pos = new BlockPos(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+                TileEntityTradingPost tileEntity = (TileEntityTradingPost) player.world.getTileEntity(pos);
+
+                Boolean mode = Boolean.parseBoolean(data[4]);
+
+                if (tileEntity != null) tileEntity.buyMode = mode;
+            }
+
+            if (data[0].equalsIgnoreCase("market-setbuymode")) {
+
+                BlockPos pos = new BlockPos(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+                TileEntityMarket tileEntity = (TileEntityMarket) player.world.getTileEntity(pos);
+
+                tileEntity.buyMode = Boolean.parseBoolean(data[4]);
+            }
+
+            if (data[0].equalsIgnoreCase("market-setoffer")) {
+
+                BlockPos pos = new BlockPos(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+                TileEntityMarket tileEntity = (TileEntityMarket) player.world.getTileEntity(pos);
+
+                tileEntity.selectedOffer = Integer.parseInt(data[4]);
+            }
+
+            if (data[0].equalsIgnoreCase("market-setautomode")) {
+
+                BlockPos pos = new BlockPos(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+                TileEntityMarket tileEntity = (TileEntityMarket) player.world.getTileEntity(pos);
+
+                tileEntity.automationMode = Boolean.parseBoolean(data[4]);
+            }
+
+            if (data[0].equalsIgnoreCase("market-buy")) {
+
+                String itemObj = data[1];
+                int meta = Integer.parseInt(data[2]);
+                int amount = Integer.parseInt(data[3]);
+                int value = Integer.parseInt(data[4]);
+
+                ItemStack stack = CurrencyHelper.getCurrentWalletStack(player);
+
+                if (stack.isEmpty()) {
+
+                    BlockPos pos = new BlockPos(Integer.parseInt(data[5]), Integer.parseInt(data[6]), Integer.parseInt(data[7]));
+                    TileEntityBank teBank = (TileEntityBank) player.world.getTileEntity(pos);
+
+                    teBank.addCurrency(-value);
+                }
+
+                else {
+                    ItemHelper.getNBT(stack).setInteger("balance", ItemHelper.getNBT(stack).getInteger("balance") - value);
+                }
+
+                ItemHelper.spawnItem(player.world, player, new ItemStack(Item.getByNameOrId(itemObj), amount, meta));
+            }
+
+            if (data[0].equalsIgnoreCase("market-sell")) {
+
+                String itemObj = data[1];
+                int meta = Integer.parseInt(data[2]);
+                int amount = Integer.parseInt(data[3]);
+                int value = Integer.parseInt(data[4]);
+
+                ItemStack stack = CurrencyHelper.getCurrentWalletStack(player);
+
+                if (stack.isEmpty()) {
+
+                    BlockPos pos = new BlockPos(Integer.parseInt(data[5]), Integer.parseInt(data[6]), Integer.parseInt(data[7]));
+                    TileEntityBank teBank = (TileEntityBank) player.world.getTileEntity(pos);
+
+                    teBank.addCurrency(value);
+                }
+
+                else {
+                    ItemHelper.getNBT(stack).setInteger("balance", ItemHelper.getNBT(stack).getInteger("balance") + value);
+                }
+
+                InventoryHelper.consumeItem(player.inventory, amount, false, new ItemStack(Item.getByNameOrId(itemObj), 1, meta));
             }
 
             if (data[0].equalsIgnoreCase("buildingunit-synccurrentbuildblueprint")) {

@@ -1,4 +1,10 @@
 {
+  "conditions": [
+    {
+      "type": "calemiutils:penny"
+    }
+  ],
+
   "type": "forge:ore_shapeless",
   "ingredients": [
     {

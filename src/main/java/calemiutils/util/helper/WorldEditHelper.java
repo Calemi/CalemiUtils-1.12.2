@@ -3,10 +3,10 @@ package calemiutils.util.helper;
 import calemiutils.config.CUConfig;
 import calemiutils.util.Location;
 import calemiutils.util.UnitChatMessage;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 
@@ -18,7 +18,7 @@ public class WorldEditHelper {
 
             if (!player.world.isRemote) {
 
-                message.printMessage(ChatFormatting.RED, "The Brush is disabled by config!");
+                message.printMessage(TextFormatting.RED, "The Brush is disabled by config!");
             }
 
             return;
@@ -28,8 +28,8 @@ public class WorldEditHelper {
 
             if (!player.world.isRemote) {
 
-                message.printMessage(ChatFormatting.RED, "Too many blocks to fill!");
-                message.printMessage(ChatFormatting.RED, "You are " + StringHelper.printCommas(list.size() - CUConfig.blockScans.worldEditMaxSize) + " blocks over!");
+                message.printMessage(TextFormatting.RED, "Too many blocks to fill!");
+                message.printMessage(TextFormatting.RED, "You are " + StringHelper.printCommas(list.size() - CUConfig.blockScans.worldEditMaxSize) + " blocks over!");
             }
 
             return;
@@ -54,7 +54,7 @@ public class WorldEditHelper {
 
         if (!player.world.isRemote) {
 
-            message.printMessage(ChatFormatting.GREEN, "Placed " + ItemHelper.countByStacks(count));
+            message.printMessage(TextFormatting.GREEN, "Placed " + ItemHelper.countByStacks(count));
         }
 
         if (count > 0) {

@@ -21,6 +21,7 @@ public class GuiTradingPost extends GuiContainerBase {
 
     private final TileEntityTradingPost tePost;
 
+    private GuiButtonRect sellModeButton;
     private GuiFakeSlot fakeSlot;
 
     private final int upY = 40;
@@ -64,7 +65,9 @@ public class GuiTradingPost extends GuiContainerBase {
         new GuiButtonRect(4, getScreenX() + 130, getScreenY() + upY, 16, "R", buttonList);
         new GuiButtonRect(5, getScreenX() + 130, getScreenY() + downY, 16, "R", buttonList);
 
-        fakeSlot = new GuiFakeSlot(6, getScreenX() + 80, getScreenY() + 19, itemRender, buttonList);
+        sellModeButton = new GuiButtonRect(6, getScreenX() + 21, getScreenY() + 19, 39, tePost.buyMode ? "Buying" : "Selling", buttonList);
+
+        fakeSlot = new GuiFakeSlot(7, getScreenX() + 80, getScreenY() + 19, itemRender, buttonList);
         fakeSlot.setItemStack(tePost.getStackForSale());
     }
 
@@ -84,41 +87,52 @@ public class GuiTradingPost extends GuiContainerBase {
             fakeSlot.setItemStack(stack);
         }
 
-        if (button.id == 0 || button.id == 2) i *= -1;
+        else if (button.id == sellModeButton.id) {
 
-        String str = "";
+            boolean mode = !tePost.buyMode;
 
-        int value = 0;
-
-        if (button.id == 0 || button.id == 1) {
-            str = "amount";
-
-            tePost.amountForSale += i;
-            value = tePost.amountForSale;
+            CalemiUtils.network.sendToServer(new ServerPacketHandler("tradingpost-togglesellmode%" + PacketHelper.sendLocation(tePost.getLocation()) + mode));
+            tePost.buyMode = mode;
         }
 
-        if (button.id == 2 || button.id == 3) {
-            str = "price";
+        else {
 
-            tePost.salePrice += i;
-            value = tePost.salePrice;
+            if (button.id == 0 || button.id == 2) i *= -1;
+
+            String str = "";
+
+            int value = 0;
+
+            if (button.id == 0 || button.id == 1) {
+                str = "amount";
+
+                tePost.amountForSale += i;
+                value = tePost.amountForSale;
+            }
+
+            if (button.id == 2 || button.id == 3) {
+                str = "price";
+
+                tePost.salePrice += i;
+                value = tePost.salePrice;
+            }
+
+            if (button.id == 4) {
+                str = "amount";
+                tePost.amountForSale = 1;
+                value = 1;
+            }
+
+            if (button.id == 5) {
+                str = "price";
+                tePost.salePrice = 0;
+                value = 0;
+            }
+
+            tePost.amountForSale = MathHelper.clamp(tePost.amountForSale, 1, 1000);
+            tePost.salePrice = MathHelper.clamp(tePost.salePrice, 0, 10000);
+            CalemiUtils.network.sendToServer(new ServerPacketHandler("tradingpost-setoptions" + "%" + str + "%" + value + "%" + tePost.getPos().getX() + "%" + tePost.getPos().getY() + "%" + tePost.getPos().getZ()));
         }
-
-        if (button.id == 4) {
-            str = "amount";
-            tePost.amountForSale = 1;
-            value = 1;
-        }
-
-        if (button.id == 5) {
-            str = "price";
-            tePost.salePrice = 0;
-            value = 0;
-        }
-
-        tePost.amountForSale = MathHelper.clamp(tePost.amountForSale, 1, 1000);
-        tePost.salePrice = MathHelper.clamp(tePost.salePrice, 0, 10000);
-        CalemiUtils.network.sendToServer(new ServerPacketHandler("tradingpost-setoptions" + "%" + str + "%" + value + "%" + tePost.getPos().getX() + "%" + tePost.getPos().getY() + "%" + tePost.getPos().getZ()));
     }
 
     @Override
@@ -130,6 +144,8 @@ public class GuiTradingPost extends GuiContainerBase {
 
         GuiHelper.drawCenteredString(StringHelper.printCommas(tePost.amountForSale), getScreenX() + getGuiSizeX() / 2, getScreenY() + upY + 4, TEXT_COLOR);
         GuiHelper.drawCenteredString(StringHelper.printCommas(tePost.salePrice), getScreenX() + getGuiSizeX() / 2, getScreenY() + downY + 4, TEXT_COLOR);
+
+        sellModeButton.displayString = tePost.buyMode ? "Buying" : "Selling";
     }
 
     @Override

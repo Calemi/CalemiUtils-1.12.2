@@ -6,7 +6,6 @@ import calemiutils.util.Location;
 import calemiutils.util.UnitChatMessage;
 import calemiutils.util.helper.LoreHelper;
 import calemiutils.util.helper.SoundHelper;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,6 +13,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class ItemBrush extends ItemBase {
 
             location1 = new Location(worldIn, pos);
 
-            if (!worldIn.isRemote) getMessage(player).printMessage(ChatFormatting.GREEN, "First position set to coords: " + location1.x + ", " + location1.y + ", " + location1.z);
+            if (!worldIn.isRemote) getMessage(player).printMessage(TextFormatting.GREEN, "First position set to coords: " + location1.x + ", " + location1.y + ", " + location1.z);
             SoundHelper.playClick(worldIn, player);
         }
 
@@ -57,7 +57,7 @@ public class ItemBrush extends ItemBase {
 
             location2 = new Location(worldIn, pos);
 
-            if (!worldIn.isRemote) getMessage(player).printMessage(ChatFormatting.GREEN, "Second position set to coords: " + location2.x + ", " + location2.y + ", " + location2.z);
+            if (!worldIn.isRemote) getMessage(player).printMessage(TextFormatting.GREEN, "Second position set to coords: " + location2.x + ", " + location2.y + ", " + location2.z);
             SoundHelper.playClick(worldIn, player);
         }
 

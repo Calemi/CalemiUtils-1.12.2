@@ -1,35 +1,44 @@
 package calemiutils.config;
 
 import calemiutils.CUReference;
+import calemiutils.util.CoinColor;
+import com.google.gson.JsonObject;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.Name;
 import net.minecraftforge.common.config.Config.RangeInt;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.common.crafting.IConditionFactory;
+import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.function.BooleanSupplier;
+
 @SuppressWarnings("CanBeFinal")
 @Config(modid = CUReference.MOD_ID)
 @Config.LangKey("config.title")
-public class CUConfig {
+public class CUConfig implements IConditionFactory {
 
     public static final CategoryItemUtils itemUtils = new CategoryItemUtils();
     public static final CategoryBlockUtils blockUtils = new CategoryBlockUtils();
     public static final CategoryTooltips tooltips = new CategoryTooltips();
     public static final CategoryWorldGen worldGen = new CategoryWorldGen();
     public static final CategoryBlockScans blockScans = new CategoryBlockScans();
+    public static final CategoryEconomy economy = new CategoryEconomy();
     public static final CategoryWallet wallet = new CategoryWallet();
     public static final CategoryBuildingUnit buildingUnit = new CategoryBuildingUnit();
     public static final CategoryMisc misc = new CategoryMisc();
 
     private static final String NEEDED_FOR_SERVERS = "(Only needed on Servers)";
 
-    public static class CategoryItemUtils {
+    @Override
+    public BooleanSupplier parse(JsonContext context, JsonObject json) {
 
-        @Name("Enable Economy")
-        @Config.Comment("Disable this to remove Economy and everything that uses it.")
-        public boolean economy = true;
+        return () -> economy.currencyRecipes;
+    }
+
+    public static class CategoryItemUtils {
 
         @Name("Enable Wallet")
         @Config.Comment("Disable this to remove the Wallet.")
@@ -119,6 +128,10 @@ public class CUConfig {
         @Config.Comment("Disable this to remove the Trading Post.")
         public boolean tradingPost = true;
 
+        @Name("Enable Market")
+        @Config.Comment("Disable this to remove the Market.")
+        public boolean market = true;
+
         @Name("Enable Book Stand")
         @Config.Comment("Disable this to remove the Book Stand.")
         public boolean bookStand = true;
@@ -173,12 +186,79 @@ public class CUConfig {
         public int worldEditMaxSize = 5000;
     }
 
+    public static class CategoryEconomy {
+
+        @Name("Enable Economy")
+        @Config.Comment("Disable this to remove Economy and everything that uses it.")
+        public boolean economy = true;
+
+        @Name("Enable Coin Recipes")
+        @Config.Comment("Disable this to remove the recipes for the coins.")
+        boolean currencyRecipes = true;
+
+        @Name("Currency Name")
+        @Config.Comment("Edit this name to change the name of the currency for everything. Try to keep it small.")
+        public String currencyName = "RC";
+
+        @Name("Penny Name")
+        @Config.Comment("Edit this name to change the name of the Penny.")
+        public String pennyName = "Penny";
+
+        @Name("Penny Color")
+        @Config.Comment("Edit this name to change the color of the Penny.")
+        public CoinColor pennyColor = CoinColor.BRONZE;
+
+        @Name("Penny Value")
+        @Config.Comment("Edit this name to change the value of the Penny.")
+        @RangeInt(min = 0, max = 10000)
+        public int pennyValue = 1;
+
+        @Name("Nickel Name")
+        @Config.Comment("Edit this name to change the name of the Nickel.")
+        public String nickelName = "Nickel";
+
+        @Name("Nickel Color")
+        @Config.Comment("Edit this name to change the color of the Nickel.")
+        public CoinColor nickelColor = CoinColor.GRAY;
+
+        @Name("Nickel Value")
+        @Config.Comment("Edit this name to change the value of the Nickel.")
+        @RangeInt(min = 0, max = 10000)
+        public int nickelValue = 5;
+
+        @Name("Quarter Name")
+        @Config.Comment("Edit this name to change the name of the Quarter.")
+        public String quarterName = "Quarter";
+
+        @Name("Quarter Color")
+        @Config.Comment("Edit this name to change the color of the Quarter.")
+        public CoinColor quarterColor = CoinColor.SILVER;
+
+        @Name("Quarter Value")
+        @Config.Comment("Edit this name to change the value of the Quarter.")
+        @RangeInt(min = 0, max = 10000)
+        public int quarterValue = 25;
+
+        @Name("Dollar Name")
+        @Config.Comment("Edit this name to change the name of the Dollar.")
+        public String dollarName = "Dollar";
+
+        @Name("Dollar Color")
+        @Config.Comment("Edit this name to change the color of the Dollar.")
+        public CoinColor dollarColor = CoinColor.GOLD;
+
+        @Name("Dollar Value")
+        @Config.Comment("Edit this name to change the value of the Dollar.")
+        @RangeInt(min = 0, max = 10000)
+        public int dollarValue = 100;
+    }
+
     public static class CategoryWallet {
 
         @Name("Wallet Currency Capacity")
         @Config.Comment("The max amount of currency the Wallet can store.")
-        @RangeInt(min = 0, max = 99999)
-        public int walletCurrencyCapacity = 99999;
+        @RangeInt(min = 0, max = 99999999)
+        public int walletCurrencyCapacity = 99999999;
 
         @Name("Give Starting Wallet")
         @Config.Comment("Enable this to give players a wallet the first time they join the world.")
@@ -236,11 +316,6 @@ public class CUConfig {
         @RangeInt(min = 0)
         public int postCurrencyCapacity = 1000000;
 
-        @Name("Mining Unit Currency Capacity")
-        @Config.Comment("The max amount of currency the Trading Post can store.")
-        @RangeInt(min = 0, max = 10000)
-        public int miningUnitCurrencyCapacity = 1000;
-
         @Name("Scaffold Max Height Teleport")
         @Config.Comment("0 to Disable. The max height you can teleport to the top or bottom of a scaffold.")
         @RangeInt(min = 0, max = 256)
@@ -260,6 +335,11 @@ public class CUConfig {
         @Config.Comment("0 to Disable. The max height amount of juice the blender can store.")
         @RangeInt(min = 0, max = 1000000)
         public int blenderMaxJuice = 1000;
+
+        @Name("Quarry Unit RC Cost")
+        @Config.Comment("The cost of every block the Quarry Unit mines.")
+        @RangeInt(min = 0)
+        public int quarryUnitCost = 1;
 
         @Name("Builders' Kit Block Capacity")
         @Config.Comment("The max amount of block the Builders' Kit can store.")

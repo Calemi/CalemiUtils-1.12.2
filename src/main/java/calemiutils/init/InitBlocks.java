@@ -31,5 +31,7 @@ public class InitBlocks {
     public static final Block BUILDING_UNIT = new BlockBuildingUnit();
 
     public static final Block TRADING_POST = new BlockTradingPost();
+    public static final Block MARKET = new BlockMarket();
+
     public static final Block BOOK_STAND = new BlockBookStand();
 }

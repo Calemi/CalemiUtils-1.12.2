@@ -22,7 +22,7 @@ public class BlockQuarryUnit extends BlockInventoryContainerBase {
 
         super("quarry_unit", MaterialSound.WOOD, HardnessConstants.UNIT);
         setCreativeTab(CalemiUtils.TAB);
-        if (CUConfig.blockUtils.quarryUnit && CUConfig.itemUtils.economy) addBlock();
+        if (CUConfig.blockUtils.quarryUnit && CUConfig.economy.economy) addBlock();
     }
 
     @Override

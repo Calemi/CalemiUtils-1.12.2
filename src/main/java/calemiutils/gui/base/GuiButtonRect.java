@@ -13,7 +13,7 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class GuiButtonRect extends GuiButton {
 
-    private final GuiRect rect;
+    public final GuiRect rect;
 
     public GuiButtonRect(int id, int x, int y, int width, String text, List<GuiButton> buttonList) {
 
@@ -44,7 +44,7 @@ public class GuiButtonRect extends GuiButton {
 
             GL11.glColor4f(1, 1, 1, 1);
 
-            GuiHelper.drawCenteredString(displayString, rect.x + (rect.width / 2), rect.y + (this.height - 8) / 2, 0xFFFFFF);
+            GuiHelper.drawCenteredString(displayString, rect.x + (rect.width / 2) + 1, rect.y + (this.height - 8) / 2, 0xFFFFFF);
         }
     }
 }

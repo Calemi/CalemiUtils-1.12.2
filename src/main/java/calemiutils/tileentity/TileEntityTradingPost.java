@@ -8,9 +8,11 @@ import calemiutils.security.SecurityProfile;
 import calemiutils.tileentity.base.ICurrencyNetworkProducer;
 import calemiutils.tileentity.base.ITileEntityGuiHandler;
 import calemiutils.tileentity.base.TileEntityInventoryBase;
+import calemiutils.util.Location;
 import calemiutils.util.UnitChatMessage;
 import calemiutils.util.helper.MathHelper;
 import calemiutils.util.helper.NBTHelper;
+import calemiutils.util.helper.NetworkHelper;
 import calemiutils.util.helper.StringHelper;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,6 +29,7 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
 
     private final SecurityProfile profile = new SecurityProfile();
     public int storedCurrency = 0;
+    private Location bankLocation;
 
     public int amountForSale;
     public int salePrice;
@@ -34,6 +37,7 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
     private ItemStack stackForSale = ItemStack.EMPTY;
 
     public boolean adminMode = false;
+    public boolean buyMode = false;
 
     public TileEntityTradingPost() {
 
@@ -42,6 +46,31 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
         amountForSale = 1;
         salePrice = 0;
         hasValidTradeOffer = false;
+    }
+
+    private TileEntityBank getBank() {
+
+        if (bankLocation != null && bankLocation.getTileEntity() instanceof TileEntityBank) {
+            return (TileEntityBank) bankLocation.getTileEntity();
+        }
+
+        return null;
+    }
+
+    public int getStoredCurrencyInBank() {
+
+        if (getBank() != null) {
+            return getBank().getStoredCurrency();
+        }
+
+        return 0;
+    }
+
+    public void decrStoredCurrencyInBank(int amount) {
+
+        if (getBank() != null) {
+            getBank().addCurrency(-amount);
+        }
     }
 
     public UnitChatMessage getUnitName(EntityPlayer player) {
@@ -55,6 +84,10 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
 
     @Override
     public void update() {
+
+        if (getBank() == null || getBank().storedCurrency == 0) {
+            bankLocation = NetworkHelper.getConnectedBank(this);
+        }
 
         hasValidTradeOffer = getStackForSale() != null && !getStackForSale().isEmpty() && amountForSale >= 1;
     }
@@ -118,6 +151,7 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
         stackForSale = NBTHelper.loadItem(nbt);
 
         adminMode = nbt.getBoolean("adminMode");
+        buyMode = nbt.getBoolean("buyMode");
     }
 
     @Override
@@ -131,6 +165,7 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
         NBTHelper.saveItem(nbt, stackForSale);
 
         nbt.setBoolean("adminMode", adminMode);
+        nbt.setBoolean("buyMode", buyMode);
 
         return nbt;
     }
@@ -184,7 +219,7 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
     public ITextComponent getDisplayName() {
 
         if (hasValidTradeOffer) {
-            return new TextComponentString(amountForSale + "x " + getStackForSale().getDisplayName() + " for " + StringHelper.printCurrency(salePrice));
+            return new TextComponentString((buyMode ? "Buying " : "Selling ") + amountForSale + "x " + getStackForSale().getDisplayName() + " for " + StringHelper.printCurrency(salePrice));
         }
 
         return null;

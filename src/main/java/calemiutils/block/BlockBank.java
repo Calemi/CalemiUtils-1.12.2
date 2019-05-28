@@ -32,7 +32,7 @@ public class BlockBank extends BlockInventoryContainerBase implements IExtraInfo
         super("bank", MaterialSound.IRON, HardnessConstants.SECURED);
         setCreativeTab(CalemiUtils.TAB);
         setBlockUnbreakable();
-        if (CUConfig.blockUtils.bank && CUConfig.itemUtils.economy) addBlock();
+        if (CUConfig.blockUtils.bank && CUConfig.economy.economy) addBlock();
     }
 
     @Override

@@ -5,9 +5,9 @@ import calemiutils.security.ISecurity;
 import calemiutils.tileentity.base.TileEntityBase;
 import calemiutils.util.Location;
 import calemiutils.util.UnitChatMessage;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.text.TextFormatting;
 
 public class SecurityHelper {
 
@@ -33,7 +33,7 @@ public class SecurityHelper {
     public static void printErrorMessage(Location location, EntityPlayer player) {
 
         UnitChatMessage message = new UnitChatMessage(location.getBlock().getLocalizedName(), player);
-        if (!player.world.isRemote) message.printMessage(ChatFormatting.RED, "This unit doesn't belong to you!");
+        if (!player.world.isRemote) message.printMessage(TextFormatting.RED, "This unit doesn't belong to you!");
     }
 
     public static String getSecuredGuiName(TileEntityBase te) {

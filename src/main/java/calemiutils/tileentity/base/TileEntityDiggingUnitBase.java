@@ -1,7 +1,10 @@
 package calemiutils.tileentity.base;
 
+import calemiutils.tileentity.TileEntityBank;
 import calemiutils.util.Location;
+import calemiutils.util.helper.InventoryHelper;
 import calemiutils.util.helper.MathHelper;
+import calemiutils.util.helper.NetworkHelper;
 import calemiutils.util.helper.WorldEditHelper;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -11,14 +14,14 @@ import net.minecraft.util.EnumFacing;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable implements ICurrencyNetworkReciever {
-
-    private int storedCurrency = 0;
+public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable implements INetwork {
 
     public List<Location> locationsToMine = new ArrayList<>();
     private Location currentLocationToMine = null;
 
     private boolean shouldCheckForLocations;
+
+    private Location bankLocation;
 
     protected TileEntityDiggingUnitBase() {
 
@@ -33,8 +36,37 @@ public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable imp
 
     public abstract int getCurrentOreCost();
 
+    public TileEntityBank getBank() {
+
+        if (bankLocation != null && bankLocation.getTileEntity() instanceof TileEntityBank) {
+            return (TileEntityBank) bankLocation.getTileEntity();
+        }
+
+        return null;
+    }
+
+    private int getStoredCurrencyInBank() {
+
+        if (getBank() != null) {
+            return getBank().getStoredCurrency();
+        }
+
+        return 0;
+    }
+
+    private void decrStoredCurrencyInBank(int amount) {
+
+        if (getBank() != null) {
+            getBank().addCurrency(-amount);
+        }
+    }
+
     @Override
     public void update() {
+
+        if (getBank() == null || getBank().storedCurrency == 0) {
+            bankLocation = NetworkHelper.getConnectedBank(this);
+        }
 
         if (enable) {
 
@@ -43,39 +75,42 @@ public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable imp
                 shouldCheckForLocations = false;
             }
 
-            if (!locationsToMine.isEmpty()) {
+            if (getBank() != null) {
 
-                if (currentLocationToMine == null) {
-                    findCurrentLocationToMine();
-                }
+                if (!locationsToMine.isEmpty()) {
 
-                else {
-
-                    ItemStack stack = new ItemStack(currentLocationToMine.getBlock(), 1, currentLocationToMine.getBlockMeta());
-
-                    if (canFitStackIntoInv(stack) && storedCurrency >= getCurrentOreCost()) {
-
-                        tickProgress();
-
-                        if (isDoneAndReset()) {
-
-                            storedCurrency -= getCurrentOreCost();
-                            if (!world.isRemote) insertMinedStackIntoInv(stack);
-                            currentLocationToMine.setBlock(getBlockToReplace());
-                            locationsToMine.remove(currentLocationToMine);
-                            currentLocationToMine = null;
-                        }
+                    if (currentLocationToMine == null) {
+                        findCurrentLocationToMine();
                     }
 
                     else {
-                        currentProgress = 0;
+
+                        ItemStack stack = new ItemStack(currentLocationToMine.getBlock(), 1, currentLocationToMine.getBlockMeta());
+
+                        if (InventoryHelper.canInsertItem(stack, this) && getStoredCurrencyInBank() >= getCurrentOreCost()) {
+
+                            tickProgress();
+
+                            if (isDoneAndReset()) {
+
+                                decrStoredCurrencyInBank(getCurrentOreCost());
+                                if (!world.isRemote) InventoryHelper.insertItem(stack, this);
+                                currentLocationToMine.setBlock(getBlockToReplace());
+                                locationsToMine.remove(currentLocationToMine);
+                                currentLocationToMine = null;
+                            }
+                        }
+
+                        else {
+                            currentProgress = 0;
+                        }
                     }
                 }
-            }
 
-            else if (currentRange < getScaledRange()) {
-                currentRange++;
-                shouldCheckForLocations = true;
+                else if (currentRange < getScaledRange()) {
+                    currentRange++;
+                    shouldCheckForLocations = true;
+                }
             }
         }
 
@@ -97,36 +132,6 @@ public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable imp
         return Blocks.STONE;
     }
 
-    private boolean canFitStackIntoInv(ItemStack stack) {
-
-        for (int i = 2; i < getSizeInventory(); i++) {
-
-            boolean equalAndNotFull = (ItemStack.areItemsEqual(getStackInSlot(i), stack) && getStackInSlot(i).getCount() < getInventoryStackLimit());
-
-            if (getStackInSlot(i).isEmpty() || equalAndNotFull) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void insertMinedStackIntoInv(ItemStack stack) {
-
-        for (int i = 2; i < getSizeInventory(); i++) {
-
-            if (ItemStack.areItemsEqual(getStackInSlot(i), stack) && getStackInSlot(i).getCount() < getInventoryStackLimit()) {
-                decrStackSize(i, -1);
-                return;
-            }
-
-            else if (getStackInSlot(i).isEmpty()) {
-                setInventorySlotContents(i, stack);
-                return;
-            }
-        }
-    }
-
     public ItemStack getCurrentLocationStack() {
 
         if (currentLocationToMine != null) {
@@ -141,8 +146,6 @@ public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable imp
         if (locationsToMine.size() > 0) {
 
             Location location = locationsToMine.get(0);
-
-            System.out.println(location.getBlock().getLocalizedName());
 
             if (!location.isAirBlock() && location.getBlockState() != getBlockToReplace().getDefaultState()) {
                 currentLocationToMine = location;
@@ -160,25 +163,6 @@ public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable imp
     protected ArrayList<Location> getLocationsWithinRange() {
 
         return WorldEditHelper.selectWallsFromRadius(getLocation(), currentRange, -getLocation().y + 1, 0);
-    }
-
-    @Override
-    public int getStoredCurrency() {
-
-        return storedCurrency;
-    }
-
-    @Override
-    public void setCurrency(int amount) {
-
-        int setAmount = amount;
-
-        if (amount > getMaxCurrency()) {
-            setAmount = getMaxCurrency();
-        }
-
-        storedCurrency = setAmount;
-
     }
 
     @Override

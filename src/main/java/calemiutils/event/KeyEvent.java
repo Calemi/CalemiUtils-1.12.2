@@ -3,7 +3,7 @@ package calemiutils.event;
 import calemiutils.CalemiUtils;
 import calemiutils.key.KeyBindings;
 import calemiutils.packet.ServerPacketHandler;
-import calemiutils.util.helper.WalletHelper;
+import calemiutils.util.helper.CurrencyHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,7 +19,7 @@ public class KeyEvent {
 
             EntityPlayer player = Minecraft.getMinecraft().player;
 
-            ItemStack walletStack = WalletHelper.getCurrentWalletStack(player);
+            ItemStack walletStack = CurrencyHelper.getCurrentWalletStack(player);
 
             if (!walletStack.isEmpty()) {
 

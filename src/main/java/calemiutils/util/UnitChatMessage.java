@@ -1,8 +1,8 @@
 package calemiutils.util;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
 public class UnitChatMessage {
 
@@ -15,35 +15,14 @@ public class UnitChatMessage {
         this.players = players;
     }
 
-    public void printMessage(ChatFormatting format, String message) {
-
-        StringBuilder newMessage = new StringBuilder();
-        String[] m = message.split(" ");
-
-        for (String t : m) {
-
-            newMessage.append(format);
-            newMessage.append(t);
-            newMessage.append(" ");
-        }
+    public void printMessage(TextFormatting format, String message) {
 
         for (EntityPlayer player : players) {
-            player.sendMessage(new TextComponentString(getUnitName() + (format + newMessage.toString())));
+
+            TextComponentString componentString = new TextComponentString(getUnitName() + (format + message));
+            player.sendMessage(componentString);
         }
     }
-
-    /*public void printSpace() {
-
-        for (EntityPlayer player : players) {
-
-            player.sendMessage(new TextComponentString(""));
-        }
-    }*/
-
-    /*private int getMessageLength(String message) {
-
-        return getUnitName().length() + message.length();
-    }*/
 
     private String getUnitName() {
 

@@ -1,5 +1,7 @@
 package calemiutils.util.helper;
 
+import calemiutils.config.CUConfig;
+
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class StringHelper {
 
     public static String printCurrency(int amount) {
 
-        return printCommas(amount) + " RC";
+        return printCommas(amount) + " " + CUConfig.economy.currencyName;
     }
 
     public static String[] getArrayFromList(List<String> list) {

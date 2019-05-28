@@ -8,7 +8,6 @@ import calemiutils.item.ItemWallet;
 import calemiutils.tileentity.TileEntityTradingPost;
 import calemiutils.util.*;
 import calemiutils.util.helper.*;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -24,6 +23,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
@@ -42,13 +42,13 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
         super("trading_post", MaterialSound.IRON, HardnessConstants.SECURED);
         setCreativeTab(CalemiUtils.TAB);
-        if (CUConfig.blockUtils.tradingPost && CUConfig.itemUtils.economy) addBlock();
+        if (CUConfig.blockUtils.tradingPost && CUConfig.economy.economy) addBlock();
     }
 
     @Override
     public void addInformation(ItemStack stack, World player, List<String> tooltip, ITooltipFlag advanced) {
 
-        LoreHelper.addInformationLore(tooltip, "Used to buy/sell blocks and items.");
+        LoreHelper.addInformationLore(tooltip, "Used to buy and sell blocks and items.");
         LoreHelper.addControlsLore(tooltip, "Show Trade Info", LoreHelper.Type.SNEAK_USE, true);
         LoreHelper.addControlsLore(tooltip, "Open Inventory", LoreHelper.Type.USE_WRENCH);
         LoreHelper.addControlsLore(tooltip, "Buy Item", LoreHelper.Type.USE_WALLET);
@@ -105,7 +105,7 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
                     TileEntityTradingPost tePost = (TileEntityTradingPost) te;
                     tePost.adminMode = true;
-                    if (!worldIn.isRemote) tePost.getUnitName(player).printMessage(ChatFormatting.GREEN, "Admin Mode is enabled for this block. Sneak place this block to disable it.");
+                    if (!worldIn.isRemote) tePost.getUnitName(player).printMessage(TextFormatting.GREEN, "Admin Mode is enabled for this block. Sneak place this block to disable it.");
                 }
             }
         }
@@ -117,7 +117,7 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
         Location location = new Location(world, pos);
 
         ItemStack heldStack = player.getHeldItem(hand);
-        ItemStack walletStack = WalletHelper.getCurrentWalletStack(player);
+        ItemStack walletStack = CurrencyHelper.getCurrentWalletStack(player);
 
         TileEntity te = location.getTileEntity();
 
@@ -140,12 +140,12 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
             else if (!world.isRemote) {
 
                 if (tePost.hasValidTradeOffer) {
-                    message.printMessage(ChatFormatting.GREEN, tePost.getSecurityProfile().getOwnerName() + " is selling " + StringHelper.printCommas(tePost.amountForSale) + " " + tePost.getStackForSale().getDisplayName() + " for " + (tePost.salePrice > 0 ? (StringHelper.printCurrency(tePost.salePrice)) : "free"));
-                    message.printMessage(ChatFormatting.GREEN, "Hold a wallet in your inventory to make a purchase.");
+                    message.printMessage(TextFormatting.GREEN, tePost.getSecurityProfile().getOwnerName() + " is selling " + StringHelper.printCommas(tePost.amountForSale) + " " + tePost.getStackForSale().getDisplayName() + " for " + (tePost.salePrice > 0 ? (StringHelper.printCurrency(tePost.salePrice)) : "free"));
+                    message.printMessage(TextFormatting.GREEN, "Hold a wallet in your inventory to make a purchase.");
                 }
 
                 else {
-                    message.printMessage(ChatFormatting.RED, "There is nothing to trade!");
+                    message.printMessage(TextFormatting.RED, "There is nothing to trade!");
                 }
             }
         }
@@ -155,77 +155,129 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
     private void handleTrade(UnitChatMessage message, World world, EntityPlayer player, TileEntityTradingPost tePost) {
 
-        ItemStack walletStack = WalletHelper.getCurrentWalletStack(player);
+        ItemStack walletStack = CurrencyHelper.getCurrentWalletStack(player);
         ItemWallet wallet = (ItemWallet) walletStack.getItem();
 
         if (tePost.hasValidTradeOffer) {
 
-            if (tePost.getStock() >= tePost.amountForSale || tePost.adminMode) {
+            if (tePost.buyMode) {
+                handleSell(message, walletStack, world, player, tePost);
+            }
 
-                if (ItemWallet.getBalance(walletStack) >= tePost.salePrice) {
+            else {
+                handlePurchase(message, walletStack, world, player, tePost);
+            }
+        }
 
-                    NBTTagCompound nbt = ItemHelper.getNBT(walletStack);
+        else if (!world.isRemote) message.printMessage(TextFormatting.RED, "The trade is not set up properly!");
+    }
 
-                    nbt.setInteger("balance", nbt.getInteger("balance") - tePost.salePrice);
+    private void handlePurchase(UnitChatMessage message, ItemStack walletStack, World world, EntityPlayer player, TileEntityTradingPost tePost) {
 
-                    if (tePost.storedCurrency + tePost.salePrice < CUConfig.misc.postCurrencyCapacity) {
+        if (tePost.getStock() >= tePost.amountForSale || tePost.adminMode) {
 
-                        ItemStack is = new ItemStack(tePost.getStackForSale().getItem(), tePost.amountForSale, tePost.getStackForSale().getItemDamage());
+            if (ItemWallet.getBalance(walletStack) >= tePost.salePrice) {
 
-                        if (tePost.adminMode) {
+                NBTTagCompound nbt = ItemHelper.getNBT(walletStack);
 
-                            if (!world.isRemote) {
+                nbt.setInteger("balance", nbt.getInteger("balance") - tePost.salePrice);
 
-                                EntityItem dropItem;
-                                dropItem = ItemHelper.spawnItem(world, player, is);
+                if (tePost.storedCurrency + tePost.salePrice < CUConfig.misc.postCurrencyCapacity) {
 
-                                if (is.hasTagCompound()) {
-                                    dropItem.getItem().setTagCompound(is.getTagCompound());
-                                }
+                    ItemStack is = new ItemStack(tePost.getStackForSale().getItem(), tePost.amountForSale, tePost.getStackForSale().getItemDamage());
 
-                                tePost.storedCurrency += tePost.salePrice;
-                                tePost.markForUpdate();
+                    if (tePost.adminMode) {
+
+                        if (!world.isRemote) {
+
+                            EntityItem dropItem;
+                            dropItem = ItemHelper.spawnItem(world, player, is);
+
+                            if (is.hasTagCompound()) {
+                                dropItem.getItem().setTagCompound(is.getTagCompound());
                             }
-                        }
 
-                        else {
-
-                            for (ItemStack stack : tePost.slots) {
-
-                                if (ItemStack.areItemsEqual(stack, is)) {
-
-                                    if (!world.isRemote) {
-
-                                        EntityItem dropItem;
-
-                                        dropItem = ItemHelper.spawnItem(world, player, is);
-
-                                        if (stack.hasTagCompound()) {
-                                            dropItem.getItem().setTagCompound(stack.getTagCompound());
-                                        }
-                                    }
-
-                                    InventoryHelper.consumeItem(tePost, tePost.amountForSale, true, tePost.getStackForSale());
-
-                                    tePost.storedCurrency += tePost.salePrice;
-                                    tePost.markForUpdate();
-
-                                    tePost.writeToNBT(tePost.getTileData());
-                                }
-                            }
+                            tePost.storedCurrency += tePost.salePrice;
+                            tePost.markForUpdate();
                         }
                     }
 
-                    else if (!world.isRemote) message.printMessage(ChatFormatting.RED, "Full of money!");
+                    else {
+
+                        for (ItemStack stack : tePost.slots) {
+
+                            if (ItemStack.areItemsEqual(stack, is)) {
+
+                                if (!world.isRemote) {
+
+                                    EntityItem dropItem;
+
+                                    dropItem = ItemHelper.spawnItem(world, player, is);
+
+                                    if (stack.hasTagCompound()) {
+                                        dropItem.getItem().setTagCompound(stack.getTagCompound());
+                                    }
+                                }
+
+                                InventoryHelper.consumeItem(tePost, tePost.amountForSale, true, tePost.getStackForSale());
+
+                                tePost.storedCurrency += tePost.salePrice;
+                                tePost.markForUpdate();
+
+                                tePost.writeToNBT(tePost.getTileData());
+                            }
+                        }
+                    }
                 }
 
-                else if (!world.isRemote) message.printMessage(ChatFormatting.RED, "You don't have enough money!");
+                else if (!world.isRemote) message.printMessage(TextFormatting.RED, "Full of money!");
             }
 
-            else if (!world.isRemote) message.printMessage(ChatFormatting.RED, "There is no more items in stock!");
+            else if (!world.isRemote) message.printMessage(TextFormatting.RED, "You don't have enough money!");
         }
 
-        else if (!world.isRemote) message.printMessage(ChatFormatting.RED, "The trade is not set up properly!");
+        else if (!world.isRemote) message.printMessage(TextFormatting.RED, "There is no more items in stock!");
+    }
+
+    private void handleSell(UnitChatMessage message, ItemStack walletStack, World world, EntityPlayer player, TileEntityTradingPost tePost) {
+
+        if (InventoryHelper.countItems(player.inventory, true, tePost.getStackForSale()) >= tePost.amountForSale) {
+
+            ItemStack is = new ItemStack(tePost.getStackForSale().getItem(), tePost.amountForSale, tePost.getStackForSale().getItemDamage());
+
+            if (InventoryHelper.canInsertItem(is, tePost) || tePost.adminMode) {
+
+                if (CurrencyHelper.canFitAddedCurrencyToWallet(walletStack, tePost.salePrice)) {
+
+                    if (tePost.storedCurrency >= tePost.salePrice || tePost.getStoredCurrencyInBank() >= tePost.salePrice || tePost.adminMode) {
+
+                        NBTTagCompound nbt = ItemHelper.getNBT(walletStack);
+
+                        InventoryHelper.consumeItem(player.inventory, tePost.amountForSale, true, tePost.getStackForSale());
+
+                        if (!tePost.adminMode) {
+                            InventoryHelper.insertItem(is, tePost);
+
+                            if (tePost.storedCurrency >= tePost.salePrice) {
+                                tePost.setCurrency(tePost.storedCurrency - tePost.salePrice);
+                            }
+
+                            else tePost.decrStoredCurrencyInBank(tePost.salePrice);
+                        }
+
+                        nbt.setInteger("balance", ItemWallet.getBalance(walletStack) + tePost.salePrice);
+                    }
+
+                    else if (!world.isRemote) message.printMessage(TextFormatting.RED, "The Trading Post is out of money");
+                }
+
+                else if (!world.isRemote) message.printMessage(TextFormatting.RED, "Your Wallet is full of money!");
+            }
+
+            else if (!world.isRemote) message.printMessage(TextFormatting.RED, "The Trading Post's stock is full!");
+        }
+
+        else if (!world.isRemote) message.printMessage(TextFormatting.RED, "You do not have the required item(s) the Trading Post is looking for!");
     }
 
     @Override

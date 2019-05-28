@@ -11,7 +11,6 @@ import calemiutils.util.VeinScan;
 import calemiutils.util.helper.InventoryHelper;
 import calemiutils.util.helper.ItemHelper;
 import calemiutils.util.helper.SoundHelper;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +22,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -77,10 +77,10 @@ public class BlockBlueprint extends BlockColoredBase {
         else if (!world.isRemote && player.isSneaking() && currentStack.isEmpty()) {
 
             if (scan.buffer.size() >= CUConfig.blockScans.veinScanMaxSize) {
-                message.printMessage(ChatFormatting.GREEN, "There are " + CUConfig.blockScans.veinScanMaxSize + "+ connected Blueprints");
+                message.printMessage(TextFormatting.GREEN, "There are " + CUConfig.blockScans.veinScanMaxSize + "+ connected Blueprints");
             }
 
-            else message.printMessage(ChatFormatting.GREEN, "There are " + ItemHelper.countByStacks(scan.buffer.size()) + " connected Blueprints");
+            else message.printMessage(TextFormatting.GREEN, "There are " + ItemHelper.countByStacks(scan.buffer.size()) + " connected Blueprints");
         }
     }
 
@@ -113,15 +113,15 @@ public class BlockBlueprint extends BlockColoredBase {
                     SoundHelper.playDing(player.world, player);
                     SoundHelper.playBlockPlaceSound(world, player, Block.getBlockFromItem(currentStack.getItem()).getDefaultState(), location);
 
-                    if (!world.isRemote) message.printMessage(ChatFormatting.GREEN, "Placed " + ItemHelper.countByStacks(amountToConsume));
+                    if (!world.isRemote) message.printMessage(TextFormatting.GREEN, "Placed " + ItemHelper.countByStacks(amountToConsume));
                     InventoryHelper.consumeItem(player.inventory, amountToConsume, true, currentStack);
                 }
             }
 
             else if (!world.isRemote) {
 
-                message.printMessage(ChatFormatting.RED, "You don't have enough blocks of that type!");
-                message.printMessage(ChatFormatting.RED, "You're missing: " + ItemHelper.countByStacks((scan.buffer.size() - itemCount)));
+                message.printMessage(TextFormatting.RED, "You don't have enough blocks of that type!");
+                message.printMessage(TextFormatting.RED, "You're missing: " + ItemHelper.countByStacks((scan.buffer.size() - itemCount)));
             }
         }
     }

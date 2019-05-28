@@ -1,6 +1,8 @@
 package calemiutils;
 
 import calemiutils.command.WorldEditCommandBase;
+import calemiutils.config.MarketItemsFile;
+import calemiutils.config.MiningUnitCostsFile;
 import calemiutils.event.*;
 import calemiutils.gui.base.GuiHandler;
 import calemiutils.init.InitOreDictionaries;
@@ -11,6 +13,7 @@ import calemiutils.world.WorldGenOre;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -22,6 +25,8 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.File;
 
 @Mod(modid = CUReference.MOD_ID, name = CUReference.MOD_NAME, version = CUReference.MOD_VERSION, acceptedMinecraftVersions = CUReference.MC_VERSION)
 public class CalemiUtils {
@@ -43,6 +48,9 @@ public class CalemiUtils {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+
+        MiningUnitCostsFile.init(new File(Loader.instance().getConfigDir(), "MiningUnitCosts.json"));
+        MarketItemsFile.init(new File(Loader.instance().getConfigDir(), "MarketItems.json"));
 
         network = NetworkRegistry.INSTANCE.newSimpleChannel(CUReference.MOD_ID);
         network.registerMessage(ServerPacketHandler.Handler.class, ServerPacketHandler.class, 0, Side.SERVER);

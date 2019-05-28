@@ -4,6 +4,5 @@ Building Unit
 -Optimize Building Unit by rendering blocks using a tesselator
 
 New Blocks
--Black Market (Ever-changing prices on illegal goods)
 -Teleport Pad for the interaction terminal
 -Storage Unit for the interaction terminal (inventory tweaks support would be nice too)

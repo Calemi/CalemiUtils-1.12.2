@@ -1,6 +1,7 @@
 package calemiutils.gui;
 
 import calemiutils.CalemiUtils;
+import calemiutils.config.CUConfig;
 import calemiutils.gui.base.GuiButtonRect;
 import calemiutils.gui.base.GuiContainerBase;
 import calemiutils.init.InitItems;
@@ -54,7 +55,7 @@ public class GuiWallet extends GuiContainerBase {
 
     private ItemStack getCurrentWalletStack() {
 
-        ItemStack walletStack = WalletHelper.getCurrentWalletStack(player);
+        ItemStack walletStack = CurrencyHelper.getCurrentWalletStack(player);
 
         if (!walletStack.isEmpty()) {
             return walletStack;
@@ -69,10 +70,10 @@ public class GuiWallet extends GuiContainerBase {
     @Override
     protected void actionPerformed(GuiButton button) {
 
-        int price = 1;
-        if (button.id == 1) price = 5;
-        if (button.id == 2) price = 25;
-        if (button.id == 3) price = 100;
+        int price = InitItems.COIN_PENNY.value;
+        if (button.id == 1) price = InitItems.COIN_NICKEL.value;
+        if (button.id == 2) price = InitItems.COIN_QUARTER.value;
+        if (button.id == 3) price = InitItems.COIN_DOLLAR.value;
 
         int multiplier = ShiftHelper.getShiftCtrlInt(1, 16, 64, 9 * 64);
 
@@ -122,7 +123,8 @@ public class GuiWallet extends GuiContainerBase {
 
             toggleSuckButton.displayString = "Suck: " + (ItemHelper.getNBT(stack).getBoolean("suck") ? "ON" : "OFF");
 
-            GuiHelper.drawCenteredString(StringHelper.printCurrency(ItemHelper.getNBT(stack).getInteger("balance")), getScreenX() + getGuiSizeX() / 2 - 16, getScreenY() + 46, TEXT_COLOR);
+            GuiHelper.drawCenteredString(StringHelper.printCommas(ItemHelper.getNBT(stack).getInteger("balance")), getScreenX() + getGuiSizeX() / 2 - 16, getScreenY() + 42, TEXT_COLOR);
+            GuiHelper.drawCenteredString(CUConfig.economy.currencyName, getScreenX() + getGuiSizeX() / 2 - 16, getScreenY() + 51, TEXT_COLOR);
         }
     }
 

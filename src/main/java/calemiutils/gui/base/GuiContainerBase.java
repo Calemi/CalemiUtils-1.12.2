@@ -109,9 +109,9 @@ public abstract class GuiContainerBase extends GuiContainer {
         GuiHelper.drawHoveringTextBox(mouseX, mouseY, 170, rect, text);
     }
 
-    private void addCurrencyInfo(int mouseX, int mouseY, int currency, int maxCurrency) {
+    protected void addCurrencyInfo(int mouseX, int mouseY, int currency, int maxCurrency) {
 
-        String fullName = StringHelper.printCurrency(currency) + " / " + StringHelper.printCurrency(maxCurrency);
+        String fullName = StringHelper.printCommas(currency) + " / " + StringHelper.printCurrency(maxCurrency);
 
         int fullWidth = mc.fontRenderer.getStringWidth(fullName) + 6;
 

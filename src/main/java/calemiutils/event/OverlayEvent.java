@@ -4,7 +4,7 @@ import calemiutils.config.CUConfig;
 import calemiutils.item.ItemWallet;
 import calemiutils.util.helper.GuiHelper;
 import calemiutils.util.helper.StringHelper;
-import calemiutils.util.helper.WalletHelper;
+import calemiutils.util.helper.CurrencyHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
@@ -22,10 +22,10 @@ public class OverlayEvent {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayerSP player = mc.player;
 
-        ItemStack walletStack = WalletHelper.getCurrentWalletStack(player);
+        ItemStack walletStack = CurrencyHelper.getCurrentWalletStack(player);
 
         //Wallet Currency
-        if (CUConfig.wallet.walletOverlay && !walletStack.isEmpty()) {
+        if (CUConfig.wallet.walletOverlay && !walletStack.isEmpty() && Minecraft.getMinecraft().currentScreen == null) {
 
             if (event.getType() == RenderGameOverlayEvent.ElementType.TEXT) {
 

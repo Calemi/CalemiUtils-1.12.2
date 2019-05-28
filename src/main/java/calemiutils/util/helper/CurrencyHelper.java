@@ -3,12 +3,14 @@ package calemiutils.util.helper;
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.common.Baubles;
+import calemiutils.config.CUConfig;
 import calemiutils.item.ItemWallet;
+import calemiutils.tileentity.base.ICurrencyNetwork;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 
-public class WalletHelper {
+public class CurrencyHelper {
 
     public static ItemStack getCurrentWalletStack(EntityPlayer player) {
 
@@ -44,5 +46,20 @@ public class WalletHelper {
         }
 
         return ItemStack.EMPTY;
+    }
+
+    public static boolean canFitAddedCurrencyToNetwork(ICurrencyNetwork network, int addAmount) {
+
+        return network.getStoredCurrency() + addAmount <= network.getMaxCurrency();
+    }
+
+    public static boolean canFitAddedCurrencyToWallet(ItemStack walletStack, int addAmount) {
+
+        if (!walletStack.isEmpty() && walletStack.getItem() instanceof ItemWallet) {
+
+            return ItemWallet.getBalance(walletStack) + addAmount <= CUConfig.wallet.walletCurrencyCapacity;
+        }
+
+        return false;
     }
 }

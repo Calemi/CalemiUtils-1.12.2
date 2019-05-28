@@ -19,6 +19,7 @@ public class InitTileEntities {
         GameRegistry.registerTileEntity(TileEntityQuarryUnit.class, new ResourceLocation(CUReference.MOD_ID + ":tileEntityQuarryUnit"));
         GameRegistry.registerTileEntity(TileEntityBuildingUnit.class, new ResourceLocation(CUReference.MOD_ID + ":tileEntityBuildingUnit"));
         GameRegistry.registerTileEntity(TileEntityTradingPost.class, new ResourceLocation(CUReference.MOD_ID + ":tileEntityTradingPost"));
+        GameRegistry.registerTileEntity(TileEntityMarket.class, new ResourceLocation(CUReference.MOD_ID + ":tileEntityMarket"));
         GameRegistry.registerTileEntity(TileEntityBookStand.class, new ResourceLocation(CUReference.MOD_ID + ":tileEntityBookStand"));
     }
 }

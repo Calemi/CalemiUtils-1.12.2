@@ -1,10 +1,10 @@
 package calemiutils.tileentity;
 
 import calemiutils.config.CUConfig;
+import calemiutils.config.MiningUnitCostsFile;
 import calemiutils.gui.GuiDiggingUnit;
 import calemiutils.inventory.ContainerDiggingUnit;
 import calemiutils.tileentity.base.TileEntityDiggingUnitBase;
-import calemiutils.util.EnumOreCost;
 import calemiutils.util.Location;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,9 +42,9 @@ public class TileEntityMiningUnit extends TileEntityDiggingUnitBase {
             ItemStack stack = new ItemStack(location.getBlock(), 1, location.getBlockMeta());
 
             oreCost:
-            for (EnumOreCost oreCost : EnumOreCost.values()) {
+            for (MiningUnitCostsFile.BlockInformation information : MiningUnitCostsFile.registeredBlocks.values()) {
 
-                for (ItemStack oreStack : OreDictionary.getOres(oreCost.oreDict)) {
+                for (ItemStack oreStack : OreDictionary.getOres(information.oreName)) {
 
                     if (ItemStack.areItemsEqual(oreStack, stack)) {
                         oreList.add(location);
@@ -60,19 +60,13 @@ public class TileEntityMiningUnit extends TileEntityDiggingUnitBase {
     @Override
     public int getCurrentOreCost() {
 
-        EnumOreCost oreCost = EnumOreCost.getFromStack(getCurrentLocationStack());
+        MiningUnitCostsFile.BlockInformation information = MiningUnitCostsFile.BlockInformation.getFromStack(getCurrentLocationStack());
 
-        if (oreCost != null) {
-            return oreCost.cost;
+        if (information != null) {
+            return information.cost;
         }
 
         return 0;
-    }
-
-    @Override
-    public int getMaxCurrency() {
-
-        return CUConfig.misc.miningUnitCurrencyCapacity;
     }
 
     @Override

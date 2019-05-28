@@ -6,10 +6,12 @@ import calemiutils.inventory.ContainerBank;
 import calemiutils.item.ItemCurrency;
 import calemiutils.security.ISecurity;
 import calemiutils.security.SecurityProfile;
-import calemiutils.tileentity.base.*;
+import calemiutils.tileentity.base.ICurrencyNetwork;
+import calemiutils.tileentity.base.ICurrencyNetworkProducer;
+import calemiutils.tileentity.base.ITileEntityGuiHandler;
+import calemiutils.tileentity.base.TileEntityInventoryBase;
 import calemiutils.util.Location;
 import calemiutils.util.VeinScan;
-import calemiutils.util.helper.MathHelper;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -64,7 +66,7 @@ public class TileEntityBank extends TileEntityInventoryBase implements ITileEnti
                         else extractCurrencyFromProducer(network);
                     }
 
-                    if (location.getTileEntity() instanceof ICurrencyNetworkReciever) {
+                    /*if (location.getTileEntity() instanceof ICurrencyNetworkReciever) {
 
                         ICurrencyNetworkReciever network = ((ICurrencyNetworkReciever) location.getTileEntity());
 
@@ -78,7 +80,7 @@ public class TileEntityBank extends TileEntityInventoryBase implements ITileEnti
                         }
 
                         else transferCurrencyToReciever(network);
-                    }
+                    }*/
                 }
             }
         }
@@ -117,7 +119,7 @@ public class TileEntityBank extends TileEntityInventoryBase implements ITileEnti
         }
     }
 
-    private void transferCurrencyToReciever(ICurrencyNetworkReciever network) {
+    /*private void transferCurrencyToReciever(ICurrencyNetworkReciever network) {
 
         transferRate = Math.min(storedCurrency, 100);
 
@@ -137,7 +139,7 @@ public class TileEntityBank extends TileEntityInventoryBase implements ITileEnti
                 storedCurrency -= remainder;
             }
         }
-    }
+    }*/
 
     private boolean canAddAmount(int amount) {
 

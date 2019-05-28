@@ -1,5 +1,6 @@
 package calemiutils.init;
 
+import calemiutils.config.CUConfig;
 import calemiutils.item.*;
 import calemiutils.item.base.ItemBase;
 import net.minecraft.item.Item;
@@ -13,10 +14,10 @@ public class InitItems {
 
     public static final Item RARITANIUM = new ItemBase("raritanium").addItem();
 
-    public static final Item COIN_PENNY = new ItemCurrency("penny", 1);
-    public static final Item COIN_NICKEL = new ItemCurrency("nickel", 5);
-    public static final Item COIN_QUARTER = new ItemCurrency("quarter", 25);
-    public static final Item COIN_DOLLAR = new ItemCurrency("dollar", 100);
+    public static final ItemCurrency COIN_PENNY = new ItemCurrency("penny", CUConfig.economy.pennyName, CUConfig.economy.pennyColor, CUConfig.economy.pennyValue);
+    public static final ItemCurrency COIN_NICKEL = new ItemCurrency("nickel", CUConfig.economy.nickelName, CUConfig.economy.nickelColor, CUConfig.economy.nickelValue);
+    public static final ItemCurrency COIN_QUARTER = new ItemCurrency("quarter", CUConfig.economy.quarterName, CUConfig.economy.quarterColor, CUConfig.economy.quarterValue);
+    public static final ItemCurrency COIN_DOLLAR = new ItemCurrency("dollar", CUConfig.economy.dollarName, CUConfig.economy.dollarColor, CUConfig.economy.dollarValue);
 
     public static final Item GOLD_CHIP = new ItemBase("gold_chip").addItem();
     public static final Item MOTOR = new ItemBase("motor").addItem();

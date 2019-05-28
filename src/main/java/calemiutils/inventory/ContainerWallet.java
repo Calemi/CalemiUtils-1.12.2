@@ -7,7 +7,7 @@ import calemiutils.inventory.base.ItemStackInventory;
 import calemiutils.inventory.base.SlotFilter;
 import calemiutils.item.ItemCurrency;
 import calemiutils.util.helper.ItemHelper;
-import calemiutils.util.helper.WalletHelper;
+import calemiutils.util.helper.CurrencyHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
@@ -37,7 +37,7 @@ public class ContainerWallet extends ContainerBase {
     }
 
     private ItemStack getCurrentWalletStack() {
-        return WalletHelper.getCurrentWalletStack(player);
+        return CurrencyHelper.getCurrentWalletStack(player);
     }
 
     private NBTTagCompound getNBT() {

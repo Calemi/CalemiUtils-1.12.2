@@ -2,10 +2,10 @@
 
 item.raritanium.name=Raritanium
 
-item.coin_penny.name=Penny
-item.coin_nickel.name=Nickel
-item.coin_quarter.name=Quarter
-item.coin_dollar.name=Dollar
+item.coin_penny.name=Coin
+item.coin_nickel.name=Coin
+item.coin_quarter.name=Coin
+item.coin_dollar.name=Coin
 
 item.gold_chip.name=Gold Chip
 item.motor.name=Motor
@@ -71,6 +71,8 @@ tile.quarry_unit.name=Quarry Unit
 tile.building_unit.name=Building Unit
 
 tile.trading_post.name=Trading Post
+tile.market.name=Market
+
 tile.book_stand.name=Book Stand
 
 #Tabs

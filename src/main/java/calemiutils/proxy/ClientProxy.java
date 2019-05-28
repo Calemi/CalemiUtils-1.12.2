@@ -3,6 +3,7 @@ package calemiutils.proxy;
 import calemiutils.event.KeyEvent;
 import calemiutils.event.OverlayEvent;
 import calemiutils.init.InitItems;
+import calemiutils.item.base.ItemCoinColored;
 import calemiutils.item.base.ItemPencilColored;
 import calemiutils.key.KeyBindings;
 import calemiutils.render.RenderBuildingUnit;
@@ -34,6 +35,11 @@ public class ClientProxy extends CommonProxy {
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMiningUnit.class, new RenderDiggingUnit());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityQuarryUnit.class, new RenderDiggingUnit());
+
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemCoinColored(), InitItems.COIN_PENNY);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemCoinColored(), InitItems.COIN_NICKEL);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemCoinColored(), InitItems.COIN_QUARTER);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemCoinColored(), InitItems.COIN_DOLLAR);
 
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemPencilColored(), InitItems.PENCIL);
     }

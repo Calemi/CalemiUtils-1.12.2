@@ -76,13 +76,7 @@ public class TileEntityQuarryUnit extends TileEntityDiggingUnitBase {
     @Override
     public int getCurrentOreCost() {
 
-        return 1;
-    }
-
-    @Override
-    public int getMaxCurrency() {
-
-        return CUConfig.misc.miningUnitCurrencyCapacity;
+        return CUConfig.misc.quarryUnitCost;
     }
 
     @Override

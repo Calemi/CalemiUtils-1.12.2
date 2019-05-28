@@ -2,8 +2,8 @@ package calemiutils.gui.base;
 
 public class GuiRect {
 
-    public final int x;
-    public final int y;
+    public int x;
+    public int y;
     public final int width;
     public final int height;
 

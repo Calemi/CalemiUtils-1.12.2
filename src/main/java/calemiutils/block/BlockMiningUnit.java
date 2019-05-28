@@ -22,7 +22,7 @@ public class BlockMiningUnit extends BlockInventoryContainerBase {
 
         super("mining_unit", MaterialSound.WOOD, HardnessConstants.UNIT);
         setCreativeTab(CalemiUtils.TAB);
-        if (CUConfig.blockUtils.miningUnit && CUConfig.itemUtils.economy) addBlock();
+        if (CUConfig.blockUtils.miningUnit && CUConfig.economy.economy) addBlock();
     }
 
     @Override

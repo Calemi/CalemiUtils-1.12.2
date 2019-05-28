@@ -13,7 +13,41 @@ import net.minecraft.world.World;
 
 public class InventoryHelper {
 
-    public static boolean insertHeldItem(EntityPlayer player, EnumHand hand, Location location, IInventory inventory, int slot, boolean removeStack) {
+    public static boolean canInsertItem(ItemStack stack, IInventory inventory) {
+
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+
+            ItemStack slot = inventory.getStackInSlot(i);
+
+            boolean equalAndNotFull = (ItemStack.areItemsEqual(slot, stack) && slot.getCount() + stack.getCount() < inventory.getInventoryStackLimit());
+
+            if (inventory.isItemValidForSlot(i, stack) && (slot.isEmpty() || equalAndNotFull)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static void insertItem(ItemStack stack, IInventory inventory) {
+
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+
+            ItemStack slot = inventory.getStackInSlot(i);
+
+            if (ItemStack.areItemsEqual(slot, stack) && (slot.getCount() + stack.getCount() <= inventory.getInventoryStackLimit())) {
+                inventory.setInventorySlotContents(i, new ItemStack(stack.getItem(), slot.getCount() + stack.getCount()));
+                return;
+            }
+
+            else if (slot.isEmpty()) {
+                inventory.setInventorySlotContents(i, stack);
+                return;
+            }
+        }
+    }
+
+    public static boolean insertHeldItemIntoSlot(EntityPlayer player, EnumHand hand, Location location, IInventory inventory, int slot, boolean removeStack) {
 
         ItemStack stack = player.getHeldItem(hand);
         TileEntity te = location.getTileEntity();

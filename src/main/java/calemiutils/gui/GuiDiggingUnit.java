@@ -4,6 +4,7 @@ import calemiutils.CalemiUtils;
 import calemiutils.gui.base.GuiButtonRect;
 import calemiutils.gui.base.GuiContainerBase;
 import calemiutils.packet.ServerPacketHandler;
+import calemiutils.tileentity.base.ICurrencyNetwork;
 import calemiutils.tileentity.base.TileEntityDiggingUnitBase;
 import calemiutils.util.helper.GuiHelper;
 import calemiutils.util.helper.PacketHelper;
@@ -12,6 +13,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class GuiDiggingUnit extends GuiContainerBase {
@@ -101,5 +103,9 @@ public class GuiDiggingUnit extends GuiContainerBase {
     @Override
     public void drawGuiForeground(int mouseX, int mouseY) {
 
+        if (teDiggingUnit.getBank() != null) {
+            GL11.glColor3f(1, 1, 1);
+            addCurrencyInfo(mouseX, mouseY, ((ICurrencyNetwork) teDiggingUnit.getBank()).getStoredCurrency(), ((ICurrencyNetwork) teDiggingUnit.getBank()).getMaxCurrency());
+        }
     }
 }

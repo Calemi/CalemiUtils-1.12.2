@@ -88,12 +88,14 @@ public class WrenchEvent {
     @SideOnly(Side.CLIENT)
     public void onLoreEvent(ItemTooltipEvent event) {
 
-        //Currency
-        int currency = ItemHelper.getNBT(event.getItemStack()).getInteger("currency");
+        if (event.getItemStack().getTagCompound() != null) {
 
-        if (currency != 0) {
-            event.getToolTip().add("");
-            LoreHelper.addCurrencyLore(event.getToolTip(), currency);
+            int currency = ItemHelper.getNBT(event.getItemStack()).getInteger("currency");
+
+            if (currency != 0) {
+                event.getToolTip().add("");
+                LoreHelper.addCurrencyLore(event.getToolTip(), currency);
+            }
         }
     }
 }

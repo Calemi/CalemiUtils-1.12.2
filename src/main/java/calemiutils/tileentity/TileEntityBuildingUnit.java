@@ -13,7 +13,6 @@ import calemiutils.tileentity.base.ITileEntityGuiHandler;
 import calemiutils.tileentity.base.TileEntityInventoryBase;
 import calemiutils.util.BlueprintTemplates;
 import calemiutils.util.helper.ItemHelper;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -122,11 +122,15 @@ public class TileEntityBuildingUnit extends TileEntityInventoryBase implements I
         for (int i = 0; i < getSizeInventory(); i++) {
 
             ItemStack stack = getStackInSlot(i);
-            NBTTagCompound nbt = ItemHelper.getNBT(stack);
 
-            if (!stack.isEmpty() && stack.getItem() instanceof ItemBuildingUnitTemplate) {
+            if (stack.hasTagCompound()) {
 
-                list.add(new BlueprintBuild(nbt.hasKey("buildName") ? nbt.getString("buildName") : "Unnamed", BlueprintTemplate.readFromItem(stack)));
+                NBTTagCompound nbt = ItemHelper.getNBT(stack);
+
+                if (!stack.isEmpty() && stack.getItem() instanceof ItemBuildingUnitTemplate) {
+
+                    list.add(new BlueprintBuild(nbt.hasKey("buildName") ? nbt.getString("buildName") : "Unnamed", BlueprintTemplate.readFromItem(stack)));
+                }
             }
         }
 
@@ -159,10 +163,10 @@ public class TileEntityBuildingUnit extends TileEntityInventoryBase implements I
                 if (!name.isEmpty()) ItemHelper.getNBT(stack).setString("buildName", name);
             }
 
-            else getUnitName(player).printMessage(ChatFormatting.RED, "There are too many Blueprints in range! (" + (template.positions.size() - CUConfig.buildingUnit.buildingUnitBlockSize + 1) + " Blueprint(s) over)");
+            else getUnitName(player).printMessage(TextFormatting.RED, "There are too many Blueprints in range! (" + (template.positions.size() - CUConfig.buildingUnit.buildingUnitBlockSize + 1) + " Blueprint(s) over)");
         }
 
-        else getUnitName(player).printMessage(ChatFormatting.RED, "There are no Blueprints in range!");
+        else getUnitName(player).printMessage(TextFormatting.RED, "There are no Blueprints in range!");
     }
 
     public void placeBlueprints() {

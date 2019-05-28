@@ -8,7 +8,6 @@ import calemiutils.item.ItemBrush;
 import calemiutils.util.Location;
 import calemiutils.util.helper.ChatHelper;
 import calemiutils.util.helper.WorldEditHelper;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
@@ -20,6 +19,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -77,16 +77,16 @@ public class WorldEditCommandBase extends CommandBase {
 
                 String holdBrush = "[Hold Brush]";
 
-                ChatHelper.printModMessage(ChatFormatting.GREEN, "----- Help for " + CUReference.MOD_NAME + " -----", player);
-                ChatHelper.printModMessage(ChatFormatting.GREEN, "() are optional arguments.", player);
-                ChatHelper.printModMessage(ChatFormatting.GREEN, holdBrush + " /cu cube <color> (block) - Creates a cube of blueprint. <color> Color. (block) the block it replaces.", player);
-                ChatHelper.printModMessage(ChatFormatting.GREEN, holdBrush + " /cu circle <color> (block) - Creates a circle of blueprint. <color> Color. (block) the block it replaces.", player);
-                ChatHelper.printModMessage(ChatFormatting.GREEN, holdBrush + " /cu move - Moves the cube selection (Not implemented)", player);
+                ChatHelper.printModMessage(TextFormatting.GREEN, "----- Help for " + CUReference.MOD_NAME + " -----", player);
+                ChatHelper.printModMessage(TextFormatting.GREEN, "() are optional arguments.", player);
+                ChatHelper.printModMessage(TextFormatting.GREEN, holdBrush + " /cu cube <color> (block) - Creates a cube of blueprint. <color> Color. (block) the block it replaces.", player);
+                ChatHelper.printModMessage(TextFormatting.GREEN, holdBrush + " /cu circle <color> (block) - Creates a circle of blueprint. <color> Color. (block) the block it replaces.", player);
+                ChatHelper.printModMessage(TextFormatting.GREEN, holdBrush + " /cu move - Moves the cube selection (Not implemented)", player);
             }
 
             else if (strings[0].equals("food")) {
-                ChatHelper.printModMessage(ChatFormatting.GREEN, "Your Food is: " + player.getFoodStats().getFoodLevel(), player);
-                ChatHelper.printModMessage(ChatFormatting.GREEN, "Your Saturation is: " + player.getFoodStats().getSaturationLevel(), player);
+                ChatHelper.printModMessage(TextFormatting.GREEN, "Your Food is: " + player.getFoodStats().getFoodLevel(), player);
+                ChatHelper.printModMessage(TextFormatting.GREEN, "Your Saturation is: " + player.getFoodStats().getSaturationLevel(), player);
             }
 
             else {
@@ -149,14 +149,14 @@ public class WorldEditCommandBase extends CommandBase {
                         }
 
                         if (strings[0].equalsIgnoreCase("move")) {
-                            ItemBrush.getMessage(player).printMessage(ChatFormatting.RED, "Not implemented yet!");
+                            ItemBrush.getMessage(player).printMessage(TextFormatting.RED, "Not implemented yet!");
                         }
                     }
 
-                    else ItemBrush.getMessage(player).printMessage(ChatFormatting.RED, "You need to set two positions!");
+                    else ItemBrush.getMessage(player).printMessage(TextFormatting.RED, "You need to set two positions!");
                 }
 
-                else ChatHelper.printModMessage(ChatFormatting.RED, "You need to hold a Brush!", player);
+                else ChatHelper.printModMessage(TextFormatting.RED, "You need to hold a Brush!", player);
             }
         }
     }
