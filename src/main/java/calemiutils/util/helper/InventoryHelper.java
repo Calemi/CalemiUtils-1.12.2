@@ -29,14 +29,15 @@ public class InventoryHelper {
         return false;
     }
 
-    public static void insertItem(ItemStack stack, IInventory inventory) {
+    public static void insertItem(ItemStack stack, IInventory inventory, int slotOffset) {
 
-        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+        for (int i = slotOffset; i < inventory.getSizeInventory(); i++) {
 
             ItemStack slot = inventory.getStackInSlot(i);
 
             if (ItemStack.areItemsEqual(slot, stack) && (slot.getCount() + stack.getCount() <= inventory.getInventoryStackLimit())) {
-                inventory.setInventorySlotContents(i, new ItemStack(stack.getItem(), slot.getCount() + stack.getCount()));
+
+                inventory.setInventorySlotContents(i, new ItemStack(stack.getItem(), slot.getCount() + stack.getCount(), stack.getItemDamage()));
                 return;
             }
 
@@ -45,6 +46,11 @@ public class InventoryHelper {
                 return;
             }
         }
+    }
+
+
+    public static void insertItem(ItemStack stack, IInventory inventory) {
+        insertItem(stack, inventory, 0);
     }
 
     public static boolean insertHeldItemIntoSlot(EntityPlayer player, EnumHand hand, Location location, IInventory inventory, int slot, boolean removeStack) {

@@ -64,9 +64,7 @@ public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable imp
     @Override
     public void update() {
 
-        if (getBank() == null || getBank().storedCurrency == 0) {
-            bankLocation = NetworkHelper.getConnectedBank(this);
-        }
+        bankLocation = NetworkHelper.getConnectedBank(this);
 
         if (enable) {
 
@@ -94,7 +92,7 @@ public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable imp
                             if (isDoneAndReset()) {
 
                                 decrStoredCurrencyInBank(getCurrentOreCost());
-                                if (!world.isRemote) InventoryHelper.insertItem(stack, this);
+                                if (!world.isRemote) InventoryHelper.insertItem(stack, this, 2);
                                 currentLocationToMine.setBlock(getBlockToReplace());
                                 locationsToMine.remove(currentLocationToMine);
                                 currentLocationToMine = null;

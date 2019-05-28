@@ -3,6 +3,7 @@ package calemiutils.tileentity;
 import calemiutils.config.MarketItemsFile;
 import calemiutils.security.ISecurity;
 import calemiutils.security.SecurityProfile;
+import calemiutils.tileentity.base.INetwork;
 import calemiutils.tileentity.base.TileEntityBase;
 import calemiutils.util.Location;
 import calemiutils.util.helper.CurrencyHelper;
@@ -16,7 +17,7 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityMarket extends TileEntityBase implements ISecurity {
+public class TileEntityMarket extends TileEntityBase implements ISecurity, INetwork {
 
     private final SecurityProfile profile = new SecurityProfile();
 
@@ -84,10 +85,7 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity {
 
         if (world.getWorldTime() % 15 == 0) {
 
-            if (bank == null || bank.storedCurrency == 0) {
-
-                bankLocation = NetworkHelper.getConnectedBank(this);
-            }
+            bankLocation = NetworkHelper.getConnectedBank(this);
 
             if (automationMode && marketItem != null && bank != null && inv != null) {
 
@@ -169,6 +167,12 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity {
         root.setBoolean("autoMode", automationMode);
 
         return super.writeToNBT(root);
+    }
+
+    @Override
+    public EnumFacing[] getConnectedDirections() {
+
+        return EnumFacing.VALUES;
     }
 
     @Override
