@@ -5,14 +5,13 @@ import calemiutils.item.base.ItemBase;
 import calemiutils.util.CoinColor;
 import calemiutils.util.helper.StringHelper;
 import com.mojang.realmsclient.gui.ChatFormatting;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import java.util.List;
 
-public class ItemCurrency extends ItemBase implements IItemColor {
+public class ItemCurrency extends ItemBase {
 
     private final String configName;
     public final CoinColor color;
@@ -25,11 +24,6 @@ public class ItemCurrency extends ItemBase implements IItemColor {
         this.color = color;
         this.value = value;
         if (CUConfig.economy.economy) addItem();
-    }
-
-    @Override
-    public int colorMultiplier(ItemStack stack, int tintIndex) {
-        return color.hexCode;
     }
 
     @Override

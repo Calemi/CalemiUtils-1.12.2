@@ -69,7 +69,7 @@ public class BlockMarket extends BlockContainerBase {
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
 
-        return new TileEntityMarket(worldIn);
+        return new TileEntityMarket();
     }
 
     public EnumBlockRenderType getRenderType(IBlockState state) {

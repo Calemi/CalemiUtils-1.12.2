@@ -1,6 +1,6 @@
 package calemiutils;
 
-import calemiutils.command.WorldEditCommandBase;
+import calemiutils.command.CUCommandBase;
 import calemiutils.config.MarketItemsFile;
 import calemiutils.config.MiningUnitCostsFile;
 import calemiutils.event.*;
@@ -49,8 +49,8 @@ public class CalemiUtils {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 
-        MiningUnitCostsFile.init(new File(Loader.instance().getConfigDir(), "MiningUnitCosts.json"));
-        MarketItemsFile.init(new File(Loader.instance().getConfigDir(), "MarketItems.json"));
+        MiningUnitCostsFile.init();
+        MarketItemsFile.init();
 
         network = NetworkRegistry.INSTANCE.newSimpleChannel(CUReference.MOD_ID);
         network.registerMessage(ServerPacketHandler.Handler.class, ServerPacketHandler.class, 0, Side.SERVER);
@@ -78,6 +78,6 @@ public class CalemiUtils {
     @EventHandler
     public void serverStart(FMLServerStartingEvent event) {
 
-        event.registerServerCommand(new WorldEditCommandBase());
+        event.registerServerCommand(new CUCommandBase());
     }
 }

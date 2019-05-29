@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.function.BooleanSupplier;
 
 @SuppressWarnings("CanBeFinal")
-@Config(modid = CUReference.MOD_ID)
+@Config(modid = CUReference.MOD_ID, name = "CalemiUtils/CalemiUtils")
 @Config.LangKey("config.title")
 public class CUConfig implements IConditionFactory {
 

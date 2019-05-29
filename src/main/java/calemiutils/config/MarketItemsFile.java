@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.Loader;
 
 import java.io.File;
 import java.io.FileReader;
@@ -19,7 +20,9 @@ public class MarketItemsFile {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().disableHtmlEscaping().create();
     public static Map<String, MarketItem> registeredBlocks = new HashMap<>();
 
-    public static void init(File jsonConfig) {
+    public static void init() {
+
+        File jsonConfig = new File(Loader.instance().getConfigDir() + "/CalemiUtils", "MarketItems.json");
 
         try {
             // Create the config if it doesn't already exist.
@@ -30,7 +33,9 @@ public class MarketItemsFile {
                 String json = gson.toJson(defaultMap, new TypeToken<Map<String, MarketItem>>(){}.getType());
                 FileWriter writer = new FileWriter(jsonConfig);
                 // Write to the file you passed
+
                 writer.write(json);
+
                 // Always close when done.
                 writer.close();
             }

@@ -29,18 +29,20 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity, INetw
 
     public boolean automationMode = false;
 
-    public TileEntityMarket() {}
+    public boolean dirtyFlag = true;
 
-    public TileEntityMarket(World world) {
-
-        if (!world.isRemote) {
-            registerMarketItems();
-            marketItemList.sort((o1, o2) -> o1.stackObj.compareToIgnoreCase(o2.stackObj));
-        }
+    public TileEntityMarket() {
+        dirtyFlag = true;
     }
 
     private void registerMarketItems() {
+
+        marketItemList.clear();
         marketItemList.addAll(MarketItemsFile.registeredBlocks.values());
+        marketItemList.sort((o1, o2) -> o1.stackObj.compareToIgnoreCase(o2.stackObj));
+        dirtyFlag = false;
+
+        markForUpdate();
     }
 
     public MarketItemsFile.MarketItem getSelectedOffer() {
@@ -78,6 +80,10 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity, INetw
 
     @Override
     public void update() {
+
+        if (!world.isRemote && dirtyFlag) {
+            registerMarketItems();
+        }
 
         MarketItemsFile.MarketItem marketItem = getSelectedOffer();
         TileEntityBank bank = getBank();

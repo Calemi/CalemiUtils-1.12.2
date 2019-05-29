@@ -1,0 +1,44 @@
+{
+  "CobbleBuy": {
+    "stackObj": "minecraft:cobblestone",
+    "meta": 0,
+    "amount": 128,
+    "value": 32,
+    "isBuy": true
+  },
+  "DiamondSell": {
+    "stackObj": "minecraft:diamond",
+    "meta": 0,
+    "amount": 1,
+    "value": 64,
+    "isBuy": false
+  },
+  "EmeraldSell": {
+    "stackObj": "minecraft:emerald",
+    "meta": 0,
+    "amount": 1,
+    "value": 16,
+    "isBuy": false
+  },
+  "CobbleSell": {
+    "stackObj": "minecraft:cobblestone",
+    "meta": 0,
+    "amount": 64,
+    "value": 1,
+    "isBuy": false
+  },
+  "BreadBuy": {
+    "stackObj": "minecraft:bread",
+    "meta": 0,
+    "amount": 4,
+    "value": 2,
+    "isBuy": true
+  },
+  "SteakBuy": {
+    "stackObj": "minecraft:cooked_beef",
+    "meta": 0,
+    "amount": 4,
+    "value": 6,
+    "isBuy": true
+  }
+}

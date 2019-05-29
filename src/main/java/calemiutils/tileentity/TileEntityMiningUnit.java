@@ -6,9 +6,11 @@ import calemiutils.gui.GuiDiggingUnit;
 import calemiutils.inventory.ContainerDiggingUnit;
 import calemiutils.tileentity.base.TileEntityDiggingUnitBase;
 import calemiutils.util.Location;
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -47,6 +49,14 @@ public class TileEntityMiningUnit extends TileEntityDiggingUnitBase {
                 for (ItemStack oreStack : OreDictionary.getOres(information.oreName)) {
 
                     if (ItemStack.areItemsEqual(oreStack, stack)) {
+                        oreList.add(location);
+                        break oreCost;
+                    }
+                }
+
+                for (Item oreBlock : MiningUnitCostsFile.oreBlocks) {
+
+                    if (oreBlock == stack.getItem()) {
                         oreList.add(location);
                         break oreCost;
                     }
