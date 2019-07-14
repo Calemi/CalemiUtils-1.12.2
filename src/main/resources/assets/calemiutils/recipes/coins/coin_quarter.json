@@ -4,7 +4,6 @@
       "type": "calemiutils:penny"
     }
   ],
-
   "type": "forge:ore_shapeless",
   "group": "coin_quarter",
   "ingredients": [

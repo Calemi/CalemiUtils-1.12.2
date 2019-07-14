@@ -2,11 +2,11 @@ package calemiutils.gui;
 
 import calemiutils.CUReference;
 import calemiutils.CalemiUtils;
-import calemiutils.gui.base.GuiInteractionTab;
-import calemiutils.gui.base.GuiScreenBase;
+import calemiutils.gui.base.*;
 import calemiutils.init.InitBlocks;
 import calemiutils.item.ItemInteractionInterfaceFilter;
-import calemiutils.packet.ServerPacketHandler;
+import calemiutils.packet.InteractionUnitPacket;
+import calemiutils.tileentity.TileEntityInteractionInterface;
 import calemiutils.tileentity.TileEntityInteractionTerminal;
 import calemiutils.util.Location;
 import calemiutils.util.helper.GuiHelper;
@@ -36,9 +36,12 @@ public class GuiInteractionTerminal extends GuiScreenBase {
 
     private final List<GuiInteractionTab> tabs = new ArrayList<>();
     private GuiInteractionTab activeTab;
+    private boolean hasMainTab = false;
     private int id = 0;
     private int offset;
     private final TileEntityInteractionTerminal teTerminal;
+
+    private GuiTextFieldRect searchField;
 
     public GuiInteractionTerminal(EntityPlayer player, TileEntityInteractionTerminal te) {
 
@@ -74,40 +77,50 @@ public class GuiInteractionTerminal extends GuiScreenBase {
         int x = getScreenX() - 80;
         int y = getScreenY() - 75;
 
-        GuiInteractionTab mainTab = new GuiInteractionTab(buttonList, itemRender, new ItemStack(InitBlocks.INTERACTION_TERMINAL), "Main", x, y, x);
-        tabs.add(mainTab);
+        GuiInteractionTab mainTab = new GuiInteractionTab(buttonList, itemRender, new ItemStack(InitBlocks.INTERACTION_TERMINAL), "Main", "", x, y, x);
 
         if (teTerminal != null) {
 
-            for (Location location : teTerminal.interfaces) {
+            for (Location blockLocation : teTerminal.blocksToInteract) {
 
-                Location interfaceUnit = new Location(location, EnumFacing.DOWN);
+                Location interfaceUnit = new Location(blockLocation, EnumFacing.DOWN);
 
                 if (teTerminal.isValidFilter(interfaceUnit)) {
-                    searchForTabs(location, interfaceUnit, x, y);
+                    searchForTabs(blockLocation, interfaceUnit, x, y);
                 }
 
                 else {
-                    mainTab.addButton(getButtonId(), location, player);
+                    mainTab.addButton(getButtonId(), (TileEntityInteractionInterface) interfaceUnit.getTileEntity(), blockLocation, player);
                 }
             }
         }
 
-        setActiveTab(mainTab);
+        if (mainTab.buttons.size() > 0 || tabs.size() == 0) {
+            tabs.add(0, mainTab);
+            setActiveTab(mainTab);
+            hasMainTab = true;
+        }
+
+        else {
+            setActiveTab(tabs.get(0));
+        }
+
+        int fieldWidth = 120;
+        searchField = new GuiTextFieldRect(0, fontRenderer, (getScreenX() + getGuiSizeX() / 2) - (fieldWidth / 2) - 1, getScreenY() + 75, fieldWidth, 32);
     }
 
-    private void searchForTabs(Location location, Location interfaceUnit, int x, int y) {
+    private void searchForTabs(Location blockLocation, Location interfaceUnit, int x, int y) {
 
         for (GuiInteractionTab tab : tabs) {
 
             if (ItemInteractionInterfaceFilter.isSameFilter(tab.filter, teTerminal.getFilterStack(interfaceUnit))) {
-                tab.addButton(getButtonId(), location, player);
+                tab.addButton(getButtonId(), (TileEntityInteractionInterface) interfaceUnit.getTileEntity(), blockLocation, player);
                 return;
             }
         }
 
-        if (addTab(location, interfaceUnit, x, y) == null) {
-            tabs.get(0).addButton(getButtonId(), location, player);
+        if (addTab(blockLocation, interfaceUnit, x, y) == null) {
+            tabs.get(0).addButton(getButtonId(), (TileEntityInteractionInterface) interfaceUnit.getTileEntity(), blockLocation, player);
         }
     }
 
@@ -115,11 +128,10 @@ public class GuiInteractionTerminal extends GuiScreenBase {
 
         if (tabs.size() < 9) {
 
-            offset += 18;
-            GuiInteractionTab newTab = new GuiInteractionTab(buttonList, itemRender, teTerminal.getFilterStack(interfaceUnit), x + offset, y, x);
+            GuiInteractionTab newTab = new GuiInteractionTab(buttonList, itemRender, teTerminal.getFilterStack(interfaceUnit), x, y, x);
             tabs.add(newTab);
 
-            newTab.addButton(getButtonId(), location, player);
+            newTab.addButton(getButtonId(), (TileEntityInteractionInterface) interfaceUnit.getTileEntity(), location, player);
 
             return newTab;
         }
@@ -139,7 +151,7 @@ public class GuiInteractionTerminal extends GuiScreenBase {
                 mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 0.75F));
 
                 Location location = activeTab.buttons.get(i).location;
-                CalemiUtils.network.sendToServer(new ServerPacketHandler("interactionterminal-interact%" + PacketHelper.sendLocation(location) + ShiftHelper.isShift()));
+                CalemiUtils.network.sendToServer(new InteractionUnitPacket("terminal-interact%" + PacketHelper.sendLocation(location) + ShiftHelper.isShift()));
                 player.setSneaking(ShiftHelper.isShift());
                 location.getBlock().onBlockActivated(player.world, location.getBlockPos(), location.getBlockState(), player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
             }
@@ -149,7 +161,29 @@ public class GuiInteractionTerminal extends GuiScreenBase {
     @Override
     public void updateScreen() {
 
+        for (int i = 0; i < tabs.size(); i++) {
+            tabs.get(i).rect.x =  (getScreenX() - 80) + i * 18;
+            tabs.get(i).x =  (getScreenX() - 80) + i * 18;
+        }
+
         activeTab.buttons.sort((o1, o2) -> o1.displayString.compareToIgnoreCase(o2.displayString));
+
+        if (!searchField.getText().isEmpty()) {
+
+            for (GuiInteractionButton button : activeTab.buttons) {
+
+                if (!button.displayString.toLowerCase().contains(searchField.getText().toLowerCase())) {
+                    button.enabled = false;
+                }
+            }
+        }
+
+        else {
+
+            for (GuiInteractionButton button : activeTab.buttons) {
+                button.enabled = true;
+            }
+        }
     }
 
     @Override
@@ -157,6 +191,7 @@ public class GuiInteractionTerminal extends GuiScreenBase {
 
         GuiHelper.drawCenteredString("Interaction Interface" + SecurityHelper.getSecuredGuiName(teTerminal), getScreenX(), getScreenY() - 90, 0xFFFFFF);
         GuiHelper.drawCenteredString(activeTab.name, getScreenX(), getScreenY() - 53, 0xFFFFFF);
+        GuiHelper.drawCenteredString("Search", getScreenX(), getScreenY() + 93, 0xFFFFFF);
 
         GL11.glPushMatrix();
 
@@ -174,6 +209,8 @@ public class GuiInteractionTerminal extends GuiScreenBase {
 
         activeTab.renderSelectedTab();
         activeTab.renderButtons();
+
+        searchField.drawTextBox();
     }
 
     @Override
@@ -195,7 +232,7 @@ public class GuiInteractionTerminal extends GuiScreenBase {
     }
 
     @Override
-    public int getGuiSizeX() {
+    protected int getGuiSizeX() {
 
         return 0;
     }
@@ -209,14 +246,19 @@ public class GuiInteractionTerminal extends GuiScreenBase {
     @Override
     protected void keyTyped(char c, int i) throws IOException {
 
-        super.keyTyped(c, i);
-        player.setSneaking(false);
+        searchField.textboxKeyTyped(c, i);
+
+        if (!searchField.isFocused()) {
+            super.keyTyped(c, i);
+            player.setSneaking(false);
+        }
     }
 
     @Override
     protected void mouseClicked(int x, int y, int i) throws IOException {
 
         super.mouseClicked(x, y, i);
+        searchField.mouseClicked(x, y, i);
 
         for (GuiInteractionTab tab : tabs) {
 

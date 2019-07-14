@@ -23,6 +23,7 @@ public class MiningUnitCostsFile {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().disableHtmlEscaping().create();
     public static Map<String, BlockInformation> registeredBlocks = new HashMap<>();
 
+    @SuppressWarnings("CanBeFinal")
     public static ArrayList<Item> oreBlocks = new ArrayList<>();
 
     public static void init() {

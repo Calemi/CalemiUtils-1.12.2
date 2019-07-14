@@ -20,6 +20,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -30,7 +31,7 @@ public class BlockScaffold extends BlockBase {
 
     public BlockScaffold() {
 
-        super("iron_scaffold", MaterialSound.IRON, 1, 1, 1);
+        super("iron_scaffold", MaterialSound.IRON, 0.1F, 0, 2);
         setCreativeTab(CalemiUtils.TAB);
         if (CUConfig.blockUtils.ironScaffold) addBlock();
     }
@@ -41,7 +42,8 @@ public class BlockScaffold extends BlockBase {
         LoreHelper.addInformationLore(tooltip, "Temporary block used for getting to the hard to reach places!");
         LoreHelper.addControlsLore(tooltip, "Teleport to the top", LoreHelper.Type.USE_OPEN_HAND, true);
         LoreHelper.addControlsLore(tooltip, "Break all connected scaffolds", LoreHelper.Type.SNEAK_BREAK_BLOCK);
-        LoreHelper.addControlsLore(tooltip, "Place blocks in a line", LoreHelper.Type.LEFT_CLICK_BLOCK);
+        LoreHelper.addControlsLore(tooltip, "Place Scaffold in a line", LoreHelper.Type.LEFT_CLICK_BLOCK);
+        LoreHelper.addControlsLore(tooltip, "Place Scaffold upwards", LoreHelper.Type.SNEAK_LEFT_CLICK_BLOCK);
     }
 
     @Override
@@ -113,15 +115,30 @@ public class BlockScaffold extends BlockBase {
     @Override
     public void onBlockClicked(World world, BlockPos pos, EntityPlayer player) {
 
-        BlockHelper.placeBlockInArray(world, pos, player, this);
+        int face = MathHelper.floor((double) (player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+
+        EnumFacing dir = null;
+
+        if (face == 0) dir = EnumFacing.SOUTH;
+        if (face == 1) dir = EnumFacing.WEST;
+        if (face == 2) dir = EnumFacing.NORTH;
+        if (face == 3) dir = EnumFacing.EAST;
+
+        if (!player.isSneaking()) {
+            BlockHelper.placeBlockInArray(world, pos, player, this, dir);
+        }
+
+        else {
+            BlockHelper.placeBlockInArray(world, pos, player, this, EnumFacing.UP);
+        }
     }
 
     @Override
     public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
 
-        if (player.isSneaking()) {
+        Location location = new Location(world, pos);
 
-            Location location = new Location(world, pos);
+        if (player.isSneaking()) {
 
             VeinScan scan = new VeinScan(location, this);
 
@@ -137,7 +154,10 @@ public class BlockScaffold extends BlockBase {
             }
         }
 
-        else super.onBlockHarvested(world, pos, state, player);
+        else {
+            if (!world.isRemote) ItemHelper.spawnItem(world, new Location(player), new ItemStack(InitBlocks.IRON_SCAFFOLD));
+            location.setBlockToAir();
+        }
     }
 
     @SideOnly(Side.CLIENT)

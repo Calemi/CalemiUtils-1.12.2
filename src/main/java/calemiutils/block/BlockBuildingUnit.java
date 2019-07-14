@@ -67,15 +67,15 @@ public class BlockBuildingUnit extends BlockInventoryContainerBase {
         return true;
     }
 
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+
+    }
+
     @SideOnly(Side.CLIENT)
     private void openGui(EntityPlayer playerIn, TileEntityBuildingUnit te) {
 
         FMLClientHandler.instance().displayGuiScreen(playerIn, new GuiBuildingUnit(playerIn, te));
-    }
-
-    @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
-
     }
 
     @Override

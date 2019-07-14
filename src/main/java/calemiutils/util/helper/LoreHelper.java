@@ -75,6 +75,7 @@ public class LoreHelper {
         SNEAK_USE_BLUEPRINT("Sneak-Use-Blueprint"),
         SNEAK_BREAK_BLOCK("Sneak-Break-Block"),
         LEFT_CLICK_BLOCK("Left-Click-Block"),
+        SNEAK_LEFT_CLICK_BLOCK("Sneak-Left-Click-Block"),
         LEFT_CLICK_BLUEPRINT("Left-Click-Blueprint");
 
         private final String name;

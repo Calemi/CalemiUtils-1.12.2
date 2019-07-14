@@ -22,6 +22,13 @@ public class GuiButtonRect extends GuiButton {
         buttonList.add(this);
     }
 
+    public void setPosition(int x, int y) {
+        rect.x = x;
+        this.x = x;
+        rect.y = y;
+        this.y = y;
+    }
+
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 

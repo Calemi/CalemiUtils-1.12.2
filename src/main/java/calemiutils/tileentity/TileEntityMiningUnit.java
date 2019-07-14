@@ -6,7 +6,6 @@ import calemiutils.gui.GuiDiggingUnit;
 import calemiutils.inventory.ContainerDiggingUnit;
 import calemiutils.tileentity.base.TileEntityDiggingUnitBase;
 import calemiutils.util.Location;
-import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -73,7 +72,7 @@ public class TileEntityMiningUnit extends TileEntityDiggingUnitBase {
         MiningUnitCostsFile.BlockInformation information = MiningUnitCostsFile.BlockInformation.getFromStack(getCurrentLocationStack());
 
         if (information != null) {
-            return information.cost;
+            return scaleCost(information.cost);
         }
 
         return 0;

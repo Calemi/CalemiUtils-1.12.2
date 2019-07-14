@@ -60,7 +60,7 @@ public class ItemBuildersKit extends ItemBase {
 
     public ItemStack getBlockType(ItemStack stack) {
 
-        return NBTHelper.loadItem(ItemHelper.getNBT(stack));
+        return NBTHelper.loadItem(ItemHelper.getNBT(stack), 0);
     }
 
     public static int getAmountOfBlocks(ItemStack stack) {
@@ -171,9 +171,13 @@ public class ItemBuildersKit extends ItemBase {
 
                 if (ItemHelper.getNBT(stack).getBoolean("suck") && getBlockType(stack) != null) {
 
-                    if (InventoryHelper.countItems(player.inventory, false, getBlockType(stack)) > 0) {
-                        InventoryHelper.consumeItem(player.inventory, addAmountOfBlocks(stack, 1), false, getBlockType(stack));
+                    int count = InventoryHelper.countItems(player.inventory, false, getBlockType(stack));
+
+                    if (count > 64) {
+                        count = 64;
                     }
+
+                    if (count > 0) InventoryHelper.consumeItem(player.inventory, addAmountOfBlocks(stack, count), false, getBlockType(stack));
                 }
             }
         }

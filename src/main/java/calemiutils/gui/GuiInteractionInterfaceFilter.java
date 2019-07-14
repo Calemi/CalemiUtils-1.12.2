@@ -23,7 +23,8 @@ import java.io.IOException;
 public class GuiInteractionInterfaceFilter extends GuiContainerBase {
 
     private GuiFakeSlot fakeSlot;
-    private GuiTextFieldRect nameField;
+    private GuiTextFieldRect tabNameField;
+    private GuiTextFieldRect tabTooltipField;
 
     public GuiInteractionInterfaceFilter(EntityPlayer player) {
 
@@ -33,7 +34,7 @@ public class GuiInteractionInterfaceFilter extends GuiContainerBase {
     @Override
     public int getGuiSizeY() {
 
-        return 144;
+        return 161;
     }
 
     @Override
@@ -45,7 +46,7 @@ public class GuiInteractionInterfaceFilter extends GuiContainerBase {
     @Override
     public String getGuiTitle() {
 
-        return "Interaction Interface Filter";
+        return "Interaction Interface Tab";
     }
 
     private ItemStack getHeldFilterStack() {
@@ -76,15 +77,16 @@ public class GuiInteractionInterfaceFilter extends GuiContainerBase {
         int fieldWidth = 120;
 
         fakeSlot = new GuiFakeSlot(6, getScreenX() + 80, getScreenY() + 18, itemRender, buttonList);
-        nameField = new GuiTextFieldRect(0, fontRenderer, (getScreenX() + getGuiSizeX() / 2) - (fieldWidth / 2) - 1, getScreenY() + 38, fieldWidth, 32);
+        tabNameField = new GuiTextFieldRect(0, fontRenderer, (getScreenX() + getGuiSizeX()) - fieldWidth - 9, getScreenY() + 39, fieldWidth, 32);
+        tabTooltipField = new GuiTextFieldRect(1, fontRenderer, (getScreenX() + getGuiSizeX()) - fieldWidth - 9, getScreenY() + 57, fieldWidth, 32);
 
         if (getHeldFilter() != null) {
 
             ItemStack stack = ItemInteractionInterfaceFilter.getFilterIcon(getHeldFilterStack());
 
             fakeSlot.setItemStack(stack);
-
-            nameField.setText(ItemInteractionInterfaceFilter.getFilterName(getHeldFilterStack()));
+            tabNameField.setText(ItemInteractionInterfaceFilter.getFilterName(getHeldFilterStack()));
+            tabTooltipField.setText(ItemInteractionInterfaceFilter.getFilterTooltip(getHeldFilterStack()));
         }
     }
 
@@ -113,10 +115,28 @@ public class GuiInteractionInterfaceFilter extends GuiContainerBase {
 
         if (getHeldFilter() != null) {
 
-            if (nameField.isFocused()) {
+            if (!ItemInteractionInterfaceFilter.isValidFilter(getHeldFilterStack())) {
+
+                if (ItemInteractionInterfaceFilter.getFilterIcon(getHeldFilterStack()).isEmpty()) {
+
+                    addRightInfoText("Invalid Icon!", 0, 15);
+                }
+
+                if (ItemInteractionInterfaceFilter.getFilterName(getHeldFilterStack()).isEmpty()) {
+
+                    addRightInfoText("Invalid Name!", 0, 15);
+                }
+            }
+
+            if (tabNameField.isFocused() || tabTooltipField.isFocused()) {
 
                 if (Keyboard.isKeyDown(Keyboard.KEY_RETURN)) {
-                    CalemiUtils.network.sendToServer(new ServerPacketHandler("iifilter-setname%" + nameField.getText()));
+
+                    CalemiUtils.network.sendToServer(new ServerPacketHandler("iifilter-setname%" + tabNameField.getText() + "%" + tabTooltipField.getText()));
+                    ItemInteractionInterfaceFilter.setFilterName(getHeldFilterStack(), tabNameField.getText());
+                    ItemInteractionInterfaceFilter.setFilterTooltip(getHeldFilterStack(), tabTooltipField.getText());
+
+                    tabNameField.setFocused(false);
                 }
             }
         }
@@ -129,11 +149,17 @@ public class GuiInteractionInterfaceFilter extends GuiContainerBase {
     @Override
     public void drawGuiBackground(int mouseX, int mouseY) {
 
-        nameField.drawTextBox();
+        tabNameField.drawTextBox();
+        tabTooltipField.drawTextBox();
     }
 
     @Override
     public void drawGuiForeground(int mouseX, int mouseY) {
+
+        mc.fontRenderer.drawString("Tab Icon", getScreenX() + 30, getScreenY() + 22, TEXT_COLOR);
+
+        mc.fontRenderer.drawString("Name", getScreenX() + 8, getScreenY() + 43, TEXT_COLOR);
+        mc.fontRenderer.drawString("Tooltip", getScreenX() + 8, getScreenY() + 62, TEXT_COLOR);
 
         fakeSlot.renderButton(mouseX, mouseY, 150);
     }
@@ -148,9 +174,10 @@ public class GuiInteractionInterfaceFilter extends GuiContainerBase {
     @Override
     protected void keyTyped(char c, int i) throws IOException {
 
-        nameField.textboxKeyTyped(c, i);
+        tabNameField.textboxKeyTyped(c, i);
+        tabTooltipField.textboxKeyTyped(c, i);
 
-        if (!nameField.isFocused()) {
+        if (!tabNameField.isFocused() && !tabTooltipField.isFocused()) {
             super.keyTyped(c, i);
         }
     }
@@ -159,6 +186,7 @@ public class GuiInteractionInterfaceFilter extends GuiContainerBase {
     protected void mouseClicked(int x, int y, int i) throws IOException {
 
         super.mouseClicked(x, y, i);
-        nameField.mouseClicked(x, y, i);
+        tabNameField.mouseClicked(x, y, i);
+        tabTooltipField.mouseClicked(x, y, i);
     }
 }

@@ -1,5 +1,6 @@
 package calemiutils.gui.base;
 
+import calemiutils.tileentity.TileEntityInteractionInterface;
 import calemiutils.util.IExtraInformation;
 import calemiutils.util.Location;
 import calemiutils.util.helper.GuiHelper;
@@ -20,14 +21,16 @@ import java.util.List;
 public class GuiInteractionButton extends GuiButton {
 
     GuiRect rect;
+    private final TileEntityInteractionInterface teII;
     public final Location location;
     private final ItemStack stack;
     private final RenderItem itemRender;
 
-    GuiInteractionButton(int id, int x, int y, RenderItem itemRender, Location location, ItemStack stack, List<GuiButton> buttonList) {
+    GuiInteractionButton(int id, int x, int y, RenderItem itemRender, TileEntityInteractionInterface teII, Location location, ItemStack stack, List<GuiButton> buttonList) {
 
         super(id, x, y, 16, 16, "");
         rect = new GuiRect(this.x, this.y, width, height);
+        this.teII = teII;
         this.location = location;
         this.stack = stack;
         this.itemRender = itemRender;
@@ -42,24 +45,45 @@ public class GuiInteractionButton extends GuiButton {
             hovered = rect.contains(mouseX, mouseY);
 
             ItemStack icon = stack;
-            String[] strings = new String[1];
+            List<String> list = new ArrayList<>();
 
-            if (Block.getBlockFromItem(stack.getItem()) instanceof IExtraInformation) {
+            if (teII != null) {
 
-                IExtraInformation info = ((IExtraInformation) Block.getBlockFromItem(stack.getItem()));
+                //Add extra strings to the list if the block has more information to share
 
-                icon = info.getButtonIcon(mc.world, location, stack);
+                if (Block.getBlockFromItem(stack.getItem()) instanceof IExtraInformation) {
 
-                List<String> list = new ArrayList<>();
-                info.getButtonInformation(list, mc.world, location, stack);
+                    IExtraInformation info = ((IExtraInformation) Block.getBlockFromItem(stack.getItem()));
 
-                if (list.size() > 0) list.add("");
+                    icon = info.getButtonIcon(mc.world, location, stack);
+                    info.getButtonInformation(list, mc.world, location, stack);
 
-                strings = new String[list.size() + 1];
-
-                for (int i = 0; i < list.size(); i++) {
-                    strings[i] = list.get(i);
+                    if (list.size() > 0) list.add("");
                 }
+
+                //Render a custom icon instead of the block above if there is one set
+
+                ItemStack blockStack = teII.blockIconStack;
+
+                if (!blockStack.isEmpty()) {
+                    icon = blockStack;
+                }
+
+                //Add a custom name if there is one set
+
+                if (!teII.blockName.isEmpty()) {
+
+                    list.add(0, "");
+                    list.add(0, teII.blockName);
+                }
+            }
+
+            //Convert List to Array
+
+            String[] strings = new String[list.size() + 1];
+
+            for (int i = 0; i < list.size(); i++) {
+                strings[i] = list.get(i);
             }
 
             strings[strings.length - 1] = ChatFormatting.ITALIC + stack.getDisplayName() + ": " + location.toString();

@@ -7,7 +7,7 @@ import calemiutils.gui.base.GuiButtonRect;
 import calemiutils.gui.base.GuiRect;
 import calemiutils.gui.base.GuiScreenBase;
 import calemiutils.gui.base.GuiTextFieldRect;
-import calemiutils.packet.ServerPacketHandler;
+import calemiutils.packet.BuildingUnitPacket;
 import calemiutils.tileentity.TileEntityBuildingUnit;
 import calemiutils.util.helper.GuiHelper;
 import calemiutils.util.helper.PacketHelper;
@@ -30,7 +30,7 @@ public class GuiBuildingUnit extends GuiScreenBase {
     private final TileEntityBuildingUnit teBuildingUnit;
 
     private GuiButtonRect upBtn, downBtn;
-    private GuiButtonRect buildBtn, readBtn, rotateBtn;
+    private GuiButtonRect buildBtn, readBlueprintsBtn, readBlocksBtn, rotateBtn;
 
     private GuiTextFieldRect nameField;
 
@@ -48,12 +48,13 @@ public class GuiBuildingUnit extends GuiScreenBase {
         upBtn = new GuiButtonRect(0, getScreenX() - 85, getScreenY() - 66, 16, "/\\", buttonList);
         downBtn = new GuiButtonRect(1, getScreenX() - 85, getScreenY() + 50, 16, "\\/", buttonList);
 
-        rotateBtn = new GuiButtonRect(4, getScreenX() - 24, getScreenY() - 20, 48, "Rotate", buttonList);
-        buildBtn = new GuiButtonRect(2, getScreenX() - 24, getScreenY() + 4, 48, "Build", buttonList);
+        rotateBtn = new GuiButtonRect(2, getScreenX() - 24, getScreenY() - 20, 48, "Rotate", buttonList);
+        buildBtn = new GuiButtonRect(3, getScreenX() - 24, getScreenY() + 4, 48, "Build", buttonList);
 
         int fieldWidth = 120;
-        nameField = new GuiTextFieldRect(0, fontRenderer, (getScreenX() + getGuiSizeX() / 2) + 40, getScreenY() - 20, fieldWidth, 32);
-        readBtn = new GuiButtonRect(3, (getScreenX() + getGuiSizeX() / 2) + 40 + (fieldWidth / 2) - (48 / 2), getScreenY() + 4, 48, "Read", buttonList);
+        nameField = new GuiTextFieldRect(4, fontRenderer, (getScreenX() + getGuiSizeX() / 2) + 40, getScreenY() - 20, fieldWidth, 32);
+        readBlueprintsBtn = new GuiButtonRect(5, (getScreenX() + getGuiSizeX() / 2) + 40 + (fieldWidth / 2) - (87 / 2), getScreenY() + 4, 87, "Read Blueprints", buttonList);
+        readBlocksBtn = new GuiButtonRect(6, (getScreenX() + getGuiSizeX() / 2) + 40 + (fieldWidth / 2) - (87 / 2), getScreenY() + 28, 87, "Read Blocks", buttonList);
     }
 
     @Override
@@ -66,18 +67,23 @@ public class GuiBuildingUnit extends GuiScreenBase {
 
         if (button.id == buildBtn.id) {
             teBuildingUnit.placeBlueprints();
-            CalemiUtils.network.sendToServer(new ServerPacketHandler("buildingunit-build%" + PacketHelper.sendLocation(teBuildingUnit.getLocation())));
+            CalemiUtils.network.sendToServer(new BuildingUnitPacket("build%" + PacketHelper.sendLocation(teBuildingUnit.getLocation())));
             return;
         }
 
-        if (button.id == readBtn.id) {
-            CalemiUtils.network.sendToServer(new ServerPacketHandler("buildingunit-read%" + PacketHelper.sendLocation(teBuildingUnit.getLocation()) + nameField.getText()));
+        if (button.id == readBlueprintsBtn.id) {
+            CalemiUtils.network.sendToServer(new BuildingUnitPacket("readblueprints%" + PacketHelper.sendLocation(teBuildingUnit.getLocation()) + nameField.getText()));
+            return;
+        }
+
+        if (button.id == readBlocksBtn.id) {
+            CalemiUtils.network.sendToServer(new BuildingUnitPacket("readblocks%" + PacketHelper.sendLocation(teBuildingUnit.getLocation()) + nameField.getText()));
             return;
         }
 
         if (button.id == rotateBtn.id) {
             teBuildingUnit.addRotation();
-            CalemiUtils.network.sendToServer(new ServerPacketHandler("buildingunit-rotate%" + PacketHelper.sendLocation(teBuildingUnit.getLocation())));
+            CalemiUtils.network.sendToServer(new BuildingUnitPacket("rotate%" + PacketHelper.sendLocation(teBuildingUnit.getLocation())));
             return;
         }
 
@@ -103,7 +109,7 @@ public class GuiBuildingUnit extends GuiScreenBase {
                 teBuildingUnit.currentBuildBlueprint = size - 1;
             }
 
-            CalemiUtils.network.sendToServer(new ServerPacketHandler("buildingunit-synccurrentbuildblueprint%" + PacketHelper.sendLocation(teBuildingUnit.getLocation()) + teBuildingUnit.currentBuildBlueprint));
+            CalemiUtils.network.sendToServer(new BuildingUnitPacket("synccurrentbuildblueprint%" + PacketHelper.sendLocation(teBuildingUnit.getLocation()) + teBuildingUnit.currentBuildBlueprint));
         }
     }
 

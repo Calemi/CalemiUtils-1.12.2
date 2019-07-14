@@ -140,7 +140,12 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
             else if (!world.isRemote) {
 
                 if (tePost.hasValidTradeOffer) {
-                    message.printMessage(TextFormatting.GREEN, tePost.getSecurityProfile().getOwnerName() + " is selling " + StringHelper.printCommas(tePost.amountForSale) + " " + tePost.getStackForSale().getDisplayName() + " for " + (tePost.salePrice > 0 ? (StringHelper.printCurrency(tePost.salePrice)) : "free"));
+
+                    if (tePost.adminMode) {
+                        message.printMessage(TextFormatting.GREEN, (tePost.buyMode ? "Buying " : "Selling ") + StringHelper.printCommas(tePost.amountForSale) + " " + tePost.getStackForSale().getDisplayName() + " for " + (tePost.salePrice > 0 ? (StringHelper.printCurrency(tePost.salePrice)) : "free"));
+                    }
+
+                    else message.printMessage(TextFormatting.GREEN, tePost.getSecurityProfile().getOwnerName() + " is " + (tePost.buyMode ? "buying " : "selling ") + StringHelper.printCommas(tePost.amountForSale) + " " + tePost.getStackForSale().getDisplayName() + " for " + (tePost.salePrice > 0 ? (StringHelper.printCurrency(tePost.salePrice)) : "free"));
                     message.printMessage(TextFormatting.GREEN, "Hold a wallet in your inventory to make a purchase.");
                 }
 
@@ -186,6 +191,10 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
                     ItemStack is = new ItemStack(tePost.getStackForSale().getItem(), tePost.amountForSale, tePost.getStackForSale().getItemDamage());
 
+                    if (tePost.getStackForSale().hasTagCompound()) {
+                        is.setTagCompound(tePost.getStackForSale().getTagCompound());
+                    }
+
                     if (tePost.adminMode) {
 
                         if (!world.isRemote) {
@@ -207,6 +216,13 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
                         for (ItemStack stack : tePost.slots) {
 
                             if (ItemStack.areItemsEqual(stack, is)) {
+
+                                if (is.hasTagCompound()) {
+
+                                    if (!stack.hasTagCompound() || !stack.getTagCompound().equals(is.getTagCompound())) {
+                                        return;
+                                    }
+                                }
 
                                 if (!world.isRemote) {
 

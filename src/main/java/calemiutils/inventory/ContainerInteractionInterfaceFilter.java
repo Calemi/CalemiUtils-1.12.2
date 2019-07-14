@@ -11,7 +11,7 @@ public class ContainerInteractionInterfaceFilter extends ContainerBase {
 
         isItemContainer = true;
 
-        addPlayerInv(8, 62);
-        addPlayerHotbar(8, 120);
+        addPlayerInv(8, 79);
+        addPlayerHotbar(8, 137);
     }
 }

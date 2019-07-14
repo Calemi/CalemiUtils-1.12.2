@@ -76,14 +76,14 @@ public class ContainerBuildersKit extends ContainerBase {
             if (nbt != null) {
 
                 ItemStack stack = stackInv.getStackInSlot(0);
-                ItemStack stackFilter = NBTHelper.loadItem(nbt);
+                ItemStack stackFilter = NBTHelper.loadItem(nbt, 0);
 
                 int amount = ItemBuildersKit.getAmountOfBlocks(getHeldStack());
 
                 if (stack != null && !stack.isEmpty() && stack.getItem() instanceof ItemBlock) {
 
                     if (amount == 0 && !stack.isEmpty()) {
-                        NBTHelper.saveItem(getNBT(), stack);
+                        NBTHelper.saveItem(getNBT(), stack, 0);
                         addAmount(stack);
                     }
 

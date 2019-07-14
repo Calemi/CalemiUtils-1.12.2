@@ -1,0 +1,24 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "CIC",
+    "IDI",
+    "CIC"
+  ],
+  "key": {
+    "C": {
+      "item": "calemiutils:gold_chip"
+    },
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "D": {
+      "item": "calemiutils:coin_dollar"
+    }
+  },
+  "result": {
+    "item": "calemiutils:market",
+    "count": 1
+  }
+}

@@ -12,9 +12,9 @@ import calemiutils.util.helper.NetworkHelper;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class TileEntityMarket extends TileEntityBase implements ISecurity, INetwork {
@@ -23,13 +23,13 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity, INetw
 
     public final List<MarketItemsFile.MarketItem> marketItemList = new ArrayList<>();
     public boolean buyMode = true;
+    public boolean automationMode = false;
     public int selectedOffer;
+    public int purchaseAmount = 1;
 
     private Location bankLocation;
 
-    public boolean automationMode = false;
-
-    public boolean dirtyFlag = true;
+    public boolean dirtyFlag;
 
     public TileEntityMarket() {
         dirtyFlag = true;
@@ -39,8 +39,16 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity, INetw
 
         marketItemList.clear();
         marketItemList.addAll(MarketItemsFile.registeredBlocks.values());
-        marketItemList.sort((o1, o2) -> o1.stackObj.compareToIgnoreCase(o2.stackObj));
+        marketItemList.sort(Comparator.comparingInt(o -> o.index));
         dirtyFlag = false;
+
+        for (int i = 0; i < marketItemList.size(); i++) {
+
+            if (marketItemList.get(i).isBuy) {
+                selectedOffer = i;
+                break;
+            }
+        }
 
         markForUpdate();
     }
@@ -48,6 +56,7 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity, INetw
     public MarketItemsFile.MarketItem getSelectedOffer() {
 
         if (selectedOffer >= marketItemList.size() || selectedOffer < 0) {
+
             return null;
         }
 
@@ -65,14 +74,11 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity, INetw
 
     private IInventory getConnectedInventory() {
 
-        for (EnumFacing face : EnumFacing.VALUES) {
+        Location location = getLocation().translate(EnumFacing.UP, 1);
 
-            Location location = getLocation().translate(face, 1);
+        if (location.getTileEntity() != null && !(location.getTileEntity() instanceof TileEntityBank) && location.getTileEntity() instanceof IInventory) {
 
-            if (location.getTileEntity() != null && location.getTileEntity() instanceof IInventory) {
-
-                return (IInventory) location.getTileEntity();
-            }
+            return (IInventory) location.getTileEntity();
         }
 
         return null;
@@ -89,7 +95,7 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity, INetw
         TileEntityBank bank = getBank();
         IInventory inv = getConnectedInventory();
 
-        if (world.getWorldTime() % 15 == 0) {
+        if (world.getWorldTime() % 10 == 0) {
 
             bankLocation = NetworkHelper.getConnectedBank(this);
 
@@ -128,9 +134,11 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity, INetw
     public void readFromNBT(NBTTagCompound root) {
 
         buyMode = root.getBoolean("buyMode");
+        automationMode = root.getBoolean("autoMode");
+
         selectedOffer = root.getInteger("selectedOffer");
 
-        automationMode = root.getBoolean("autoMode");
+        purchaseAmount = root.getInteger("purchaseAmount");
 
         marketItemList.clear();
 
@@ -168,9 +176,11 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity, INetw
         root.setTag("MarketItems", parent);
 
         root.setBoolean("buyMode", buyMode);
+        root.setBoolean("autoMode", automationMode);
+
         root.setInteger("selectedOffer", selectedOffer);
 
-        root.setBoolean("autoMode", automationMode);
+        root.setInteger("purchaseAmount", purchaseAmount);
 
         return super.writeToNBT(root);
     }

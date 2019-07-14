@@ -12,7 +12,9 @@ import calemiutils.item.ItemBuildingUnitTemplate;
 import calemiutils.tileentity.base.ITileEntityGuiHandler;
 import calemiutils.tileentity.base.TileEntityInventoryBase;
 import calemiutils.util.BlueprintTemplates;
+import calemiutils.util.Location;
 import calemiutils.util.helper.ItemHelper;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -163,10 +165,82 @@ public class TileEntityBuildingUnit extends TileEntityInventoryBase implements I
                 if (!name.isEmpty()) ItemHelper.getNBT(stack).setString("buildName", name);
             }
 
-            else getUnitName(player).printMessage(TextFormatting.RED, "There are too many Blueprints in range! (" + (template.positions.size() - CUConfig.buildingUnit.buildingUnitBlockSize + 1) + " Blueprint(s) over)");
+            else getUnitName(player).printMessage(TextFormatting.RED, "There are too many Blueprints in range! (" + (template.positions.size() - CUConfig.buildingUnit.buildingUnitBlockSize + 1) + " Blueprint(s) over). Try reducing the size with Markers!");
         }
 
         else getUnitName(player).printMessage(TextFormatting.RED, "There are no Blueprints in range!");
+    }
+
+    public void readBlocksInRange(EntityPlayer player, String name) {
+
+        ArrayList<Location> list = new ArrayList<>();
+        ArrayList<IBlockState> differentBlocks = new ArrayList<>();
+
+        for (int x = -horRange; x < horRange; x++) {
+
+            for (int y = 0; y < verRange; y++) {
+
+                for (int z = -horRange; z < horRange; z++) {
+
+                    Location nextLocation = new Location(world, getLocation().x + x, getLocation().y + y, getLocation().z + z);
+
+                    if (!nextLocation.isAirBlock() && !nextLocation.equals(getLocation())) {
+
+                        //Check if differentBlocks already has this block
+
+                        if (differentBlocks.isEmpty()) {
+                            differentBlocks.add(nextLocation.getBlockState());
+                        }
+
+                        else {
+
+                            for (IBlockState state : differentBlocks) {
+
+                                if (nextLocation.getBlock() != state.getBlock() || nextLocation.getBlockMeta() != state.getBlock().getMetaFromState(state)) {
+                                    differentBlocks.add(nextLocation.getBlockState());
+                                    break;
+                                }
+                            }
+                        }
+
+                        //Add it to list
+
+                        list.add(nextLocation);
+                    }
+                }
+            }
+        }
+
+        if (list.size() > 0) {
+
+            if (list.size() < CUConfig.buildingUnit.buildingUnitBlockSize) {
+
+                ItemStack stack = new ItemStack(InitItems.BUILDING_UNIT_TEMPLATE);
+                EntityItem entity = ItemHelper.spawnItem(getWorld(), getLocation().translate(EnumFacing.UP, 1), stack);
+
+                ArrayList<BlueprintPos> positions = new ArrayList<>();
+
+                for (Location location : list) {
+
+                    for (int index = 0; index < differentBlocks.size(); index++) {
+
+                        if (location.getBlockState() == differentBlocks.get(index)) {
+
+                            positions.add(new BlueprintPos(location.x - getLocation().x,  location.y - getLocation().y, location.z - getLocation().z, index % 15));
+                        }
+                    }
+                }
+
+                BlueprintTemplate template = new BlueprintTemplate(positions);
+
+                entity.setItem(template.writeToItem(stack));
+                if (!name.isEmpty()) ItemHelper.getNBT(stack).setString("buildName", name);
+            }
+
+            else getUnitName(player).printMessage(TextFormatting.RED, "There are too many blocks in range! (" + (list.size() - CUConfig.buildingUnit.buildingUnitBlockSize + 1) + " Blueprint(s) over). Try reducing the size with Markers!");
+        }
+
+        else getUnitName(player).printMessage(TextFormatting.RED, "There are no blocks in range!");
     }
 
     public void placeBlueprints() {

@@ -1,5 +1,6 @@
 package calemiutils.tileentity.base;
 
+import calemiutils.config.CUConfig;
 import calemiutils.util.helper.MathHelper;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -39,7 +40,11 @@ public abstract class TileEntityUpgradable extends TileEntityInventoryBase imple
 
         int difference = max - min;
 
-        return min + MathHelper.scaleInt(getStackInSlot(slot).getCount(), 5, difference);
+        return min + MathHelper.scaleInt(getStackInSlot(slot).getCount(), CUConfig.misc.upgradeStackSize, difference);
+    }
+
+    protected int scaleCost(int cost) {
+        return cost + (int)(cost * CUConfig.misc.speedUpgradeCostMultiplier * getStackInSlot(getSpeedSlot()).getCount());
     }
 
     protected void tickProgress() {

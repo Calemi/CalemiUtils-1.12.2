@@ -5,6 +5,7 @@ import calemiutils.config.CUConfig;
 import calemiutils.gui.GuiLinkBook;
 import calemiutils.item.base.ItemBase;
 import calemiutils.tileentity.TileEntityBookStand;
+import calemiutils.tileentity.base.TileEntityBase;
 import calemiutils.util.Location;
 import calemiutils.util.UnitChatMessage;
 import calemiutils.util.helper.EntityHelper;
@@ -176,6 +177,7 @@ public class ItemLinkBookLocation extends ItemBase {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ItemLinkBookLocation && location.getTileEntity() != null && location.getTileEntity() instanceof TileEntityBookStand && location.getIInventory() != null) {
 
             if (InventoryHelper.insertHeldItemIntoSlot(player, hand, location, location.getIInventory(), 0, true)) {
+                ((TileEntityBase)location.getTileEntity()).markForUpdate();
                 return EnumActionResult.SUCCESS;
             }
 

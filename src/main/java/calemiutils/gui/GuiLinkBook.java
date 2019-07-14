@@ -5,7 +5,7 @@ import calemiutils.gui.base.GuiButtonRect;
 import calemiutils.gui.base.GuiScreenBase;
 import calemiutils.gui.base.GuiTextFieldRect;
 import calemiutils.item.ItemLinkBookLocation;
-import calemiutils.packet.ServerPacketHandler;
+import calemiutils.packet.LinkBookPacket;
 import calemiutils.util.Location;
 import calemiutils.util.helper.GuiHelper;
 import calemiutils.util.helper.PacketHelper;
@@ -28,7 +28,7 @@ public class GuiLinkBook extends GuiScreenBase {
 
     private GuiTextFieldRect nameField;
 
-    private GuiButtonRect resetBook;
+    private GuiButtonRect resetBookButton;
     private GuiButtonRect teleportButton;
     private GuiButtonRect bindLocationButton;
 
@@ -57,7 +57,7 @@ public class GuiLinkBook extends GuiScreenBase {
     private void setName(String name) {
 
         if (isBookInHand && getBook() != null) {
-            CalemiUtils.network.sendToServer(new ServerPacketHandler("linkbook%name%" + name));
+            CalemiUtils.network.sendToServer(new LinkBookPacket("name%" + name));
             ItemLinkBookLocation.bindName(stack, name);
         }
     }
@@ -82,7 +82,7 @@ public class GuiLinkBook extends GuiScreenBase {
 
             new GuiButtonRect(0, getScreenX() + 80 - 4, getScreenY() - 50 - 8, 16, "+", buttonList);
             bindLocationButton = new GuiButtonRect(2, getScreenX() - 50, getScreenY() + 35 - 8, 100, "Bind Location", buttonList);
-            resetBook = new GuiButtonRect(3, getScreenX() - 50, getScreenY() + 70 - 8, 100, "Reset Book", buttonList);
+            resetBookButton = new GuiButtonRect(3, getScreenX() - 50, getScreenY() + 70 - 8, 100, "Reset Book", buttonList);
         }
 
         teleportButton = new GuiButtonRect(1, getScreenX() - 50, getScreenY() - 8, 100, "Teleport", buttonList);
@@ -102,13 +102,13 @@ public class GuiLinkBook extends GuiScreenBase {
                 Location location = new Location(player.world, (int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ));
                 int dim = player.world.provider.getDimension();
 
-                CalemiUtils.network.sendToServer(new ServerPacketHandler("linkbook%bind%" + PacketHelper.sendLocation(location) + dim));
+                CalemiUtils.network.sendToServer(new LinkBookPacket("bind%" + PacketHelper.sendLocation(location) + dim));
                 ItemLinkBookLocation.bindLocation(stack, player, location, true);
             }
 
-            if (button.id == resetBook.id) {
+            if (button.id == resetBookButton.id) {
                 setName("");
-                CalemiUtils.network.sendToServer(new ServerPacketHandler("linkbook%reset%"));
+                CalemiUtils.network.sendToServer(new LinkBookPacket("reset%"));
                 ItemLinkBookLocation.resetLocation(stack, player);
                 nameField.setText("");
             }
@@ -123,7 +123,7 @@ public class GuiLinkBook extends GuiScreenBase {
                 if (location != null) {
                     mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 0.75F));
                     SoundHelper.playWarp(player.world, player);
-                    CalemiUtils.network.sendToServer(new ServerPacketHandler("linkbook%teleport%" + PacketHelper.sendLocation(location) + ItemLinkBookLocation.getLinkedDimension(stack)));
+                    CalemiUtils.network.sendToServer(new LinkBookPacket("teleport%" + PacketHelper.sendLocation(location) + ItemLinkBookLocation.getLinkedDimension(stack)));
 
                     mc.player.closeScreen();
                 }
@@ -136,22 +136,10 @@ public class GuiLinkBook extends GuiScreenBase {
 
         super.updateScreen();
 
-        if (getBook() != null) {
+        Location location = ItemLinkBookLocation.getLinkedLocation(player.world, stack);
 
-            teleportButton.enabled = getBook().isLinked(stack);
-
-            if (isBookInHand) {
-
-                resetBook.enabled = getBook().isLinked(stack);
-
-                if (nameField.isFocused()) {
-
-                    if (Keyboard.isKeyDown(Keyboard.KEY_RETURN)) {
-                        setName(nameField.getText());
-                    }
-                }
-            }
-        }
+        teleportButton.enabled = location != null;
+        if (isBookInHand) resetBookButton.enabled = location != null;
     }
 
     @Override
@@ -213,6 +201,23 @@ public class GuiLinkBook extends GuiScreenBase {
 
         super.keyTyped(c, i);
         if (isBookInHand) nameField.textboxKeyTyped(c, i);
+
+        if (getBook() != null) {
+
+            teleportButton.enabled = getBook().isLinked(stack);
+
+            if (isBookInHand) {
+
+                resetBookButton.enabled = getBook().isLinked(stack);
+
+                if (nameField.isFocused()) {
+
+                    if (Keyboard.isKeyDown(Keyboard.KEY_RETURN)) {
+                        setName(nameField.getText());
+                    }
+                }
+            }
+        }
     }
 
     @Override

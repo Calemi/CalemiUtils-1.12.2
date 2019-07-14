@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -50,8 +51,6 @@ public class WrenchEvent {
             }
         }
 
-        ItemHelper.getNBT(stack);
-
         location.setBlockToAir();
     }
 
@@ -81,6 +80,17 @@ public class WrenchEvent {
 
                 ItemStackHelper.loadAllItems(ItemHelper.getNBT(stack), teBuildingUnit.slots);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onBlockDestroy(BlockEvent.BreakEvent event) {
+
+        TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
+
+        //Building Unit
+        if (tileEntity instanceof TileEntityBuildingUnit) {
+            onBlockWrenched(event.getWorld(), new Location(tileEntity));
         }
     }
 

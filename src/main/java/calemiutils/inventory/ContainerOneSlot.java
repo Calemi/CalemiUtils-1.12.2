@@ -4,7 +4,9 @@ import calemiutils.inventory.base.ContainerBase;
 import calemiutils.inventory.base.SlotFilter;
 import calemiutils.tileentity.base.TileEntityInventoryBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class ContainerOneSlot extends ContainerBase {
 
@@ -18,4 +20,10 @@ public class ContainerOneSlot extends ContainerBase {
         addSlotToContainer(new SlotFilter(te, 0, 80, 18, filters));
     }
 
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+
+        tileEntity.markForUpdate();
+        return super.slotClick(slotId, dragType, clickTypeIn, player);
+    }
 }

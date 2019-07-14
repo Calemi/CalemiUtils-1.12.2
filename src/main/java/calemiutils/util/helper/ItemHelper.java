@@ -5,6 +5,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -25,23 +27,51 @@ public class ItemHelper {
 
     public static String getStringFromStack(ItemStack stack) {
 
+        if (stack.isEmpty()) {
+            return "null";
+        }
+
         return Item.getIdFromItem(stack.getItem()) + "&" + stack.getCount() + "&" + stack.getMetadata();
+    }
+
+    public static String getNBTFromStack(ItemStack stack) {
+
+        if (stack.hasTagCompound()) {
+            return stack.getTagCompound().toString();
+        }
+
+        return "";
     }
 
     public static ItemStack getStackFromString(String string) {
 
-        String[] data = string.split("&");
+        if (!string.equalsIgnoreCase("null")) {
 
-        if (data.length == 3) {
+            String[] data = string.split("&");
 
-            int itemId = Integer.parseInt(data[0]);
-            int stackSize = Integer.parseInt(data[1]);
-            int meta = Integer.parseInt(data[2]);
+            if (data.length == 3) {
 
-            return new ItemStack(Item.getItemById(itemId), stackSize, meta);
+                int itemId = Integer.parseInt(data[0]);
+                int stackSize = Integer.parseInt(data[1]);
+                int meta = Integer.parseInt(data[2]);
+
+                return new ItemStack(Item.getItemById(itemId), stackSize, meta);
+            }
         }
 
-        return null;
+        return ItemStack.EMPTY;
+    }
+
+    public static void attachNBTFromString(ItemStack stack, String nbtString) {
+
+        try {
+            stack.setTagCompound(JsonToNBT.getTagFromJson(nbtString));
+        }
+
+        catch (NBTException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static String countByStacks(int count) {
@@ -65,9 +95,9 @@ public class ItemHelper {
 
         EntityItem item = new EntityItem(world, x, y, z, is);
         item.setNoPickupDelay();
-        item.motionX = -0.1F + rand.nextFloat() * 0.2F;
-        item.motionY = -0.1F + rand.nextFloat() * 0.2F;
-        item.motionZ = -0.1F + rand.nextFloat() * 0.2F;
+        item.motionX = -0.05F + rand.nextFloat() * 0.1F;
+        item.motionY = -0.05F + rand.nextFloat() * 0.1F;
+        item.motionZ = -0.05F + rand.nextFloat() * 0.1F;
         world.spawnEntity(item);
         return item;
     }

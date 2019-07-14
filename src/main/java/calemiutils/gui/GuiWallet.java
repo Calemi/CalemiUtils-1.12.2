@@ -7,7 +7,7 @@ import calemiutils.gui.base.GuiContainerBase;
 import calemiutils.init.InitItems;
 import calemiutils.inventory.ContainerWallet;
 import calemiutils.item.ItemWallet;
-import calemiutils.packet.ServerPacketHandler;
+import calemiutils.packet.WalletPacket;
 import calemiutils.util.helper.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -89,10 +89,10 @@ public class GuiWallet extends GuiContainerBase {
 
                 if (ItemHelper.getNBT(walletStack).getBoolean("suck")) {
                     walletItem.toggleSuck(walletStack);
-                    CalemiUtils.network.sendToServer(new ServerPacketHandler("wallet-togglesuck"));
+                    CalemiUtils.network.sendToServer(new WalletPacket("togglesuck"));
                 }
 
-                CalemiUtils.network.sendToServer(new ServerPacketHandler("wallet-withdraw%" + button.id + "%" + multiplier));
+                CalemiUtils.network.sendToServer(new WalletPacket("withdraw%" + button.id + "%" + multiplier));
 
                 NBTTagCompound nbt = ItemHelper.getNBT(walletStack);
 
@@ -100,7 +100,7 @@ public class GuiWallet extends GuiContainerBase {
             }
 
             if (button.id == toggleSuckButton.id) {
-                CalemiUtils.network.sendToServer(new ServerPacketHandler("wallet-togglesuck"));
+                CalemiUtils.network.sendToServer(new WalletPacket("togglesuck"));
                 walletItem.toggleSuck(walletStack);
             }
         }

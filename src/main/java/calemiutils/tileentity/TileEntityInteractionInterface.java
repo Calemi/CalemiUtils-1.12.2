@@ -21,7 +21,10 @@ public class TileEntityInteractionInterface extends TileEntityInventoryBase impl
 
     private final SecurityProfile profile = new SecurityProfile();
 
-    public ItemStack filter = ItemStack.EMPTY;
+    public String blockName = "";
+
+    public ItemStack tabIconStack = ItemStack.EMPTY;
+    public ItemStack blockIconStack = ItemStack.EMPTY;
 
     @Override
     public void update() {
@@ -30,21 +33,29 @@ public class TileEntityInteractionInterface extends TileEntityInventoryBase impl
 
     public boolean canSetFilter(ItemStack stack) {
 
-        return stack.isEmpty() || stack.getItem() instanceof ItemInteractionInterfaceFilter;
+        return stack.getItem() instanceof ItemInteractionInterfaceFilter;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
 
         super.readFromNBT(nbt);
-        filter = NBTHelper.loadItem(nbt);
+
+        blockName = nbt.getString("blockName");
+
+        tabIconStack = NBTHelper.loadItem(nbt, 0);
+        blockIconStack = NBTHelper.loadItem(nbt, 1);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 
         super.writeToNBT(nbt);
-        NBTHelper.saveItem(nbt, filter);
+
+        nbt.setString("blockName", blockName);
+
+        NBTHelper.saveItem(nbt, tabIconStack, 0);
+        NBTHelper.saveItem(nbt, blockIconStack, 1);
         return nbt;
     }
 
@@ -69,7 +80,7 @@ public class TileEntityInteractionInterface extends TileEntityInventoryBase impl
     @Override
     public Container getTileContainer(EntityPlayer player) {
 
-        return new ContainerBase(player, this, 8, 41);
+        return new ContainerBase(player, this, 8, 62);
     }
 
     @Override

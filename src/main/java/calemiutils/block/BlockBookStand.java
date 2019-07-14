@@ -48,19 +48,6 @@ public class BlockBookStand extends BlockInventoryContainerBase implements IExtr
         if (CUConfig.blockUtils.bookStand && CUConfig.itemUtils.locationLinkBook) addBlock();
     }
 
-    public static void setState(boolean value, World worldIn, BlockPos pos, int meta) {
-
-        TileEntity tileentity = worldIn.getTileEntity(pos);
-        Location location = new Location(worldIn, pos);
-
-        location.setBlock(location.getBlock().getStateFromMeta(meta).withProperty(BlockBookStand.BOOK, value));
-
-        if (tileentity != null) {
-            tileentity.validate();
-            worldIn.setTileEntity(pos, tileentity);
-        }
-    }
-
     @Override
     public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 

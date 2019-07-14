@@ -13,7 +13,7 @@ public class ItemUpgrade extends ItemBase {
 
     public ItemUpgrade(String name) {
 
-        super(name + "_upgrade", 5);
+        super(name + "_upgrade", CUConfig.misc.upgradeStackSize);
         if (CUConfig.itemUtils.upgrades) addItem();
     }
 

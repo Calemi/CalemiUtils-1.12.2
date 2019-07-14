@@ -10,29 +10,10 @@
     },
     {
       "when": {
-        "facing": "north",
-        "book": "true"
-      },
-      "apply": {
-        "model": "calemiutils:book"
-      }
-    },
-    {
-      "when": {
         "facing": "south"
       },
       "apply": {
         "model": "calemiutils:book_stand",
-        "y": 180
-      }
-    },
-    {
-      "when": {
-        "facing": "south",
-        "book": "true"
-      },
-      "apply": {
-        "model": "calemiutils:book",
         "y": 180
       }
     },
@@ -47,30 +28,10 @@
     },
     {
       "when": {
-        "facing": "west",
-        "book": "true"
-      },
-      "apply": {
-        "model": "calemiutils:book",
-        "y": 270
-      }
-    },
-    {
-      "when": {
         "facing": "east"
       },
       "apply": {
         "model": "calemiutils:book_stand",
-        "y": 90
-      }
-    },
-    {
-      "when": {
-        "facing": "east",
-        "book": "true"
-      },
-      "apply": {
-        "model": "calemiutils:book",
         "y": 90
       }
     }

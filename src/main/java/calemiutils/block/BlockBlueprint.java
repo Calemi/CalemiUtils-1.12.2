@@ -12,6 +12,8 @@ import calemiutils.util.helper.InventoryHelper;
 import calemiutils.util.helper.ItemHelper;
 import calemiutils.util.helper.SoundHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockChest;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -21,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
@@ -30,6 +33,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BlockBlueprint extends BlockColoredBase {
@@ -88,40 +92,43 @@ public class BlockBlueprint extends BlockColoredBase {
 
         IBlockState state = Block.getBlockFromItem(currentStack.getItem()).getStateForPlacement(player.world, location.getBlockPos(), EnumFacing.UP, 0, 0, 0, currentStack.getItemDamage(), player, EnumHand.MAIN_HAND);
 
-        if (player.isSneaking()) {
-            replaceBlock(location, player, state);
-            InventoryHelper.consumeItem(player.inventory, 1, true, currentStack);
-            SoundHelper.playBlockPlaceSound(world, player, Block.getBlockFromItem(currentStack.getItem()).getDefaultState(), location);
-        }
+        if (canPlaceBlockInBlueprint(state)) {
 
-        else {
-
-            int itemCount = InventoryHelper.countItems(player.inventory, true, currentStack);
-
-            if (itemCount >= scan.buffer.size()) {
-
-                int amountToConsume = 0;
-
-                for (Location nextLocation : scan.buffer) {
-
-                    amountToConsume++;
-                    replaceBlock(nextLocation, player, state);
-                }
-
-                if (amountToConsume > 0) {
-
-                    SoundHelper.playDing(player.world, player);
-                    SoundHelper.playBlockPlaceSound(world, player, Block.getBlockFromItem(currentStack.getItem()).getDefaultState(), location);
-
-                    if (!world.isRemote) message.printMessage(TextFormatting.GREEN, "Placed " + ItemHelper.countByStacks(amountToConsume));
-                    InventoryHelper.consumeItem(player.inventory, amountToConsume, true, currentStack);
-                }
+            if (player.isSneaking()) {
+                replaceBlock(location, player, state);
+                InventoryHelper.consumeItem(player.inventory, 1, true, currentStack);
+                SoundHelper.playBlockPlaceSound(world, player, Block.getBlockFromItem(currentStack.getItem()).getDefaultState(), location);
             }
 
-            else if (!world.isRemote) {
+            else {
 
-                message.printMessage(TextFormatting.RED, "You don't have enough blocks of that type!");
-                message.printMessage(TextFormatting.RED, "You're missing: " + ItemHelper.countByStacks((scan.buffer.size() - itemCount)));
+                int itemCount = InventoryHelper.countItems(player.inventory, true, currentStack);
+
+                if (itemCount >= scan.buffer.size()) {
+
+                    int amountToConsume = 0;
+
+                    for (Location nextLocation : scan.buffer) {
+
+                        amountToConsume++;
+                        replaceBlock(nextLocation, player, state);
+                    }
+
+                    if (amountToConsume > 0) {
+
+                        SoundHelper.playDing(player.world, player);
+                        SoundHelper.playBlockPlaceSound(world, player, Block.getBlockFromItem(currentStack.getItem()).getDefaultState(), location);
+
+                        if (!world.isRemote) message.printMessage(TextFormatting.GREEN, "Placed " + ItemHelper.countByStacks(amountToConsume));
+                        InventoryHelper.consumeItem(player.inventory, amountToConsume, true, currentStack);
+                    }
+                }
+
+                else if (!world.isRemote) {
+
+                    message.printMessage(TextFormatting.RED, "You don't have enough blocks of that type!");
+                    message.printMessage(TextFormatting.RED, "You're missing: " + ItemHelper.countByStacks((scan.buffer.size() - itemCount)));
+                }
             }
         }
     }
@@ -131,9 +138,15 @@ public class BlockBlueprint extends BlockColoredBase {
         if (!player.world.isRemote) {
 
             location.setBlock(state, player);
-
             ForgeEventFactory.onPlayerBlockPlace(player, BlockSnapshot.getBlockSnapshot(player.world, location.getBlockPos()), EnumFacing.UP, EnumHand.MAIN_HAND);
         }
+    }
+
+    private boolean canPlaceBlockInBlueprint(IBlockState state) {
+
+        if (state.getBlock() instanceof BlockChest) return false;
+
+        return state.getMaterial() != Material.PLANTS && state.getMaterial() != Material.AIR && state.getMaterial() != Material.ANVIL && state.getMaterial() != Material.CACTUS && state.getMaterial() != Material.CAKE && state.getMaterial() != Material.CARPET && state.getMaterial() != Material.CIRCUITS && state.getMaterial() != Material.VINE && state.getMaterial() != Material.PORTAL;
     }
 
     @Override
@@ -170,6 +183,16 @@ public class BlockBlueprint extends BlockColoredBase {
     public boolean isOpaqueCube(IBlockState state) {
 
         return false;
+    }
+
+    @Nullable
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+
+        if (CUConfig.misc.blueprintPassable) {
+            return NULL_AABB;
+        }
+
+        else return super.getCollisionBoundingBox(blockState, worldIn, pos);
     }
 
     @SideOnly(Side.CLIENT)

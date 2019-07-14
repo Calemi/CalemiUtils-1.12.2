@@ -303,8 +303,12 @@ public class CUConfig implements IConditionFactory {
         public boolean usePermission = false;
 
         @Name("Use Security")
-        @Config.Comment("Disable this to allow everyone access to anyone's blocks")
+        @Config.Comment("Disable this to allow everyone access to anyone's blocks.")
         public boolean useSecurity = true;
+
+        @Name("Make Blueprint Passable")
+        @Config.Comment("Enable this to allow players to pass through Blueprint.")
+        public boolean blueprintPassable = false;
 
         @Name("Bank Currency Capacity")
         @Config.Comment("The max amount of currency the Bank can store.")
@@ -330,6 +334,16 @@ public class CUConfig implements IConditionFactory {
         @Config.Comment("The max range the Mining Unit can mine blocks.")
         @RangeInt(min = 10, max = 64)
         public int miningUnitMaxRange = 32;
+
+        @Name("Upgrade Stack Size")
+        @Config.Comment("The max range the Torch Place can place torches.")
+        @RangeInt(min = 1, max = 64)
+        public int upgradeStackSize = 5;
+
+        @Name("Speed Upgrade Cost Multiplier")
+        @Config.Comment("This value is multiplied and added to the current cost of the Unit. This value increases based on how many Speed Upgrades are in the slot.")
+        @Config.RangeDouble(min = 0)
+        public double speedUpgradeCostMultiplier = 0;
 
         @Name("Blender Max Juice")
         @Config.Comment("0 to Disable. The max height amount of juice the blender can store.")

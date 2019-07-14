@@ -6,7 +6,7 @@ import calemiutils.gui.base.GuiButtonRect;
 import calemiutils.gui.base.GuiContainerBase;
 import calemiutils.inventory.ContainerBuildersKit;
 import calemiutils.item.ItemBuildersKit;
-import calemiutils.packet.ServerPacketHandler;
+import calemiutils.packet.BuildersKitPacket;
 import calemiutils.util.helper.GuiHelper;
 import calemiutils.util.helper.ItemHelper;
 import calemiutils.util.helper.ShiftHelper;
@@ -62,19 +62,19 @@ public class GuiBuilderKit extends GuiContainerBase {
         if (player.getHeldItemMainhand().getItem() instanceof ItemBuildersKit) {
 
             if (button.id == extractButton.id) {
-                CalemiUtils.network.sendToServer(new ServerPacketHandler("builderskit-extractblocks%" + multiplier));
+                CalemiUtils.network.sendToServer(new BuildersKitPacket("extractblocks%" + multiplier));
 
                 if (ItemHelper.getNBT(player.getHeldItemMainhand()).getBoolean("suck")) {
-                    CalemiUtils.network.sendToServer(new ServerPacketHandler("builderskit-togglesuck"));
+                    CalemiUtils.network.sendToServer(new BuildersKitPacket("togglesuck"));
                 }
             }
 
             if (button.id == toggleSuckButton.id) {
-                CalemiUtils.network.sendToServer(new ServerPacketHandler("builderskit-togglesuck"));
+                CalemiUtils.network.sendToServer(new BuildersKitPacket("togglesuck"));
             }
 
             if (button.id == resetBlockButton.id) {
-                CalemiUtils.network.sendToServer(new ServerPacketHandler("builderskit-resetblock"));
+                CalemiUtils.network.sendToServer(new BuildersKitPacket("resetblock"));
             }
         }
     }

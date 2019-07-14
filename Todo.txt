@@ -1,5 +1,8 @@
 Try to fix the known bugs before implementing anything on this list.
 
+Market
+-Add an option for selling ore dictionary names
+
 Building Unit
 -Optimize Building Unit by rendering blocks using a tesselator
 

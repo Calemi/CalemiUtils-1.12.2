@@ -99,7 +99,15 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
             for (int i = 0; i < getSizeInventory(); i++) {
 
                 if (getStackInSlot(i) != null && getStackInSlot(i).isItemEqual(getStackForSale())) {
-                    count += getStackInSlot(i).getCount();
+
+                    if (getStackForSale().hasTagCompound()) {
+
+                        if (getStackInSlot(i).hasTagCompound() && getStackInSlot(i).getTagCompound().equals(getStackForSale().getTagCompound())) {
+                            count += getStackInSlot(i).getCount();
+                        }
+                    }
+
+                    else count += getStackInSlot(i).getCount();
                 }
             }
 
@@ -146,7 +154,7 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
         amountForSale = nbt.getInteger("amount");
         salePrice = nbt.getInteger("price");
 
-        stackForSale = NBTHelper.loadItem(nbt);
+        stackForSale = NBTHelper.loadItem(nbt, 0);
 
         adminMode = nbt.getBoolean("adminMode");
         buyMode = nbt.getBoolean("buyMode");
@@ -160,7 +168,7 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
         nbt.setInteger("amount", amountForSale);
         nbt.setInteger("price", salePrice);
 
-        NBTHelper.saveItem(nbt, stackForSale);
+        NBTHelper.saveItem(nbt, stackForSale, 0);
 
         nbt.setBoolean("adminMode", adminMode);
         nbt.setBoolean("buyMode", buyMode);

@@ -125,7 +125,7 @@ public abstract class GuiContainerBase extends GuiContainer {
         addLeftInfoText(text, 15);
     }
 
-    private void addRightInfoText(String text, int sizeAdd, int sizeY) {
+    protected void addRightInfoText(String text, int sizeAdd, int sizeY) {
 
         int width = mc.fontRenderer.getStringWidth(text) + sizeAdd + 7;
 

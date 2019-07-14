@@ -15,9 +15,9 @@ public class MathHelper {
         return array;
     }
 
-    public static int getAmountToAdd(int value, int amountToAdd, int maxAmount) {
+    public static int getAmountToAdd(int startingValue, int amountToAdd, int maxAmount) {
 
-        if (value + amountToAdd > maxAmount) {
+        if (startingValue + amountToAdd > maxAmount) {
 
             return 0;
         }
@@ -27,10 +27,10 @@ public class MathHelper {
         }
     }
 
-    public static int getRemainder(int value, int amountToAdd, int maxAmount) {
+    public static int getRemainder(int startingValue, int amountToAdd, int maxAmount) {
 
-        if (value + amountToAdd > maxAmount) {
-            return maxAmount - value;
+        if (startingValue + amountToAdd > maxAmount) {
+            return maxAmount - startingValue;
         }
 
         else {

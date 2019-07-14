@@ -49,4 +49,32 @@ public class BlockHelper {
             }
         }
     }
+
+    public static void placeBlockInArray(World world, BlockPos pos, EntityPlayer player, Block block, EnumFacing dir) {
+
+        Location location = new Location(world, pos);
+
+        ItemStack currentStack = player.getHeldItemMainhand();
+
+        if (currentStack.getItem() == Item.getItemFromBlock(block) || currentStack.getItem() instanceof ItemBuildersKit) {
+
+            for (int i = 0; i < 64; i++) {
+
+                Location nextLocation = new Location(location, dir, i);
+
+                if (nextLocation.getBlock() != null && nextLocation.getBlock() != block && !nextLocation.isBlockValidForPlacing(block)) {
+                    break;
+                }
+
+                if (nextLocation.isBlockValidForPlacing(block)) {
+
+                    nextLocation.setBlock(block);
+
+                    InventoryHelper.consumeItem(player.inventory, 1, true, new ItemStack(block));
+
+                    break;
+                }
+            }
+        }
+    }
 }

@@ -1,7 +1,12 @@
 {
   "parent": "block/cube_column",
   "textures": {
-    "end": "calemiutils:blocks/unit_side",
-    "side": "calemiutils:blocks/market_side"
+    "particle": "blocks/crafting_table_front",
+    "down": "calemiutils:blocks/unit_side",
+    "up": "calemiutils:blocks/market_top",
+    "north": "calemiutils:blocks/market_side",
+    "east": "calemiutils:blocks/market_side",
+    "south": "calemiutils:blocks/market_side",
+    "west": "calemiutils:blocks/market_side"
   }
 }

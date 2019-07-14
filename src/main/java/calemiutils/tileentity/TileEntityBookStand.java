@@ -1,24 +1,19 @@
 package calemiutils.tileentity;
 
-import calemiutils.block.BlockBookStand;
 import calemiutils.gui.GuiOneSlot;
 import calemiutils.init.InitItems;
 import calemiutils.inventory.ContainerOneSlot;
-import calemiutils.item.ItemLinkBookLocation;
 import calemiutils.tileentity.base.INetwork;
 import calemiutils.tileentity.base.ITileEntityGuiHandler;
 import calemiutils.tileentity.base.TileEntityInventoryBase;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityBookStand extends TileEntityInventoryBase implements ITileEntityGuiHandler, INetwork {
-
-    private boolean hasChanged = false;
 
     public TileEntityBookStand() {
 
@@ -30,26 +25,6 @@ public class TileEntityBookStand extends TileEntityInventoryBase implements ITil
     @Override
     public void update() {
 
-        ItemStack stack = getStackInSlot(0);
-
-        if (!stack.isEmpty() && stack.getItem() instanceof ItemLinkBookLocation) {
-
-            if (!hasChanged) {
-                setState(true);
-                hasChanged = true;
-            }
-
-        }
-
-        else {
-            setState(false);
-            hasChanged = false;
-        }
-    }
-
-    private void setState(boolean value) {
-
-        BlockBookStand.setState(value, world, pos, getBlockMetadata());
     }
 
     @Override

@@ -4,7 +4,7 @@ import calemiutils.CalemiUtils;
 import calemiutils.gui.base.GuiButtonRect;
 import calemiutils.gui.base.GuiContainerBase;
 import calemiutils.gui.base.GuiFakeSlot;
-import calemiutils.packet.ServerPacketHandler;
+import calemiutils.packet.TradingPostPacket;
 import calemiutils.tileentity.TileEntityTradingPost;
 import calemiutils.util.helper.*;
 import net.minecraft.client.gui.GuiButton;
@@ -82,7 +82,9 @@ public class GuiTradingPost extends GuiContainerBase {
 
             ItemStack stack = new ItemStack(inv.getItemStack().getItem(), 1, inv.getItemStack().getMetadata());
 
-            CalemiUtils.network.sendToServer(new ServerPacketHandler("tradingpost-setstackforsale%" + PacketHelper.sendLocation(tePost.getLocation()) + ItemHelper.getStringFromStack(stack)));
+            if (inv.getItemStack().hasTagCompound()) stack.setTagCompound(inv.getItemStack().getTagCompound());
+
+            CalemiUtils.network.sendToServer(new TradingPostPacket("setstackforsale%" + PacketHelper.sendLocation(tePost.getLocation()) + ItemHelper.getStringFromStack(stack) + "%" + ItemHelper.getNBTFromStack(stack)));
             tePost.setStackForSale(stack);
             fakeSlot.setItemStack(stack);
         }
@@ -91,7 +93,7 @@ public class GuiTradingPost extends GuiContainerBase {
 
             boolean mode = !tePost.buyMode;
 
-            CalemiUtils.network.sendToServer(new ServerPacketHandler("tradingpost-togglesellmode%" + PacketHelper.sendLocation(tePost.getLocation()) + mode));
+            CalemiUtils.network.sendToServer(new TradingPostPacket("togglesellmode%" + PacketHelper.sendLocation(tePost.getLocation()) + mode));
             tePost.buyMode = mode;
         }
 
@@ -131,7 +133,7 @@ public class GuiTradingPost extends GuiContainerBase {
 
             tePost.amountForSale = MathHelper.clamp(tePost.amountForSale, 1, 1000);
             tePost.salePrice = MathHelper.clamp(tePost.salePrice, 0, 10000);
-            CalemiUtils.network.sendToServer(new ServerPacketHandler("tradingpost-setoptions" + "%" + str + "%" + value + "%" + tePost.getPos().getX() + "%" + tePost.getPos().getY() + "%" + tePost.getPos().getZ()));
+            CalemiUtils.network.sendToServer(new TradingPostPacket("setoptions" + "%" + str + "%" + value + "%" + tePost.getPos().getX() + "%" + tePost.getPos().getY() + "%" + tePost.getPos().getZ()));
         }
     }
 

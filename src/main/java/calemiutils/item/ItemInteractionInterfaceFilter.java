@@ -30,16 +30,20 @@ public class ItemInteractionInterfaceFilter extends ItemBase {
         if (CUConfig.blockUtils.interactionNetwork) addItem();
     }
 
+    public static boolean isValidFilter(ItemStack stack) {
+        return !getFilterIcon(stack).isEmpty() && !getFilterName(stack).isEmpty();
+    }
+
     public static ItemStack getFilterIcon(ItemStack stack) {
 
         NBTTagCompound nbt = ItemHelper.getNBT(stack);
-        return NBTHelper.loadItem(nbt);
+        return NBTHelper.loadItem(nbt, 0);
     }
 
     public static void setFilterIcon(ItemStack stack, ItemStack filterStack) {
 
         NBTTagCompound nbt = ItemHelper.getNBT(stack);
-        NBTHelper.saveItem(nbt, filterStack);
+        NBTHelper.saveItem(nbt, filterStack, 0);
     }
 
     public static String getFilterName(ItemStack stack) {
@@ -59,12 +63,28 @@ public class ItemInteractionInterfaceFilter extends ItemBase {
         nbt.setString("filterName", string);
     }
 
+    public static String getFilterTooltip(ItemStack stack) {
+
+        NBTTagCompound nbt = ItemHelper.getNBT(stack);
+
+        if (nbt.hasKey("filterTooltip")) {
+            return nbt.getString("filterTooltip");
+        }
+
+        return "";
+    }
+
+    public static void setFilterTooltip(ItemStack stack, String string) {
+
+        NBTTagCompound nbt = ItemHelper.getNBT(stack);
+        nbt.setString("filterTooltip", string);
+    }
+
     public static boolean isSameFilter(ItemStack stack1, ItemStack stack2) {
 
         if (ItemStack.areItemStacksEqual(getFilterIcon(stack1), getFilterIcon(stack2))) {
 
-            return getFilterName(stack1).equalsIgnoreCase(getFilterName(stack2));
-
+            return getFilterName(stack1).equalsIgnoreCase(getFilterName(stack2)) && getFilterTooltip(stack1).equalsIgnoreCase(getFilterTooltip(stack2));
         }
 
         return false;
@@ -78,6 +98,7 @@ public class ItemInteractionInterfaceFilter extends ItemBase {
         tooltip.add("");
         tooltip.add("Filter Icon: " + ChatFormatting.AQUA + (getFilterIcon(stack).isEmpty() ? "Not set" : getFilterIcon(stack).getDisplayName()));
         tooltip.add("Filter Name: " + ChatFormatting.AQUA + (getFilterName(stack).isEmpty() ? "Not set" : getFilterName(stack)));
+        tooltip.add("Filter Tooltip: " + ChatFormatting.AQUA + (getFilterTooltip(stack).isEmpty() ? "Not set" : getFilterTooltip(stack)));
     }
 
     @Override
@@ -90,7 +111,7 @@ public class ItemInteractionInterfaceFilter extends ItemBase {
 
             TileEntityInteractionInterface teInterface = (TileEntityInteractionInterface) location.getTileEntity();
 
-            teInterface.filter = heldItem;
+            teInterface.tabIconStack = heldItem;
             return EnumActionResult.SUCCESS;
         }
 

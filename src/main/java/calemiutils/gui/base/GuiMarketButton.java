@@ -6,7 +6,6 @@ import calemiutils.util.helper.StringHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -37,24 +36,26 @@ public class GuiMarketButton extends GuiButton {
 
             hovered = rect.contains(mouseX, mouseY);
 
-            ItemStack stack = ItemStack.EMPTY;
+            ItemStack[] stacks;
 
-            Item item = Item.getByNameOrId(marketItem.stackObj);
-
-            if (item != null) {
-                stack = new ItemStack(item, 1, marketItem.meta);
+            if (!marketItem.isBuy && MarketItemsFile.MarketItem.doesOreNameExist(marketItem.stackObj)) {
+                stacks = MarketItemsFile.MarketItem.getStacksFromOreDict(marketItem.stackObj);
             }
 
-            if (!stack.isEmpty()) {
+            else {
+                stacks = new ItemStack[]{marketItem.getStack()};
+            }
+
+            if (stacks.length > 0 && !stacks[0].isEmpty()) {
 
                 String[] strings = new String[2];
 
-                strings[0] = marketItem.amount + "x " + stack.getDisplayName();
+                strings[0] = marketItem.amount + "x " + stacks[0].getDisplayName();
                 strings[1] = "Value " + StringHelper.printCurrency(marketItem.value);
 
-                GuiHelper.drawItemStack(itemRender, stack, rect.x, rect.y);
+                GuiHelper.drawItemStack(itemRender, stacks[0], rect.x, rect.y);
                 GuiHelper.drawHoveringTextBox(mouseX, mouseY, 150, rect, strings);
-                this.displayString = stack.getDisplayName();
+                this.displayString = stacks[0].getDisplayName();
 
                 GL11.glColor4f(1, 1, 1, 1);
             }

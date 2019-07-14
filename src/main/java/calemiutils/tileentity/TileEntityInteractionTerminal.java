@@ -18,7 +18,7 @@ public class TileEntityInteractionTerminal extends TileEntityBase implements INe
     private final SecurityProfile profile = new SecurityProfile();
 
     private VeinScan scan;
-    public final List<Location> interfaces = new ArrayList<>();
+    public final List<Location> blocksToInteract = new ArrayList<>();
 
     @Override
     public void update() {
@@ -30,7 +30,7 @@ public class TileEntityInteractionTerminal extends TileEntityBase implements INe
 
     public void huntForInterfaces() {
 
-        interfaces.clear();
+        blocksToInteract.clear();
         scan.reset();
         scan.startNetworkScan(getConnectedDirections());
 
@@ -46,7 +46,7 @@ public class TileEntityInteractionTerminal extends TileEntityBase implements INe
 
                     if (!locationBlock.isAirBlock()) {
 
-                        interfaces.add(locationBlock);
+                        blocksToInteract.add(locationBlock);
                     }
                 }
             }
@@ -56,7 +56,7 @@ public class TileEntityInteractionTerminal extends TileEntityBase implements INe
     public ItemStack getFilterStack(Location location) {
 
         TileEntityInteractionInterface tileInterface = ((TileEntityInteractionInterface) location.getTileEntity());
-        ItemStack stack = tileInterface.filter;
+        ItemStack stack = tileInterface.tabIconStack;
 
         if (!stack.isEmpty() && stack.getItem() instanceof ItemInteractionInterfaceFilter) {
             return stack;
@@ -68,7 +68,7 @@ public class TileEntityInteractionTerminal extends TileEntityBase implements INe
     private ItemInteractionInterfaceFilter getFilter(Location location) {
 
         TileEntityInteractionInterface tileInterface = ((TileEntityInteractionInterface) location.getTileEntity());
-        ItemStack stack = tileInterface.filter;
+        ItemStack stack = tileInterface.tabIconStack;
 
         if (getFilterStack(location) != null) {
             return (ItemInteractionInterfaceFilter) stack.getItem();
@@ -77,7 +77,7 @@ public class TileEntityInteractionTerminal extends TileEntityBase implements INe
         return null;
     }
 
-    private ItemStack getFilterIcon(Location location) {
+    private ItemStack getFilterTabIcon(Location location) {
 
         if (getFilter(location) != null) {
             return ItemInteractionInterfaceFilter.getFilterIcon(getFilterStack(location));
@@ -97,7 +97,7 @@ public class TileEntityInteractionTerminal extends TileEntityBase implements INe
 
     public boolean isValidFilter(Location location) {
 
-        ItemStack filterIcon = getFilterIcon(location);
+        ItemStack filterIcon = getFilterTabIcon(location);
 
         if (location != null && getFilter(location) != null && filterIcon != null) {
             return !filterIcon.isEmpty() && !getFilterName(location).isEmpty();

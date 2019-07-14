@@ -6,13 +6,11 @@ import calemiutils.init.InitItems;
 import calemiutils.item.base.ItemCoinColored;
 import calemiutils.item.base.ItemPencilColored;
 import calemiutils.key.KeyBindings;
+import calemiutils.render.RenderBookStand;
 import calemiutils.render.RenderBuildingUnit;
 import calemiutils.render.RenderDiggingUnit;
 import calemiutils.render.RenderTradingPost;
-import calemiutils.tileentity.TileEntityBuildingUnit;
-import calemiutils.tileentity.TileEntityMiningUnit;
-import calemiutils.tileentity.TileEntityQuarryUnit;
-import calemiutils.tileentity.TileEntityTradingPost;
+import calemiutils.tileentity.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -31,6 +29,7 @@ public class ClientProxy extends CommonProxy {
         FMLCommonHandler.instance().bus().register(new OverlayEvent());
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTradingPost.class, new RenderTradingPost());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBookStand.class, new RenderBookStand());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBuildingUnit.class, new RenderBuildingUnit());
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMiningUnit.class, new RenderDiggingUnit());
