@@ -85,7 +85,7 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
     @Override
     public void update() {
 
-        bankLocation = NetworkHelper.getConnectedBank(this);
+        //bankLocation = NetworkHelper.getConnectedBank(this);
 
         hasValidTradeOffer = getStackForSale() != null && !getStackForSale().isEmpty() && amountForSale >= 1;
     }

@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
+import java.util.List;
 import java.util.Random;
 
 public class ItemHelper {
@@ -100,5 +101,23 @@ public class ItemHelper {
         item.motionZ = -0.05F + rand.nextFloat() * 0.1F;
         world.spawnEntity(item);
         return item;
+    }
+
+    public static void spawnItems(World world, Location location, List<ItemStack> is) {
+
+        spawnItems(world, location.x + 0.5F, location.y + 0.5F, location.z + 0.5F, is);
+    }
+
+    private static void spawnItems(World world, float x, float y, float z, List<ItemStack> stacks) {
+
+        for (ItemStack is : stacks) {
+
+            EntityItem item = new EntityItem(world, x, y, z, is);
+            item.setNoPickupDelay();
+            item.motionX = -0.05F + rand.nextFloat() * 0.1F;
+            item.motionY = -0.05F + rand.nextFloat() * 0.1F;
+            item.motionZ = -0.05F + rand.nextFloat() * 0.1F;
+            world.spawnEntity(item);
+        }
     }
 }

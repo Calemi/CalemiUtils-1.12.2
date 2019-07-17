@@ -119,7 +119,7 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity, INetw
 
                     if (CurrencyHelper.canFitAddedCurrencyToNetwork(bank, marketItem.value)) {
 
-                        if (InventoryHelper.countItems(inv, false, marketItem.getStack()) >= marketItem.amount) {
+                        if (InventoryHelper.countItems(inv, false, false, marketItem.getStack()) >= marketItem.amount) {
 
                             InventoryHelper.consumeItem(inv, marketItem.amount, false, marketItem.getStack());
                             bank.addCurrency(marketItem.value);

@@ -396,7 +396,7 @@ public class GuiMarket extends GuiScreenBase {
 
                     if (currency + price <= getMaxCurrencyFromPayType(price)) {
 
-                        if (InventoryHelper.countItems(player.inventory, false, stacks) >= marketItem.amount * teMarket.purchaseAmount) {
+                        if (InventoryHelper.countItems(player.inventory, false, false, stacks) >= marketItem.amount * teMarket.purchaseAmount) {
 
                             InventoryHelper.consumeItem(player.inventory, marketItem.amount * teMarket.purchaseAmount, false, stacks);
                             if (getPaymentTypeFromSpace(price) == PayType.WALLET) ItemHelper.getNBT(walletStack).setInteger("balance", ItemHelper.getNBT(walletStack).getInteger("balance") + (marketItem.value * teMarket.purchaseAmount));

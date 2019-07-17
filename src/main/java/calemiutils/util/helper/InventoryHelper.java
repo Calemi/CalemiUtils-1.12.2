@@ -100,14 +100,14 @@ public class InventoryHelper {
 
     public static void consumeItem(IInventory inventory, int amount, boolean suckFromBuildersKit, ItemStack... itemStack) {
 
-        consumeItem(0, inventory, amount, suckFromBuildersKit, itemStack);
+        consumeItem(0, inventory, amount, suckFromBuildersKit, false, itemStack);
     }
 
-    private static void consumeItem(int slotOffset, IInventory inventory, int amount, boolean suckFromBuildersKit, ItemStack... itemStacks) {
+    public static void consumeItem(int slotOffset, IInventory inventory, int amount, boolean suckFromBuildersKit, boolean useNBT, ItemStack... itemStacks) {
 
         int amountLeft = amount;
 
-        if (countItems(inventory, suckFromBuildersKit, itemStacks) >= amount) {
+        if (countItems(inventory, suckFromBuildersKit, useNBT, itemStacks) >= amount) {
 
             for (int i = slotOffset; i < inventory.getSizeInventory(); i++) {
 
@@ -128,6 +128,13 @@ public class InventoryHelper {
                             for (ItemStack itemStack : itemStacks) {
 
                                 if (buildersKit.getBlockType(stack) != null && buildersKit.getBlockType(stack).isItemEqual(itemStack)) {
+
+                                    if (useNBT && itemStack.hasTagCompound()) {
+
+                                        if (!stack.hasTagCompound() || !stack.getTagCompound().equals(itemStack.getTagCompound())) {
+                                            continue;
+                                        }
+                                    }
 
                                     int stackAmount = ItemBuildersKit.getAmountOfBlocks(stack);
 
@@ -151,6 +158,13 @@ public class InventoryHelper {
 
                         if (stack.isItemEqual(itemStack)) {
 
+                            if (useNBT && itemStack.hasTagCompound()) {
+
+                                if (!stack.hasTagCompound() || !stack.getTagCompound().equals(itemStack.getTagCompound())) {
+                                    continue;
+                                }
+                            }
+
                             if (amountLeft >= stack.getCount()) {
 
                                 amountLeft -= stack.getCount();
@@ -172,7 +186,7 @@ public class InventoryHelper {
 
     }
 
-    public static int countItems(IInventory inventory, boolean countFromBuildersKit, ItemStack... itemStacks) {
+    public static int countItems(IInventory inventory, boolean countFromBuildersKit, boolean useNBT, ItemStack... itemStacks) {
 
         int count = 0;
 
@@ -188,7 +202,14 @@ public class InventoryHelper {
 
                     if (buildersKit.getBlockType(stack) != null && buildersKit.getBlockType(stack).isItemEqual(itemStack)) {
 
-                        count += ItemBuildersKit.getAmountOfBlocks(stack);
+                        if (useNBT && itemStack.hasTagCompound()) {
+
+                            if (stack.hasTagCompound() && stack.getTagCompound().equals(itemStack.getTagCompound())) {
+                                count += ItemBuildersKit.getAmountOfBlocks(stack);
+                            }
+                        }
+
+                        else count += ItemBuildersKit.getAmountOfBlocks(stack);
                     }
                 }
             }
@@ -196,6 +217,14 @@ public class InventoryHelper {
             for (ItemStack itemStack : itemStacks) {
 
                 if (stack.isItemEqual(itemStack)) {
+
+                    if (useNBT && itemStack.hasTagCompound()) {
+
+                        if (stack.hasTagCompound() && stack.getTagCompound().equals(itemStack.getTagCompound())) {
+                            count += stack.getCount();
+                        }
+                    }
+
                     count += stack.getCount();
                 }
             }

@@ -171,7 +171,7 @@ public class ItemBuildersKit extends ItemBase {
 
                 if (ItemHelper.getNBT(stack).getBoolean("suck") && getBlockType(stack) != null) {
 
-                    int count = InventoryHelper.countItems(player.inventory, false, getBlockType(stack));
+                    int count = InventoryHelper.countItems(player.inventory, false, false, getBlockType(stack));
 
                     if (count > 64) {
                         count = 64;

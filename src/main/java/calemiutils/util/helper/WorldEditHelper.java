@@ -66,20 +66,20 @@ public class WorldEditHelper {
 
     }
 
-    /*public static ArrayList<Location> selectCubeFromRadius(Location location, int xRad, int yRad, int zRad) {
+    public static ArrayList<Location> selectCubeFromRadius(Location location, int xRad, int yRad, int zRad) {
 
         return selectCubeFromRadius(location, xRad, -yRad, yRad, zRad);
-    }*/
+    }
 
-    /*private static ArrayList<Location> selectCubeFromRadius(Location location, int xRad, int yRadMin, int yRadMax, int zRad) {
+    private static ArrayList<Location> selectCubeFromRadius(Location location, int xRad, int yRadMin, int yRadMax, int zRad) {
 
-        ArrayList<Location> list = new ArrayList<Location>();
+        ArrayList<Location> list = new ArrayList<>();
 
-        for (int x = -xRad; x < xRad; x++) {
+        for (int x = -xRad; x <= xRad; x++) {
 
-            for (int y = yRadMin; y < yRadMax; y++) {
+            for (int y = yRadMin; y <= yRadMax; y++) {
 
-                for (int z = -zRad; z < zRad; z++) {
+                for (int z = -zRad; z <= zRad; z++) {
 
                     Location nextLocation = new Location(location.world, location.x + x, location.y + y, location.z + z);
                     list.add(nextLocation);
@@ -88,7 +88,7 @@ public class WorldEditHelper {
         }
 
         return list;
-    }*/
+    }
 
     public static ArrayList<Location> selectCubeFromTwoPoints(Location loc1, Location loc2) {
 

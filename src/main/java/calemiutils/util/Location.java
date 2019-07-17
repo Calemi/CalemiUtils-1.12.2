@@ -1,6 +1,9 @@
 package calemiutils.util;
 
+import calemiutils.util.helper.ItemHelper;
+import calemiutils.util.helper.SoundHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +15,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class Location {
 
@@ -149,15 +154,25 @@ public class Location {
         world.setBlockState(getBlockPos(), state);
     }
 
+    public void breakBlock(EntityPlayer player) {
+        SoundHelper.playBlockPlaceSound(world, player, getBlockState(), this);
+        if (!world.isRemote && (!player.capabilities.isCreativeMode)) ItemHelper.spawnItems(world, this, getDrops());
+        if (!world.isRemote) setBlockToAir();
+    }
+
     public int getBlockMeta() {
 
         return getBlock().getMetaFromState(getBlockState());
     }
 
-    /*public List<ItemStack> getDrops() {
+    public Material getBlockMaterial() {
+        return getBlock().getMaterial(getBlockState());
+    }
+
+    public List<ItemStack> getDrops() {
 
         return getBlock().getDrops(world, getBlockPos(), getBlockState(), 0);
-    }*/
+    }
 
     public TileEntity getTileEntity() {
 

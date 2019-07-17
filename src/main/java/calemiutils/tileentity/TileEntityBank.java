@@ -115,7 +115,6 @@ public class TileEntityBank extends TileEntityInventoryBase implements ITileEnti
         if (network.getStoredCurrency() > 0) {
 
             storedCurrency += network.extractAllCurrency();
-            markForUpdate();
         }
     }
 

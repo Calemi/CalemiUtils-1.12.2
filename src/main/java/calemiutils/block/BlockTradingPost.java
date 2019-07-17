@@ -185,8 +185,6 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
                 NBTTagCompound nbt = ItemHelper.getNBT(walletStack);
 
-                nbt.setInteger("balance", nbt.getInteger("balance") - tePost.salePrice);
-
                 if (tePost.storedCurrency + tePost.salePrice < CUConfig.misc.postCurrencyCapacity) {
 
                     ItemStack is = new ItemStack(tePost.getStackForSale().getItem(), tePost.amountForSale, tePost.getStackForSale().getItemDamage());
@@ -208,40 +206,36 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
                             tePost.storedCurrency += tePost.salePrice;
                             tePost.markForUpdate();
+
+                            nbt.setInteger("balance", nbt.getInteger("balance") - tePost.salePrice);
                         }
                     }
 
                     else {
 
-                        for (ItemStack stack : tePost.slots) {
+                        int count = InventoryHelper.countItems(tePost, false, true, tePost.getStackForSale());
 
-                            if (ItemStack.areItemsEqual(stack, is)) {
+                        if (count >= tePost.amountForSale) {
 
-                                if (is.hasTagCompound()) {
+                            if (!world.isRemote) {
 
-                                    if (!stack.hasTagCompound() || !stack.getTagCompound().equals(is.getTagCompound())) {
-                                        return;
-                                    }
+                                EntityItem dropItem;
+
+                                dropItem = ItemHelper.spawnItem(world, player, is);
+
+                                if (tePost.getStackForSale().hasTagCompound()) {
+                                    dropItem.getItem().setTagCompound(tePost.getStackForSale().getTagCompound());
                                 }
-
-                                if (!world.isRemote) {
-
-                                    EntityItem dropItem;
-
-                                    dropItem = ItemHelper.spawnItem(world, player, is);
-
-                                    if (stack.hasTagCompound()) {
-                                        dropItem.getItem().setTagCompound(stack.getTagCompound());
-                                    }
-                                }
-
-                                InventoryHelper.consumeItem(tePost, tePost.amountForSale, true, tePost.getStackForSale());
-
-                                tePost.storedCurrency += tePost.salePrice;
-                                tePost.markForUpdate();
-
-                                tePost.writeToNBT(tePost.getTileData());
                             }
+
+                            InventoryHelper.consumeItem(0, tePost, tePost.amountForSale, true, true, tePost.getStackForSale());
+
+                            tePost.storedCurrency += tePost.salePrice;
+                            tePost.markForUpdate();
+
+                            tePost.writeToNBT(tePost.getTileData());
+
+                            nbt.setInteger("balance", nbt.getInteger("balance") - tePost.salePrice);
                         }
                     }
                 }
@@ -252,12 +246,12 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
             else if (!world.isRemote) message.printMessage(TextFormatting.RED, "You don't have enough money!");
         }
 
-        else if (!world.isRemote) message.printMessage(TextFormatting.RED, "There is no more items in stock!");
+        else if (!world.isRemote) message.printMessage(TextFormatting.RED, "There is not enough items in stock!");
     }
 
     private void handleSell(UnitChatMessage message, ItemStack walletStack, World world, EntityPlayer player, TileEntityTradingPost tePost) {
 
-        if (InventoryHelper.countItems(player.inventory, true, tePost.getStackForSale()) >= tePost.amountForSale) {
+        if (InventoryHelper.countItems(player.inventory, true, true, tePost.getStackForSale()) >= tePost.amountForSale) {
 
             ItemStack is = new ItemStack(tePost.getStackForSale().getItem(), tePost.amountForSale, tePost.getStackForSale().getItemDamage());
 

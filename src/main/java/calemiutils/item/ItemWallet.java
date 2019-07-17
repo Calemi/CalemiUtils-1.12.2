@@ -99,7 +99,7 @@ public class ItemWallet extends ItemBase implements IBauble  {
 
                         int value = ((ItemCurrency) coinStack.getItem()).value;
 
-                        if (InventoryHelper.countItems(player.inventory, false, coinStack) > 0 && getBalance(stack) + value <= CUConfig.wallet.walletCurrencyCapacity) {
+                        if (InventoryHelper.countItems(player.inventory, false, false, coinStack) > 0 && getBalance(stack) + value <= CUConfig.wallet.walletCurrencyCapacity) {
                             InventoryHelper.consumeItem(player.inventory, 1, false, coinStack);
                             nbt.setInteger("balance", getBalance(stack) + value);
                             break;

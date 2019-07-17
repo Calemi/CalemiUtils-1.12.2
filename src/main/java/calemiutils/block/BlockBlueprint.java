@@ -102,7 +102,7 @@ public class BlockBlueprint extends BlockColoredBase {
 
             else {
 
-                int itemCount = InventoryHelper.countItems(player.inventory, true, currentStack);
+                int itemCount = InventoryHelper.countItems(player.inventory, true, false, currentStack);
 
                 if (itemCount >= scan.buffer.size()) {
 

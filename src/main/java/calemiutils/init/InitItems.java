@@ -4,11 +4,18 @@ import calemiutils.config.CUConfig;
 import calemiutils.item.*;
 import calemiutils.item.base.ItemBase;
 import net.minecraft.item.Item;
+import net.minecraftforge.common.util.EnumHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InitItems {
+
+    static Item.ToolMaterial HAMMER_WOOD = EnumHelper.addToolMaterial("hammerWood",0, 160, 2.0F, 3.0F, 15);
+    static Item.ToolMaterial HAMMER_STONE = EnumHelper.addToolMaterial("hammerStone",1, 252, 4.0F, 4.0F, 5);
+    static Item.ToolMaterial HAMMER_IRON = EnumHelper.addToolMaterial("hammerIron",2, 664, 6.0F, 5.0F, 14);
+    static Item.ToolMaterial HAMMER_GOLD = EnumHelper.addToolMaterial("hammerGold",0, 88, 12.0F, 3.0F, 22);
+    static Item.ToolMaterial HAMMER_DIAMOND = EnumHelper.addToolMaterial("hammerDiamond",3, 4160, 8.0F, 6.0F, 10);
 
     public static final List<Item> ITEMS = new ArrayList<>();
 
@@ -24,11 +31,11 @@ public class InitItems {
 
     public static final Item SECURITY_WRENCH = new ItemSecurityWrench();
 
-    public static final Item SLEDGEHAMMER_WOOD = new ItemSledgehammer("wood", Item.ToolMaterial.WOOD, 1, 2, 1000);
-    public static final Item SLEDGEHAMMER_STONE = new ItemSledgehammer("stone", Item.ToolMaterial.STONE, 1, 2, 1000);
-    public static final Item SLEDGEHAMMER_IRON = new ItemSledgehammer("iron", Item.ToolMaterial.IRON, 1, 2, 1000);
-    public static final Item SLEDGEHAMMER_GOLD = new ItemSledgehammer("gold", Item.ToolMaterial.GOLD, 1, 2, 1000);
-    public static final Item SLEDGEHAMMER_DIAMOND = new ItemSledgehammer("diamond", Item.ToolMaterial.DIAMOND, 1, 2, 1000);
+    public static final Item SLEDGEHAMMER_WOOD = new ItemSledgehammer("wood", HAMMER_WOOD, 2);
+    public static final Item SLEDGEHAMMER_STONE = new ItemSledgehammer("stone", HAMMER_STONE, 2);
+    public static final Item SLEDGEHAMMER_IRON = new ItemSledgehammer("iron", HAMMER_IRON, 2);
+    public static final Item SLEDGEHAMMER_GOLD = new ItemSledgehammer("gold", HAMMER_GOLD, 2);
+    public static final Item SLEDGEHAMMER_DIAMOND = new ItemSledgehammer("diamond", HAMMER_DIAMOND, 2);
 
     public static final Item PENCIL = new ItemPencil();
     public static final Item BRUSH = new ItemBrush();
