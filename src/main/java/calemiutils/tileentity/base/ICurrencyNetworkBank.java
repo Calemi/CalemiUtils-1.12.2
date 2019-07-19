@@ -1,6 +1,6 @@
 package calemiutils.tileentity.base;
 
-public interface ICurrencyNetwork extends INetwork {
+public interface ICurrencyNetworkBank extends INetwork {
 
     int getStoredCurrency();
 

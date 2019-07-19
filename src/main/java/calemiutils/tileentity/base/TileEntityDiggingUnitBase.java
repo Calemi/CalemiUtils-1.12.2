@@ -14,7 +14,7 @@ import net.minecraft.util.EnumFacing;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable implements INetwork {
+public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable implements ICurrencyNetworkUnit {
 
     public List<Location> locationsToMine = new ArrayList<>();
     private Location currentLocationToMine = null;
@@ -36,13 +36,23 @@ public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable imp
 
     public abstract int getCurrentOreCost();
 
+    @Override
+    public Location getBankLocation() {
+        return bankLocation;
+    }
+
+    @Override
+    public void setBankLocation(Location location) {
+        bankLocation = location;
+    }
+
     public TileEntityBank getBank() {
 
-        if (bankLocation != null && bankLocation.getTileEntity() instanceof TileEntityBank) {
-            return (TileEntityBank) bankLocation.getTileEntity();
-        }
+        TileEntityBank bank = NetworkHelper.getConnectedBank(getLocation(), bankLocation);
 
-        return null;
+        if (bank == null) bankLocation = null;
+
+        return bank;
     }
 
     private int getStoredCurrencyInBank() {
@@ -63,8 +73,6 @@ public abstract class TileEntityDiggingUnitBase extends TileEntityUpgradable imp
 
     @Override
     public void update() {
-
-        bankLocation = NetworkHelper.getConnectedBank(this);
 
         if (enable) {
 

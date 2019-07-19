@@ -1,7 +1,7 @@
 package calemiutils.gui.base;
 
 import calemiutils.security.ISecurity;
-import calemiutils.tileentity.base.ICurrencyNetwork;
+import calemiutils.tileentity.base.ICurrencyNetworkBank;
 import calemiutils.tileentity.base.IProgress;
 import calemiutils.tileentity.base.TileEntityBase;
 import calemiutils.tileentity.base.TileEntityUpgradable;
@@ -21,7 +21,7 @@ public abstract class GuiContainerBase extends GuiContainer {
     protected final EntityPlayer player;
     protected TileEntityBase te;
 
-    private int leftTabOffset;
+    public int leftTabOffset;
     private int rightTabOffset;
 
     protected GuiContainerBase(Container container, EntityPlayer player) {
@@ -96,11 +96,11 @@ public abstract class GuiContainerBase extends GuiContainer {
         GuiHelper.drawHoveringTextBox(mouseX, mouseY, 170, rect, "Progress: " + MathHelper.scaleInt(progress, maxProgress, 100) + "%");
     }
 
-    protected void addInfoIcon() {
+    protected void addInfoIcon(int index) {
 
         GL11.glDisable(GL11.GL_LIGHTING);
         GuiHelper.bindGuiTextures();
-        GuiHelper.drawRect(getScreenX() - 13, getScreenY() + leftTabOffset, 0, 72, 2, 13, 15);
+        GuiHelper.drawRect(getScreenX() - 13, getScreenY() + leftTabOffset, (index * 13), 72, 2, 13, 15);
     }
 
     protected void addInfoIconText(int mouseX, int mouseY, String... text) {
@@ -196,9 +196,9 @@ public abstract class GuiContainerBase extends GuiContainer {
                 GL11.glColor3f(1, 1, 1);
             }
 
-            if (te instanceof ICurrencyNetwork) {
+            if (te instanceof ICurrencyNetworkBank) {
                 GL11.glColor3f(1, 1, 1);
-                addCurrencyInfo(mouseX, mouseY, ((ICurrencyNetwork) te).getStoredCurrency(), ((ICurrencyNetwork) te).getMaxCurrency());
+                addCurrencyInfo(mouseX, mouseY, ((ICurrencyNetworkBank) te).getStoredCurrency(), ((ICurrencyNetworkBank) te).getMaxCurrency());
             }
 
             if (te instanceof IProgress) {

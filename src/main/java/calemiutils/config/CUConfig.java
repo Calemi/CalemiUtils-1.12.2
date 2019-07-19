@@ -40,6 +40,30 @@ public class CUConfig implements IConditionFactory {
 
     public static class CategoryItemUtils {
 
+        @Name("Enable Wood Sledgehammer")
+        @Config.Comment("Disable this to remove the Wood Sledgehammer.")
+        public boolean wood_sledgehammer = true;
+
+        @Name("Enable Stone Sledgehammer")
+        @Config.Comment("Disable this to remove the Stone Sledgehammer.")
+        public boolean stone_sledgehammer = true;
+
+        @Name("Enable Iron Sledgehammer")
+        @Config.Comment("Disable this to remove the Iron Sledgehammer.")
+        public boolean iron_sledgehammer = true;
+
+        @Name("Enable Gold Sledgehammer")
+        @Config.Comment("Disable this to remove the Gold Sledgehammer.")
+        public boolean gold_sledgehammer = true;
+
+        @Name("Enable Diamond Sledgehammer")
+        @Config.Comment("Disable this to remove the Diamond Sledgehammer.")
+        public boolean diamond_sledgehammer = true;
+
+        @Name("Enable Starlight Sledgehammer")
+        @Config.Comment("Disable this to remove the Starlight Sledgehammer.")
+        public boolean starlight_sledgehammer = true;
+
         @Name("Enable Wallet")
         @Config.Comment("Disable this to remove the Wallet.")
         public boolean wallet = true;

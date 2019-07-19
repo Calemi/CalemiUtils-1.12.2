@@ -6,6 +6,7 @@ import calemiutils.util.UnitChatMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
@@ -64,6 +65,29 @@ public class WorldEditHelper {
             }
         }
 
+    }
+
+    public static ArrayList<Location> selectFlatCubeFromFace(Location location, EnumFacing face, int radius) {
+
+        ArrayList<Location> list = new ArrayList<>();
+
+        int xRad = radius;
+        int yRad = radius;
+        int zRad = radius;
+
+        if (face == EnumFacing.UP || face == EnumFacing.DOWN) {
+            yRad = 0;
+        }
+
+        else if (face == EnumFacing.NORTH || face == EnumFacing.SOUTH) {
+            zRad = 0;
+        }
+
+        else if (face == EnumFacing.EAST || face == EnumFacing.WEST) {
+            xRad = 0;
+        }
+
+        return selectCubeFromRadius(location, xRad, yRad, zRad);
     }
 
     public static ArrayList<Location> selectCubeFromRadius(Location location, int xRad, int yRad, int zRad) {

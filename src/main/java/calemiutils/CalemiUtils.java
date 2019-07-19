@@ -5,6 +5,7 @@ import calemiutils.config.MarketItemsFile;
 import calemiutils.config.MiningUnitCostsFile;
 import calemiutils.event.*;
 import calemiutils.gui.base.GuiHandler;
+import calemiutils.init.InitEnchantments;
 import calemiutils.init.InitOreDictionaries;
 import calemiutils.init.InitTileEntities;
 import calemiutils.packet.*;
@@ -66,6 +67,7 @@ public class CalemiUtils {
 
         MinecraftForge.EVENT_BUS.register(new SecurityEvent());
         MinecraftForge.EVENT_BUS.register(new WrenchEvent());
+        MinecraftForge.EVENT_BUS.register(new InitEnchantments());
 
         InitTileEntities.init();
     }

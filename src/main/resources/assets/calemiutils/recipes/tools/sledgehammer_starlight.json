@@ -1,0 +1,27 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "KXK",
+    " S ",
+    " S "
+  ],
+  "key": {
+
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "stickWood"
+    },
+
+    "K": {
+      "item": "calemiutils:knob_starlight"
+    },
+
+    "X": {
+      "item": "calemiutils:raritanium"
+    }
+  },
+  "result": {
+    "item": "calemiutils:sledgehammer_starlight",
+    "count": 1
+  }
+}

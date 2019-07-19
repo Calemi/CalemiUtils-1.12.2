@@ -6,10 +6,7 @@ import calemiutils.inventory.ContainerBank;
 import calemiutils.item.ItemCurrency;
 import calemiutils.security.ISecurity;
 import calemiutils.security.SecurityProfile;
-import calemiutils.tileentity.base.ICurrencyNetwork;
-import calemiutils.tileentity.base.ICurrencyNetworkProducer;
-import calemiutils.tileentity.base.ITileEntityGuiHandler;
-import calemiutils.tileentity.base.TileEntityInventoryBase;
+import calemiutils.tileentity.base.*;
 import calemiutils.util.Location;
 import calemiutils.util.VeinScan;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -19,10 +16,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityBank extends TileEntityInventoryBase implements ITileEntityGuiHandler, ICurrencyNetwork, ISecurity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class TileEntityBank extends TileEntityInventoryBase implements ITileEntityGuiHandler, ICurrencyNetworkBank, ISecurity {
+
+    public List<Location> connectedUnits = new ArrayList<>();
 
     public int storedCurrency = 0;
-    private int transferRate = 100;
 
     private final SecurityProfile profile = new SecurityProfile();
     private VeinScan scan;
@@ -45,43 +46,33 @@ public class TileEntityBank extends TileEntityInventoryBase implements ITileEnti
 
             if (world.getWorldTime() % 40 == 0) {
 
+                connectedUnits.clear();
+
+                boolean foundAnotherBank = false;
+
                 scan.reset();
                 scan.startNetworkScan(getConnectedDirections());
 
                 for (Location location : scan.buffer) {
 
-                    if (location.getTileEntity() instanceof ICurrencyNetworkProducer) {
-
-                        ICurrencyNetworkProducer network = ((ICurrencyNetworkProducer) location.getTileEntity());
-
-                        if (location.getTileEntity() instanceof ISecurity) {
-
-                            ISecurity security = (ISecurity) location.getTileEntity();
-
-                            if (security.getSecurityProfile().isOwner(profile.getOwnerName())) {
-                                extractCurrencyFromProducer(network);
-                            }
-                        }
-
-                        else extractCurrencyFromProducer(network);
+                    if (!location.equals(getLocation()) && location.getTileEntity() instanceof TileEntityBank) {
+                        foundAnotherBank = true;
                     }
 
-                    /*if (location.getTileEntity() instanceof ICurrencyNetworkReciever) {
+                    if (location.getTileEntity() instanceof ICurrencyNetworkUnit) {
 
-                        ICurrencyNetworkReciever network = ((ICurrencyNetworkReciever) location.getTileEntity());
+                        ICurrencyNetworkUnit unit = (ICurrencyNetworkUnit) location.getTileEntity();
 
-                        if (location.getTileEntity() instanceof ISecurity) {
+                        connectedUnits.add(location);
 
-                            ISecurity security = (ISecurity) location.getTileEntity();
+                        if (unit.getBankLocation() == null) {
 
-                            if (security.getSecurityProfile().isOwner(profile.getOwnerName())) {
-                                transferCurrencyToReciever(network);
-                            }
+                            unit.setBankLocation(getLocation());
                         }
-
-                        else transferCurrencyToReciever(network);
-                    }*/
+                    }
                 }
+
+                enable = !foundAnotherBank;
             }
         }
 
@@ -109,36 +100,6 @@ public class TileEntityBank extends TileEntityInventoryBase implements ITileEnti
             }
         }
     }
-
-    private void extractCurrencyFromProducer(ICurrencyNetworkProducer network) {
-
-        if (network.getStoredCurrency() > 0) {
-
-            storedCurrency += network.extractAllCurrency();
-        }
-    }
-
-    /*private void transferCurrencyToReciever(ICurrencyNetworkReciever network) {
-
-        transferRate = Math.min(storedCurrency, 100);
-
-        int amountToAdd = MathHelper.getAmountToAdd(network.getStoredCurrency(), transferRate, network.getMaxCurrency());
-
-        if (amountToAdd > 0) {
-            network.setCurrency(network.getStoredCurrency() + amountToAdd);
-            storedCurrency -= amountToAdd;
-        }
-
-        else {
-
-            int remainder = MathHelper.getRemainder(network.getStoredCurrency(), transferRate, network.getMaxCurrency());
-
-            if (remainder > 0) {
-                network.setCurrency(network.getStoredCurrency() + remainder);
-                storedCurrency -= remainder;
-            }
-        }
-    }*/
 
     private boolean canAddAmount(int amount) {
 

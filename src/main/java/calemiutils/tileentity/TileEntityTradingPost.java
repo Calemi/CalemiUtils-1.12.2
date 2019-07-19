@@ -1,11 +1,10 @@
 package calemiutils.tileentity;
 
-import calemiutils.config.CUConfig;
 import calemiutils.gui.GuiTradingPost;
 import calemiutils.inventory.ContainerTradingPost;
 import calemiutils.security.ISecurity;
 import calemiutils.security.SecurityProfile;
-import calemiutils.tileentity.base.ICurrencyNetworkProducer;
+import calemiutils.tileentity.base.ICurrencyNetworkUnit;
 import calemiutils.tileentity.base.ITileEntityGuiHandler;
 import calemiutils.tileentity.base.TileEntityInventoryBase;
 import calemiutils.util.Location;
@@ -25,10 +24,9 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityTradingPost extends TileEntityInventoryBase implements ITileEntityGuiHandler, ICurrencyNetworkProducer, ISecurity {
+public class TileEntityTradingPost extends TileEntityInventoryBase implements ITileEntityGuiHandler, ICurrencyNetworkUnit, ISecurity {
 
     private final SecurityProfile profile = new SecurityProfile();
-    public int storedCurrency = 0;
     private Location bankLocation;
 
     public int amountForSale;
@@ -48,13 +46,23 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
         hasValidTradeOffer = false;
     }
 
-    private TileEntityBank getBank() {
+    @Override
+    public Location getBankLocation() {
+        return bankLocation;
+    }
 
-        if (bankLocation != null && bankLocation.getTileEntity() instanceof TileEntityBank) {
-            return (TileEntityBank) bankLocation.getTileEntity();
-        }
+    @Override
+    public void setBankLocation(Location location) {
+        bankLocation = location;
+    }
 
-        return null;
+    public TileEntityBank getBank() {
+
+        TileEntityBank bank = NetworkHelper.getConnectedBank(getLocation(), bankLocation);
+
+        if (bank == null) bankLocation = null;
+
+        return bank;
     }
 
     public int getStoredCurrencyInBank() {
@@ -64,6 +72,14 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
         }
 
         return 0;
+    }
+
+    public void addStoredCurrencyInBank(int amount) {
+
+        if (getBank() != null) {
+
+           getBank().setCurrency(getBank().getStoredCurrency() + amount);
+        }
     }
 
     public void decrStoredCurrencyInBank(int amount) {
@@ -84,8 +100,6 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
 
     @Override
     public void update() {
-
-        //bankLocation = NetworkHelper.getConnectedBank(this);
 
         hasValidTradeOffer = getStackForSale() != null && !getStackForSale().isEmpty() && amountForSale >= 1;
     }
@@ -177,33 +191,6 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
     }
 
     @Override
-    public int getStoredCurrency() {
-
-        return storedCurrency;
-    }
-
-    @Override
-    public void setCurrency(int amount) {
-
-        int setAmount = amount;
-
-        if (amount > getMaxCurrency()) {
-            setAmount = getMaxCurrency();
-        }
-
-        storedCurrency = setAmount;
-
-    }
-
-    @Override
-    public int extractAllCurrency() {
-
-        int i = storedCurrency;
-        storedCurrency = 0;
-        return i;
-    }
-
-    @Override
     public SecurityProfile getSecurityProfile() {
 
         return profile;
@@ -213,12 +200,6 @@ public class TileEntityTradingPost extends TileEntityInventoryBase implements IT
     public EnumFacing[] getConnectedDirections() {
 
         return new EnumFacing[]{EnumFacing.DOWN};
-    }
-
-    @Override
-    public int getMaxCurrency() {
-
-        return CUConfig.misc.postCurrencyCapacity;
     }
 
     @Override

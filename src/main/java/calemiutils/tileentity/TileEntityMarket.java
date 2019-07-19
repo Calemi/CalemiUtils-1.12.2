@@ -3,7 +3,7 @@ package calemiutils.tileentity;
 import calemiutils.config.MarketItemsFile;
 import calemiutils.security.ISecurity;
 import calemiutils.security.SecurityProfile;
-import calemiutils.tileentity.base.INetwork;
+import calemiutils.tileentity.base.ICurrencyNetworkUnit;
 import calemiutils.tileentity.base.TileEntityBase;
 import calemiutils.util.Location;
 import calemiutils.util.helper.CurrencyHelper;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class TileEntityMarket extends TileEntityBase implements ISecurity, INetwork {
+public class TileEntityMarket extends TileEntityBase implements ISecurity, ICurrencyNetworkUnit {
 
     private final SecurityProfile profile = new SecurityProfile();
 
@@ -63,13 +63,23 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity, INetw
         else return marketItemList.get(selectedOffer);
     }
 
+    @Override
+    public Location getBankLocation() {
+        return bankLocation;
+    }
+
+    @Override
+    public void setBankLocation(Location location) {
+        this.bankLocation = location;
+    }
+
     public TileEntityBank getBank() {
 
-        if (bankLocation != null && bankLocation.getTileEntity() instanceof TileEntityBank) {
-            return (TileEntityBank) bankLocation.getTileEntity();
-        }
+        TileEntityBank bank = NetworkHelper.getConnectedBank(getLocation(), bankLocation);
 
-        return null;
+        if (bank == null) bankLocation = null;
+
+        return bank;
     }
 
     private IInventory getConnectedInventory() {
@@ -96,8 +106,6 @@ public class TileEntityMarket extends TileEntityBase implements ISecurity, INetw
         IInventory inv = getConnectedInventory();
 
         if (world.getWorldTime() % 10 == 0) {
-
-            bankLocation = NetworkHelper.getConnectedBank(this);
 
             if (automationMode && marketItem != null && bank != null && inv != null) {
 

@@ -1,12 +1,12 @@
 package calemiutils.item;
 
 import calemiutils.CalemiUtils;
+import calemiutils.init.InitEnchantments;
 import calemiutils.init.InitItems;
 import calemiutils.registry.IHasModel;
 import calemiutils.util.Location;
 import calemiutils.util.VeinScan;
-import calemiutils.util.helper.ItemHelper;
-import calemiutils.util.helper.SoundHelper;
+import calemiutils.util.helper.LoreHelper;
 import calemiutils.util.helper.WorldEditHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -14,7 +14,8 @@ import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -27,6 +28,7 @@ import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -40,33 +42,51 @@ import java.util.Set;
 
 public class ItemSledgehammer extends ItemPickaxe implements IHasModel {
 
-    private static final Set<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.CLAY, Blocks.DIRT, Blocks.FARMLAND, Blocks.GRASS, Blocks.GRAVEL, Blocks.MYCELIUM, Blocks.SAND, Blocks.SNOW, Blocks.SNOW_LAYER, Blocks.SOUL_SAND, Blocks.GRASS_PATH, Blocks.CONCRETE_POWDER, Blocks.PLANKS, Blocks.BOOKSHELF, Blocks.LOG, Blocks.LOG2, Blocks.CHEST, Blocks.PUMPKIN, Blocks.LIT_PUMPKIN, Blocks.MELON_BLOCK, Blocks.LADDER, Blocks.WOODEN_BUTTON, Blocks.WOODEN_PRESSURE_PLATE);
+    private static final Set<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.LEAVES, Blocks.LEAVES2, Blocks.CRAFTING_TABLE, Blocks.CLAY, Blocks.DIRT, Blocks.FARMLAND, Blocks.GRASS, Blocks.GRAVEL, Blocks.MYCELIUM, Blocks.SAND, Blocks.SNOW, Blocks.SNOW_LAYER, Blocks.SOUL_SAND, Blocks.GRASS_PATH, Blocks.CONCRETE_POWDER, Blocks.PLANKS, Blocks.BOOKSHELF, Blocks.LOG, Blocks.LOG2, Blocks.CHEST, Blocks.PUMPKIN, Blocks.LIT_PUMPKIN, Blocks.MELON_BLOCK, Blocks.LADDER, Blocks.WOODEN_BUTTON, Blocks.WOODEN_PRESSURE_PLATE);
 
     private double attackSpeed, attackDamage;
 
-    public ItemSledgehammer(String name, Item.ToolMaterial toolMaterial, double attackSpeed) {
+    public ItemSledgehammer(String name, Item.ToolMaterial toolMaterial, double attackSpeed, boolean shouldRegister) {
         super(toolMaterial);
 
         String realName = "sledgehammer_" + name;
         setUnlocalizedName(realName);
         setRegistryName(realName);
         setCreativeTab(CalemiUtils.TAB);
-        InitItems.ITEMS.add(this);
+
+        if (shouldRegister) InitItems.ITEMS.add(this);
 
         this.attackSpeed = attackSpeed;
-        this.attackDamage = 4.0F + toolMaterial.getAttackDamage();
+        this.attackDamage = 2 + toolMaterial.getAttackDamage();
+
+        if (this == InitItems.SLEDGEHAMMER_STARLIGHT) {
+            setMaxDamage(0);
+        }
     }
 
-    public float getAttackDamage()
-    {
+    @Override
+    public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+
+        LoreHelper.addInformationLore(tooltip, "Need a pickaxe, axe, shovel and sword in one single tool? This is your best bet.");
+        LoreHelper.addControlsLore(tooltip, "Charge", LoreHelper.Type.USE, true);
+        LoreHelper.addControlsLore(tooltip, "Excavates, Mines Veins & Fells Trees", LoreHelper.Type.RELEASE_USE);
+    }
+
+    @Override
+    public boolean hasEffect(ItemStack stack) {
+
+        return this == InitItems.SLEDGEHAMMER_STARLIGHT;
+    }
+
+    public float getAttackDamage() {
         return toolMaterial.getAttackDamage();
     }
-    public int getMaxItemUseDuration(ItemStack stack)
-    {
+
+    public int getMaxItemUseDuration(ItemStack stack) {
         return 72000;
     }
-    public EnumAction getItemUseAction(ItemStack stack)
-    {
+
+    public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.BOW;
     }
 
@@ -95,31 +115,37 @@ public class ItemSledgehammer extends ItemPickaxe implements IHasModel {
                 Location location = new Location(worldIn, pos);
                 Material mat = location.getBlockMaterial();
 
+                player.spawnSweepParticles();
+
                 int[] ids = OreDictionary.getOreIDs(new ItemStack(location.getBlock()));
 
                 for (int id : ids) {
 
-                    if (OreDictionary.getOreName(id).contains("log")) {
+                    if (OreDictionary.getOreName(id).contains("log") || OreDictionary.getOreName(id).contains("ore")) {
 
-                        fellTree(player, location);
+                        veinMine(stack, player, location);
                         return;
                     }
                 }
 
-                excavateRock(worldIn, stack, player, location);
+                excavateRock(worldIn, stack, player, location, trace.sideHit);
             }
         }
     }
 
-    private void excavateRock(World worldIn, ItemStack stack, EntityPlayer player, Location location) {
+    private void excavateRock(World worldIn, ItemStack stack, EntityPlayer player, Location location, EnumFacing face) {
 
-        ArrayList<Location> locations = WorldEditHelper.selectCubeFromRadius(location, 1, 1, 1);
+        int radius = EnchantmentHelper.getEnchantmentLevel(InitEnchantments.CRUSHING, stack) + 1;
+
+        ArrayList<Location> locations = WorldEditHelper.selectFlatCubeFromFace(location, face, radius);
 
         int damage = getDamage(stack);
 
         for (Location nextLocation : locations) {
 
-            if (damage > getMaxDamage(stack)) {
+            int maxDamage = getMaxDamage(stack);
+
+            if (damage > maxDamage && maxDamage > 0) {
                 return;
             }
 
@@ -134,17 +160,26 @@ public class ItemSledgehammer extends ItemPickaxe implements IHasModel {
         }
     }
 
-    private void fellTree(EntityPlayer player, Location location) {
+    private void veinMine(ItemStack stack, EntityPlayer player, Location location) {
 
         IBlockState state = location.getBlockState();
 
-        VeinScan scan = new VeinScan(location, state);
+        VeinScan scan = new VeinScan(location, state.getBlock());
+        scan.startScan(64, true);
 
-        scan.startScan(10, true);
+        int damage = getDamage(stack);
 
         for (Location nextLocation : scan.buffer) {
 
+            int maxDamage = getMaxDamage(stack);
+
+            if (damage > getMaxDamage(stack) && maxDamage > 0) {
+                return;
+            }
+
             nextLocation.breakBlock(player);
+            stack.damageItem(1, player);
+            damage++;
         }
     }
 
@@ -158,20 +193,15 @@ public class ItemSledgehammer extends ItemPickaxe implements IHasModel {
     }
 
     @Override
-    public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        stack.damageItem(1, attacker);
-        return true;
-    }
-
-    @Override
     public Multimap<String, AttributeModifier> getItemAttributeModifiers(EntityEquipmentSlot equipmentSlot) {
 
         Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(equipmentSlot);
 
         if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
 
+            multimap.clear();
             multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", attackDamage, 0));
-            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", attackSpeed, 0));
+            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", attackSpeed - 4, 0));
         }
 
         return multimap;

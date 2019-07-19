@@ -1,7 +1,7 @@
 package calemiutils.event;
 
 import calemiutils.tileentity.TileEntityBuildingUnit;
-import calemiutils.tileentity.base.ICurrencyNetwork;
+import calemiutils.tileentity.base.ICurrencyNetworkBank;
 import calemiutils.tileentity.base.TileEntityBase;
 import calemiutils.util.Location;
 import calemiutils.util.helper.ItemHelper;
@@ -32,9 +32,9 @@ public class WrenchEvent {
         }
 
         //Currency
-        if (tileEntity instanceof ICurrencyNetwork) {
+        if (tileEntity instanceof ICurrencyNetworkBank) {
 
-            ICurrencyNetwork currencyNetwork = (ICurrencyNetwork) tileEntity;
+            ICurrencyNetworkBank currencyNetwork = (ICurrencyNetworkBank) tileEntity;
 
             if (currencyNetwork.getStoredCurrency() > 0) {
                 ItemHelper.getNBT(stack).setInteger("currency", currencyNetwork.getStoredCurrency());
@@ -63,9 +63,9 @@ public class WrenchEvent {
         if (!stack.isEmpty() && stack.getItem() instanceof ItemBlock) {
 
             //Currency
-            if (tileEntity instanceof ICurrencyNetwork) {
+            if (tileEntity instanceof ICurrencyNetworkBank) {
 
-                ICurrencyNetwork currencyNetwork = (ICurrencyNetwork) tileEntity;
+                ICurrencyNetworkBank currencyNetwork = (ICurrencyNetworkBank) tileEntity;
 
                 if (ItemHelper.getNBT(stack).getInteger("currency") != 0) {
                     currencyNetwork.setCurrency(ItemHelper.getNBT(stack).getInteger("currency"));

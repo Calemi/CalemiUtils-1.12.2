@@ -19,7 +19,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 import java.util.List;
 
@@ -38,14 +40,22 @@ public class ItemWallet extends ItemBase implements IBauble  {
         return BaubleType.TRINKET;
     }
 
-    public static int getBalance(ItemStack stack) {
+    public static boolean isActive(ItemStack stack) {
+        return ItemHelper.getNBT(stack).getBoolean("active");
+    }
 
+    public static int getBalance(ItemStack stack) {
         return ItemHelper.getNBT(stack).getInteger("balance");
     }
 
     public void toggleSuck(ItemStack stack) {
 
         ItemHelper.getNBT(stack).setBoolean("suck", !ItemHelper.getNBT(stack).getBoolean("suck"));
+    }
+
+    public static void activate(ItemStack stack, boolean active) {
+
+        ItemHelper.getNBT(stack).setBoolean("active", active);
     }
 
     @Override
@@ -55,6 +65,7 @@ public class ItemWallet extends ItemBase implements IBauble  {
         LoreHelper.addInformationLore(tooltip, "Used to store currency in one place.");
         LoreHelper.addControlsLore(tooltip, "Open Inventory", LoreHelper.Type.USE, true);
         tooltip.add("");
+        tooltip.add(ChatFormatting.AQUA + (isActive(stack) ? "Active" : "Inactive"));
         tooltip.add("Suck: " + ChatFormatting.AQUA + (ItemHelper.getNBT(stack).getBoolean("suck") ? "ON" : "OFF"));
         LoreHelper.addCurrencyLore(tooltip, getBalance(stack), CUConfig.wallet.walletCurrencyCapacity);
     }
@@ -113,6 +124,6 @@ public class ItemWallet extends ItemBase implements IBauble  {
     @Override
     public boolean hasEffect(ItemStack stack) {
 
-        return ItemHelper.getNBT(stack).getBoolean("suck");
+        return ItemHelper.getNBT(stack).getBoolean("active");
     }
 }

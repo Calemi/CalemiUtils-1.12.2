@@ -37,7 +37,7 @@ public class ContainerWallet extends ContainerBase {
     }
 
     private ItemStack getCurrentWalletStack() {
-        return CurrencyHelper.getCurrentWalletStack(player);
+        return CurrencyHelper.getCurrentWalletStack(player, false);
     }
 
     private NBTTagCompound getNBT() {

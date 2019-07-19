@@ -145,7 +145,8 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
                         message.printMessage(TextFormatting.GREEN, (tePost.buyMode ? "Buying " : "Selling ") + StringHelper.printCommas(tePost.amountForSale) + " " + tePost.getStackForSale().getDisplayName() + " for " + (tePost.salePrice > 0 ? (StringHelper.printCurrency(tePost.salePrice)) : "free"));
                     }
 
-                    else message.printMessage(TextFormatting.GREEN, tePost.getSecurityProfile().getOwnerName() + " is " + (tePost.buyMode ? "buying " : "selling ") + StringHelper.printCommas(tePost.amountForSale) + " " + tePost.getStackForSale().getDisplayName() + " for " + (tePost.salePrice > 0 ? (StringHelper.printCurrency(tePost.salePrice)) : "free"));
+                    else
+                        message.printMessage(TextFormatting.GREEN, tePost.getSecurityProfile().getOwnerName() + " is " + (tePost.buyMode ? "buying " : "selling ") + StringHelper.printCommas(tePost.amountForSale) + " " + tePost.getStackForSale().getDisplayName() + " for " + (tePost.salePrice > 0 ? (StringHelper.printCurrency(tePost.salePrice)) : "free"));
                     message.printMessage(TextFormatting.GREEN, "Hold a wallet in your inventory to make a purchase.");
                 }
 
@@ -163,18 +164,23 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
         ItemStack walletStack = CurrencyHelper.getCurrentWalletStack(player);
         ItemWallet wallet = (ItemWallet) walletStack.getItem();
 
-        if (tePost.hasValidTradeOffer) {
+        if (tePost.getBank() != null || tePost.salePrice <= 0 || tePost.adminMode) {
 
-            if (tePost.buyMode) {
-                handleSell(message, walletStack, world, player, tePost);
+            if (tePost.hasValidTradeOffer) {
+
+                if (tePost.buyMode) {
+                    handleSell(message, walletStack, world, player, tePost);
+                }
+
+                else {
+                    handlePurchase(message, walletStack, world, player, tePost);
+                }
             }
 
-            else {
-                handlePurchase(message, walletStack, world, player, tePost);
-            }
+            else if (!world.isRemote) message.printMessage(TextFormatting.RED, "The trade is not set up properly!");
         }
 
-        else if (!world.isRemote) message.printMessage(TextFormatting.RED, "The trade is not set up properly!");
+        else if (!world.isRemote) message.printMessage(TextFormatting.RED, "There is no active connected Bank!");
     }
 
     private void handlePurchase(UnitChatMessage message, ItemStack walletStack, World world, EntityPlayer player, TileEntityTradingPost tePost) {
@@ -185,7 +191,7 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
                 NBTTagCompound nbt = ItemHelper.getNBT(walletStack);
 
-                if (tePost.storedCurrency + tePost.salePrice < CUConfig.misc.postCurrencyCapacity) {
+                if (tePost.getStoredCurrencyInBank() + tePost.salePrice < CUConfig.misc.postCurrencyCapacity) {
 
                     ItemStack is = new ItemStack(tePost.getStackForSale().getItem(), tePost.amountForSale, tePost.getStackForSale().getItemDamage());
 
@@ -204,7 +210,7 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
                                 dropItem.getItem().setTagCompound(is.getTagCompound());
                             }
 
-                            tePost.storedCurrency += tePost.salePrice;
+                            tePost.addStoredCurrencyInBank(tePost.salePrice);
                             tePost.markForUpdate();
 
                             nbt.setInteger("balance", nbt.getInteger("balance") - tePost.salePrice);
@@ -230,7 +236,7 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
                             InventoryHelper.consumeItem(0, tePost, tePost.amountForSale, true, true, tePost.getStackForSale());
 
-                            tePost.storedCurrency += tePost.salePrice;
+                            tePost.addStoredCurrencyInBank(tePost.salePrice);
                             tePost.markForUpdate();
 
                             tePost.writeToNBT(tePost.getTileData());
@@ -259,7 +265,7 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
 
                 if (CurrencyHelper.canFitAddedCurrencyToWallet(walletStack, tePost.salePrice)) {
 
-                    if (tePost.storedCurrency >= tePost.salePrice || tePost.getStoredCurrencyInBank() >= tePost.salePrice || tePost.adminMode) {
+                    if (tePost.getStoredCurrencyInBank() >= tePost.salePrice || tePost.getStoredCurrencyInBank() >= tePost.salePrice || tePost.adminMode) {
 
                         NBTTagCompound nbt = ItemHelper.getNBT(walletStack);
 
@@ -268,8 +274,8 @@ public class BlockTradingPost extends BlockInventoryContainerBase implements IEx
                         if (!tePost.adminMode) {
                             InventoryHelper.insertItem(is, tePost);
 
-                            if (tePost.storedCurrency >= tePost.salePrice) {
-                                tePost.setCurrency(tePost.storedCurrency - tePost.salePrice);
+                            if (tePost.getStoredCurrencyInBank() >= tePost.salePrice) {
+                                tePost.addStoredCurrencyInBank(-tePost.salePrice);
                             }
 
                             else tePost.decrStoredCurrencyInBank(tePost.salePrice);

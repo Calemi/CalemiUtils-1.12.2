@@ -10,11 +10,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class InitTileEntities {
 
-    public static final EnumEnchantmentType WEAPONS = EnumHelper.addEnchantmentType("tools", (item)->(item instanceof ItemSledgehammer));
-
     public static void init() {
-
-        //EnumHelper.addEnchantmentType("crushing", WEAPONS);
 
         GameRegistry.registerTileEntity(TileEntityTorchPlacer.class, new ResourceLocation(CUReference.MOD_ID + ":tileEntityTorchPlacer"));
         GameRegistry.registerTileEntity(TileEntityBank.class, new ResourceLocation(CUReference.MOD_ID + ":tileEntityBank"));

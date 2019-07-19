@@ -1,0 +1,28 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "KXK",
+    " S ",
+    " S "
+  ],
+  "key": {
+
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "stickWood"
+    },
+
+    "K": {
+      "item": "calemiutils:knob_gold"
+    },
+
+    "X": {
+      "type": "forge:ore_dict",
+      "ore": "ingotGold"
+    }
+  },
+  "result": {
+    "item": "calemiutils:sledgehammer_gold",
+    "count": 1
+  }
+}

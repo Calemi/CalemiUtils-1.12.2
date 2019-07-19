@@ -118,5 +118,9 @@ public class GuiBank extends GuiContainerBase {
     @Override
     public void drawGuiForeground(int mouseX, int mouseY) {
 
+        if (!teBank.enable) {
+            addInfoIcon(1);
+            addInfoIconText(mouseX, mouseY, "Inactive!", "Another Bank is connected in the network!");
+        }
     }
 }

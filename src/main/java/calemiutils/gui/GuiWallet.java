@@ -18,10 +18,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import java.util.List;
+
 @SideOnly(Side.CLIENT)
 public class GuiWallet extends GuiContainerBase {
 
     private GuiButtonRect toggleSuckButton;
+    private GuiButtonRect setActiveButton;
 
     public GuiWallet(EntityPlayer player) {
 
@@ -50,12 +53,13 @@ public class GuiWallet extends GuiContainerBase {
         new GuiButtonRect(2, getScreenX() + 146, getScreenY() + 15 + (2 * 18), 16, "+", buttonList);
         new GuiButtonRect(3, getScreenX() + 146, getScreenY() + 15 + (3 * 18), 16, "+", buttonList);
 
-        toggleSuckButton = new GuiButtonRect(4, getScreenX() + (getGuiSizeX() / 2) - (54 / 2), getScreenY() + 18 + (3 * 18), 54, "", buttonList);
+        toggleSuckButton = new GuiButtonRect(4, getScreenX() + (getGuiSizeX() / 2) - (54 / 2) - 54, getScreenY() + 18 + (3 * 18), 54, "", buttonList);
+        setActiveButton = new GuiButtonRect(5, getScreenX() + (getGuiSizeX() / 2) - (48 / 2), getScreenY() + 18 + (3 * 18), 48, "Activate", buttonList);
     }
 
     private ItemStack getCurrentWalletStack() {
 
-        ItemStack walletStack = CurrencyHelper.getCurrentWalletStack(player);
+        ItemStack walletStack = CurrencyHelper.getCurrentWalletStack(player, false);
 
         if (!walletStack.isEmpty()) {
             return walletStack;
@@ -103,6 +107,20 @@ public class GuiWallet extends GuiContainerBase {
                 CalemiUtils.network.sendToServer(new WalletPacket("togglesuck"));
                 walletItem.toggleSuck(walletStack);
             }
+
+            if (button.id == setActiveButton.id) {
+
+                CalemiUtils.network.sendToServer(new WalletPacket("activate"));
+
+                List<ItemStack> list = CurrencyHelper.checkForActiveWallets(player);
+
+                for (ItemStack stack : list) {
+
+                    ItemWallet.activate(stack, false);
+                }
+
+                ItemWallet.activate(walletStack, true);
+            }
         }
     }
 
@@ -132,7 +150,14 @@ public class GuiWallet extends GuiContainerBase {
     public void drawGuiForeground(int mouseX, int mouseY) {
 
         GL11.glDisable(GL11.GL_LIGHTING);
-        addInfoIcon();
+        addInfoIcon(0);
         addInfoIconText(mouseX, mouseY, "Button Click Info", "Shift: 16, Ctrl: 64, Shift + Ctrl: 64 * 9");
+
+        if (!ItemWallet.isActive(getCurrentWalletStack())) {
+
+            leftTabOffset += 17;
+            addInfoIcon(1);
+            addInfoIconText(mouseX, mouseY, "Inactive!", "Press the activate button.", "There can only be one active Wallet.");
+        }
     }
 }

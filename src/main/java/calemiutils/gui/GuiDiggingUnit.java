@@ -4,7 +4,7 @@ import calemiutils.CalemiUtils;
 import calemiutils.gui.base.GuiButtonRect;
 import calemiutils.gui.base.GuiContainerBase;
 import calemiutils.packet.ServerPacketHandler;
-import calemiutils.tileentity.base.ICurrencyNetwork;
+import calemiutils.tileentity.base.ICurrencyNetworkBank;
 import calemiutils.tileentity.base.TileEntityDiggingUnitBase;
 import calemiutils.util.helper.GuiHelper;
 import calemiutils.util.helper.PacketHelper;
@@ -105,7 +105,7 @@ public class GuiDiggingUnit extends GuiContainerBase {
 
         if (teDiggingUnit.getBank() != null) {
             GL11.glColor3f(1, 1, 1);
-            addCurrencyInfo(mouseX, mouseY, ((ICurrencyNetwork) teDiggingUnit.getBank()).getStoredCurrency(), ((ICurrencyNetwork) teDiggingUnit.getBank()).getMaxCurrency());
+            addCurrencyInfo(mouseX, mouseY, ((ICurrencyNetworkBank) teDiggingUnit.getBank()).getStoredCurrency(), ((ICurrencyNetworkBank) teDiggingUnit.getBank()).getMaxCurrency());
         }
     }
 }

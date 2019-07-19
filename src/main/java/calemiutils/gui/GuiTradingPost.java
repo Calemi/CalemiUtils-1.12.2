@@ -6,6 +6,7 @@ import calemiutils.gui.base.GuiContainerBase;
 import calemiutils.gui.base.GuiFakeSlot;
 import calemiutils.packet.TradingPostPacket;
 import calemiutils.tileentity.TileEntityTradingPost;
+import calemiutils.tileentity.base.ICurrencyNetworkBank;
 import calemiutils.util.helper.*;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -153,8 +154,13 @@ public class GuiTradingPost extends GuiContainerBase {
     @Override
     public void drawGuiForeground(int mouseX, int mouseY) {
 
+        if (tePost.getBank() != null) {
+            GL11.glColor3f(1, 1, 1);
+            addCurrencyInfo(mouseX, mouseY, ((ICurrencyNetworkBank) tePost.getBank()).getStoredCurrency(), ((ICurrencyNetworkBank) tePost.getBank()).getMaxCurrency());
+        }
+
         GL11.glDisable(GL11.GL_LIGHTING);
-        addInfoIcon();
+        addInfoIcon(0);
         addInfoIconText(mouseX, mouseY, "Button Click Info", "Shift: 10, Ctrl: 100, Shift + Ctrl: 100");
 
         fakeSlot.renderButton(mouseX, mouseY, 150);

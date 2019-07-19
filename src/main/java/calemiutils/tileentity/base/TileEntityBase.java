@@ -82,9 +82,9 @@ public abstract class TileEntityBase extends TileEntity implements ITickable {
             security.getSecurityProfile().readFromNBT(nbt);
         }
 
-        if (this instanceof ICurrencyNetwork) {
+        if (this instanceof ICurrencyNetworkBank) {
 
-            ICurrencyNetwork currency = (ICurrencyNetwork) this;
+            ICurrencyNetworkBank currency = (ICurrencyNetworkBank) this;
 
             currency.setCurrency(nbt.getInteger("currency"));
         }
@@ -103,9 +103,9 @@ public abstract class TileEntityBase extends TileEntity implements ITickable {
             security.getSecurityProfile().writeToNBT(nbt);
         }
 
-        if (this instanceof ICurrencyNetwork) {
+        if (this instanceof ICurrencyNetworkBank) {
 
-            ICurrencyNetwork currency = (ICurrencyNetwork) this;
+            ICurrencyNetworkBank currency = (ICurrencyNetworkBank) this;
 
             nbt.setInteger("currency", currency.getStoredCurrency());
         }

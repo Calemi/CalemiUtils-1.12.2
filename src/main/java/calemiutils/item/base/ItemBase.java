@@ -4,8 +4,11 @@ import calemiutils.CalemiUtils;
 import calemiutils.init.InitItems;
 import calemiutils.registry.IHasModel;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class ItemBase extends Item implements IHasModel {
+
+    private boolean hasEffect = false;
 
     public ItemBase(String name) {
 
@@ -20,10 +23,30 @@ public class ItemBase extends Item implements IHasModel {
         setMaxStackSize(stackSize);
     }
 
+    public ItemBase(String name, boolean shouldRegister) {
+
+        setUnlocalizedName(name);
+        setRegistryName(name);
+        setCreativeTab(CalemiUtils.TAB);
+
+        if (shouldRegister) addItem();
+    }
+
     public ItemBase addItem() {
 
         InitItems.ITEMS.add(this);
         return this;
+    }
+
+    public ItemBase setEffect() {
+        hasEffect = true;
+        return this;
+    }
+
+    @Override
+    public boolean hasEffect(ItemStack stack) {
+
+        return hasEffect;
     }
 
     @Override

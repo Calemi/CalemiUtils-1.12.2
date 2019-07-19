@@ -1,0 +1,21 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    " R ",
+    "RNR",
+    " R "
+  ],
+  "key": {
+    "R": {
+      "item": "calemiutils:raritanium"
+    },
+
+    "N": {
+      "item": "minecraft:nether_star"
+    }
+  },
+  "result": {
+    "item": "calemiutils:knob_starlight",
+    "count": 1
+  }
+}

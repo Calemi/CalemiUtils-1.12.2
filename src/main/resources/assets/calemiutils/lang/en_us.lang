@@ -10,6 +10,20 @@ item.coin_dollar.name=Coin
 item.gold_chip.name=Gold Chip
 item.motor.name=Motor
 
+item.knob_wood.name=Wood Knob
+item.knob_stone.name=Stone Knob
+item.knob_iron.name=Iron Knob
+item.knob_gold.name=Gold Knob
+item.knob_diamond.name=Diamond Knob
+item.knob_starlight.name=Starlight Knob
+
+item.sledgehammer_wood.name=Wood Sledgehammer
+item.sledgehammer_stone.name=Stone Sledgehammer
+item.sledgehammer_iron.name=Iron Sledgehammer
+item.sledgehammer_gold.name=Gold Sledgehammer
+item.sledgehammer_diamond.name=Diamond Sledgehammer
+item.sledgehammer_starlight.name=Starlight Sledgehammer
+
 item.security_wrench.name=Security Wrench
 
 item.wallet.name=Wallet
@@ -81,3 +95,6 @@ itemGroup.calemiutils.tabMain=Calemi's Utilities
 
 #Config
 config.title = Calemi's Utilities Config
+
+#Enchantments
+enchantment.crushing=Crushing

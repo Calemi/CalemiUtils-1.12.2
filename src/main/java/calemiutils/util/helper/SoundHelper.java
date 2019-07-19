@@ -24,6 +24,11 @@ public class SoundHelper {
         player.world.playSound(player, player.getPosition(), SoundEvents.BLOCK_LEVER_CLICK, player.getSoundCategory(), 1, 1);
     }
 
+    public static void playClang(World world, EntityPlayer player) {
+
+        player.world.playSound(player, player.getPosition(), SoundEvents.BLOCK_ANVIL_LAND, player.getSoundCategory(), 0.9F, 1.1F);
+    }
+
     public static void playWarp(World world, EntityPlayer player) {
 
         player.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 0.25F, 0.75F);

@@ -1,6 +1,7 @@
 {
   "parent": "calemiutils:item/sledgehammer_base",
   "textures": {
-    "0": "calemiutils:models/sledgehammer_wood"
+    "0": "calemiutils:models/sledgehammer_wood",
+    "particle": "calemiutils:models/sledgehammer_wood"
   }
 }

@@ -13,6 +13,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import java.util.List;
+
 public class WalletPacket extends ServerPacketHandler {
 
     public WalletPacket() {
@@ -57,7 +59,7 @@ public class WalletPacket extends ServerPacketHandler {
 
                 price *= multiplier;
 
-                ItemStack walletStack = CurrencyHelper.getCurrentWalletStack(player);
+                ItemStack walletStack = CurrencyHelper.getCurrentWalletStack(player, false);
 
                 if (!walletStack.isEmpty()) {
 
@@ -71,13 +73,29 @@ public class WalletPacket extends ServerPacketHandler {
 
             else if (data[0].equalsIgnoreCase("togglesuck")) {
 
-                ItemStack heldStack = CurrencyHelper.getCurrentWalletStack(player);
+                ItemStack heldStack = CurrencyHelper.getCurrentWalletStack(player, false);
 
                 if (heldStack.getItem() instanceof ItemWallet) {
 
                     ItemWallet wallet = (ItemWallet) heldStack.getItem();
 
                     wallet.toggleSuck(heldStack);
+                }
+            }
+
+            else if (data[0].equalsIgnoreCase("activate")) {
+
+                ItemStack heldStack = CurrencyHelper.getCurrentWalletStack(player, false);
+                List<ItemStack> list = CurrencyHelper.checkForActiveWallets(player);
+
+                if (heldStack.getItem() instanceof ItemWallet) {
+
+                    for (ItemStack stack : list) {
+
+                        ItemWallet.activate(stack, false);
+                    }
+
+                    ItemWallet.activate(heldStack, true);
                 }
             }
 

@@ -103,7 +103,7 @@ public class GuiBuilderKit extends GuiContainerBase {
     public void drawGuiForeground(int mouseX, int mouseY) {
 
         GL11.glDisable(GL11.GL_LIGHTING);
-        addInfoIcon();
+        addInfoIcon(0);
         addInfoIconText(mouseX, mouseY, "Button Click Info", "Shift: 16, Ctrl: 64, Shift + Ctrl: 64 * 9");
     }
 }
