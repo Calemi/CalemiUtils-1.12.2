@@ -1,11 +1,35 @@
 Try to fix the known bugs before implementing anything on this list.
 
-Market
--Add an option for selling ore dictionary names
+Digging Unit
+-RF Support (via config option to toggle RC to RF)
+
+Blueprint
+-Bucket and Liquid Sprayer support
 
 Building Unit
 -Optimize Building Unit by rendering blocks using a tesselator
 
-New Blocks
--Teleport Pad for the interaction terminal
--Storage Unit for the interaction terminal (inventory tweaks support would be nice too)
+Block Ideas
+
+-Teleport Pad
+--Connects to a network, used by the Interaction Terminal (IT)
+--When clicked in the IT, it will teleport the player to the top of the pad.
+
+-Storage Unit
+--Connects to a network, used by the Interaction Terminal (IT)
+--Can store items and space can be upgraded
+--Can be configured to filter items that are pumped in.
+--Trading Posts will pump their stock to the unit if they match the filter
+--Possible Inventory Tweaks Support
+
+-Storage Pump
+--Any items placed in the GUI or pump in will try and find a spot in the network to place it in.
+
+Item Ideas
+
+-Liquid Sprayer
+--Has two modes, "Suck" and "Spray"
+--When "Suck", right-clicking any source of liquid will use up the source and store it into it's tank
+--When "Spray", right-clicking will place down a source of the liquid stored
+--Shift-right-clicking will toggle the mode.
+--Can also be placed in Thermal Expansion Liquid Transposer to pump liquid into it.
